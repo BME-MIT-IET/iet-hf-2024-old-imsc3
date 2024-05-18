@@ -59,8 +59,8 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     /**
      * Pipe konstruktora
      */
-    public Pipe() {
-        counter = PointCounter.getInstance();
+    public Pipe(PointCounter pointCounter) {
+        counter = pointCounter;
     }
 
     /**

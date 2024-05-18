@@ -235,7 +235,7 @@ public class Controller implements Serializable {
                 gameView.addCisternView(cisternView);
             }
             case "pipe" -> {
-                Pipe pipe = new Pipe();
+                Pipe pipe = new Pipe(PointCounter.getInstance());
                 steppables.add(pipe);
                 pipes.add(pipe);
                 pickupables.add(pipe);
