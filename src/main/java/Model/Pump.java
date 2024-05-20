@@ -53,7 +53,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @param from melyik elemről vesszük le / csatlakoztatjuk le a pumpát
      */
     @Override
-    public void PickedUp(Steppable from) {}
+    public void PickedUp(Steppable from) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Pumpa letétele

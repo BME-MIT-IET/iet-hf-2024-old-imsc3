@@ -14,7 +14,7 @@ import java.io.*;
 /**
  * A játék ablakát reprezentáló osztály
  */
-public abstract class Window {
+public abstract class Window implements Serializable {
     protected LinkedList<Drawable> drawables = new LinkedList<>();
     protected LinkedList<Clickable> clickables = new LinkedList<>();
     protected LinkedList<JComponent> components = new LinkedList<>();

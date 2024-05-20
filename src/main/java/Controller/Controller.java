@@ -29,6 +29,9 @@ public class Controller implements Serializable {
         return controller;
     }
     final String WrongAttr = "wrong attribute name";
+    final String WrongPipe = "wrong pipe name";
+    final String WrongPlayer = "wrong player name";
+    final String WrongMech = "wrong mechanic name";
     final String fellDownStr = "fellDown";
     final String stuckStr = "stuck";
     final String standingOnStr = "standingOn";
@@ -279,7 +282,7 @@ public class Controller implements Serializable {
     public void connect(String pipeName, String wNodeName) {
 
         if (!pipes.contains((Pipe)objectCatalog.get(pipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPipe, Controller.filetoWrite != null);
             return;
         }
         Pipe p = (Pipe) objectCatalog.get(pipeName);
@@ -305,7 +308,7 @@ public class Controller implements Serializable {
     public void move(String playerName, String steppableName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPlayer, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
@@ -336,7 +339,7 @@ public class Controller implements Serializable {
     public void pierce(String playerName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPlayer, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
@@ -353,7 +356,7 @@ public class Controller implements Serializable {
     public void glue(String playerName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPlayer, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
@@ -388,7 +391,7 @@ public class Controller implements Serializable {
     public void repair(String mechanicName) {
 
         if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongMech, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
@@ -411,19 +414,19 @@ public class Controller implements Serializable {
     public void redirect(String playerName, String inPipeName, String outPipeName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPlayer, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
         if (!pipes.contains((Pipe)objectCatalog.get(inPipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPipe, Controller.filetoWrite != null);
             return;
         }
         Pipe in = (Pipe) objectCatalog.get(inPipeName);
 
         if (!pipes.contains((Pipe)objectCatalog.get(outPipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongPipe, Controller.filetoWrite != null);
             return;
         }
         Pipe out = (Pipe) objectCatalog.get(outPipeName);
@@ -443,7 +446,7 @@ public class Controller implements Serializable {
     public void pickup(String mechanicName, String pickupName) {
 
         if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongMech, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
@@ -467,7 +470,7 @@ public class Controller implements Serializable {
     public void placedown(String mechanicName) {
 
         if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+            IO_Manager.writeError(WrongMech, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
@@ -745,12 +748,25 @@ public class Controller implements Serializable {
      * @param filename - a fájl amibe mentünk
      */
     public void save(String filename) {
+        ObjectOutputStream oos = null;
+        FileOutputStream fops = null;
         try {
-            FileOutputStream fops = new FileOutputStream("program.txt");
-            ObjectOutputStream oos = new ObjectOutputStream(fops);
+            fops = new FileOutputStream("program.txt");
+            oos = new ObjectOutputStream(fops);
             oos.writeObject(this);
         } catch (Exception e) {
             System.err.println("Error saving state to " + filename + ": " + e.getMessage());
+        } finally {
+            try {
+                if (oos != null) {
+                    oos.close();
+                }
+                if (fops != null) {
+                    fops.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error closing output streams: " + e.getMessage());
+            }
         }
         IO_Manager.write("saved state to program.txt", Controller.filetoWrite != null);
     }
@@ -760,15 +776,29 @@ public class Controller implements Serializable {
      * @param filename - a fájl amiből betöltünk
      */
     public void load(String filename) {
+        ObjectInputStream ois = null;
+        FileInputStream fis = null;
         try {
-            FileInputStream fis = new FileInputStream("program.txt");
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            fis = new FileInputStream("program.txt");
+            ois = new ObjectInputStream(fis);
             controller = (Controller) ois.readObject();
         } catch (Exception e) {
             System.err.println("Error loading state from " + filename + ": " + e.getMessage());
+        } finally {
+            try {
+                if (ois != null) {
+                    ois.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                System.err.println("Error closing input streams: " + e.getMessage());
+            }
         }
         IO_Manager.write("loaded state from program.txt", Controller.filetoWrite != null);
     }
+
 
     /**
      * A játék végét lefuttató függvény

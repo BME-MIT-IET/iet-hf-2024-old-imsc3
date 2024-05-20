@@ -7,6 +7,7 @@ import Model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import static View.Pictures.*;
@@ -15,7 +16,7 @@ import static View.PopUpButton.*;
 /**
  * A játék nézetét megvalósító osztály.
  */
-public class GameView extends Window {
+public class GameView extends Window implements Serializable {
 
     /**
      * Map beállítása.
@@ -38,7 +39,7 @@ public class GameView extends Window {
     protected PopUpBar popUpBar = null;
     protected PopUpBar cisternDisplay = null;
     private boolean ended = false;
-    private Button exit;
+    private final Button exit;
 
 
     private AppFrame frame;
@@ -76,7 +77,7 @@ public class GameView extends Window {
     }
 
 
-    private Object sync = new Object();
+    private final Object sync = new Object();
 
     /**
      * kirajzolás megvalósítása.
@@ -134,7 +135,6 @@ public class GameView extends Window {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.BLACK);
                 g2d.setFont(new Font("Inter", Font.BOLD, 20));
-                AppFrame f = Controller.getInstance().getFrame();
                 g2d.drawString("Válaszd ki a két átirányítandó csövet!", 40, 40);
             }
         }
@@ -194,12 +194,12 @@ public class GameView extends Window {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override

@@ -14,8 +14,8 @@ import Model.Steppable;
  */
 public class CisternView extends Drawable implements Clickable, CreatePopUpBar, SteppableView {
 
-    private Cistern cistern;
-    private int r;
+    private final Cistern cistern;
+    private final int r;
     private GameView gameView = null;
     private BufferedImage sprite = null;
 

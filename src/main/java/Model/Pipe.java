@@ -121,42 +121,50 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             players.add(player);
 
             if (lubricated){
-                SecureRandom random = new SecureRandom();
-                int end = random.nextInt(1,2);
-                boolean ignoreState = Player.isIgnoreStates();
-                Player.setIgnoreStates(true);
-                if(end == 1){
-                    player.getStandingOn().PlayerExit(player);
-                    player.setStandingOn(null);
-                    player.Move(nodes.getFirst());
-                }
-                else if(end == 2){
-                    player.getStandingOn().PlayerExit(player);
-                    player.setStandingOn(null);
-                    player.Move(nodes.getLast());
-                }
-                Player.setIgnoreStates(ignoreState);
-                players.remove(player);
-                if (player.getState() == PlayerActionState.MOVE_ACTION)
-                    player.setState(PlayerActionState.SPECIAL_ACTION);
-                else if (player.getState() == PlayerActionState.SPECIAL_ACTION) {
-                    player.setState(PlayerActionState.TURN_OVER);
-                    Controller.getInstance().turnOver();
-                }
-                lubricated = false;
+                handleLubricatedPlayer(player);
                 successful = false;
             }
 
             if (glued) {
-                player.setStuck(true);
-                player.setGlueLength(1);
-                glued = false;
-                player.setState(PlayerActionState.TURN_OVER);
-                Controller.getInstance().turnOver();
+                handleGluedPlayer(player);
             }
 
         }
         return successful;
+    }
+
+    private void handleLubricatedPlayer(Player player) {
+        SecureRandom random = new SecureRandom();
+        int end = random.nextInt(1, 3); // 1 or 2
+        boolean ignoreState = Player.isIgnoreStates();
+        Player.setIgnoreStates(true);
+
+        player.getStandingOn().PlayerExit(player);
+        player.setStandingOn(null);
+
+        if (end == 1) {
+            player.Move(nodes.getFirst());
+        } else {
+            player.Move(nodes.getLast());
+        }
+
+        Player.setIgnoreStates(ignoreState);
+        players.remove(player);
+        if (player.getState() == PlayerActionState.MOVE_ACTION) {
+            player.setState(PlayerActionState.SPECIAL_ACTION);
+        } else if (player.getState() == PlayerActionState.SPECIAL_ACTION) {
+            player.setState(PlayerActionState.TURN_OVER);
+            Controller.getInstance().turnOver();
+        }
+        lubricated = false;
+    }
+
+    private void handleGluedPlayer(Player player) {
+        player.setStuck(true);
+        player.setGlueLength(1);
+        glued = false;
+        player.setState(PlayerActionState.TURN_OVER);
+        Controller.getInstance().turnOver();
     }
 
     /**
