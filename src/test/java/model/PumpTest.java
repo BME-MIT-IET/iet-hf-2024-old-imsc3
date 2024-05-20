@@ -11,32 +11,28 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-class PumpTest {
+public class PumpTest {
 
     private Pump pump;
     private Pipe mockActiveIn;
     private Pipe mockActiveOut;
-    private Controller mockController;
 
     @BeforeEach
-    void setUp() {
+    public void init() {
         pump = new Pump();
         mockActiveIn = Mockito.mock(Pipe.class);
         mockActiveOut = Mockito.mock(Pipe.class);
-        mockController = Mockito.mock(Controller.class);
 
         pump.setActiveIn(mockActiveIn);
         pump.setActiveOut(mockActiveOut);
     }
 
     @Test
-    void testWaterFlow() {
+    public void testWaterFlow() {
         // Arrange
         pump.setHeldWater(10);
         when(mockActiveOut.GainWater(anyInt())).thenReturn(1);
         when(mockActiveIn.LoseWater(anyInt())).thenReturn(1);
-        when(Controller.getInstance()).thenReturn(mockController);
-        when(mockController.getObjectName(any())).thenReturn("Pipe");
 
         // Act
         pump.WaterFlow();
@@ -49,7 +45,7 @@ class PumpTest {
     }
 
     @Test
-    void testWaterFlowWhenBroken() {
+    public void testWaterFlowWhenBroken() {
         // Arrange
         pump.setBroken(true);
 
@@ -62,7 +58,7 @@ class PumpTest {
     }
 
     @Test
-    void testWaterFlowWhenEmpty() {
+    public void testWaterFlowWhenEmpty() {
         // Arrange
         pump.setHeldWater(0);
 
