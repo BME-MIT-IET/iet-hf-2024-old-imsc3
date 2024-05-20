@@ -1,9 +1,6 @@
 package Model;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 //A ki és bemenet fájlba, illetve konzolra kiírásáért, beolvasásáért felelős osztály.
@@ -43,7 +40,7 @@ public class IO_Manager {
         try {
             fw.write(text + "\n");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new UncheckedIOException(ioe);
         }
     }
 
@@ -53,7 +50,7 @@ public class IO_Manager {
         try {
             fw.write("ERROR: \"" + errorMessage + "\"" + "\n");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new UncheckedIOException(ioe);
         }
     }
 
@@ -63,7 +60,7 @@ public class IO_Manager {
         try {
             fw.write("INFO: \"" + info + "\"" + "\n");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new UncheckedIOException(ioe);
         }
     }
 
@@ -71,8 +68,7 @@ public class IO_Manager {
     static public String readLine() {
         if (stdScanner == null)
             stdScanner = new Scanner(System.in);
-        String ret = stdScanner.nextLine();
-        return ret;
+        return stdScanner.nextLine();
     }
 
     //Befejezi az olvasást.
@@ -93,7 +89,7 @@ public class IO_Manager {
         try {
             fw = new FileWriter(filename);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new UncheckedIOException(ioe);
         }
     }
 
@@ -110,7 +106,7 @@ public class IO_Manager {
             }
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            throw new UncheckedIOException(ioe);
         }
     }
 
@@ -119,7 +115,7 @@ public class IO_Manager {
         try {
             scanner = new Scanner(new File(filename));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 

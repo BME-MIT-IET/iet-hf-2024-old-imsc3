@@ -5,8 +5,8 @@ import View.GameView;
 import View.PipeView;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Ciszterna megvalósítására szolgáló osztály
@@ -101,7 +101,7 @@ public class Cistern extends WaterNode implements Serializable {
     public void GeneratePickupables() {
         if (createdPickupables.size() > 3)
             return;
-        Random rand = new Random();
+        SecureRandom rand = new SecureRandom();
         if (rand.nextInt(0, 10) == 9) {
             String pumpName = "genPump" + Controller.getInstance().createdPumpNumber++;
             Controller.getInstance().create(pumpName, "pump", -50, -50);

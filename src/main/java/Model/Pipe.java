@@ -5,8 +5,8 @@ import View.PipeView;
 import View.PumpView;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Csövet reprezentáló osztály
@@ -49,7 +49,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     /**
      * Csatlakozási pontok
      */
-    private LinkedList<WaterNode> nodes = new LinkedList<>();
+    private final LinkedList<WaterNode> nodes = new LinkedList<>();
 
     /**
      * Pontszámításhoz használt singleton
@@ -70,19 +70,20 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      */
     @Override
     public void PickedUp(Steppable from) {
-        int pickupIdx = nodes.indexOf(from);
-        if (pickupIdx != -1) {
-            if (nodes.size() > 1)
-                nodes.remove(pickupIdx);
-            beingHeld=true;
-            if (players.size() != 0) {
-                IO_Manager.writeInfo(Controller.getInstance().getObjectName(players.getFirst()) + " is fallen off", Controller.filetoWrite != null);
-                players.getFirst().setFellDown(true);
+        if(nodes.contains(from)) {
+            int pickupIdx = nodes.indexOf(from);
+            if (pickupIdx != -1) {
+                if (nodes.size() > 1)
+                    nodes.remove(pickupIdx);
+                beingHeld = true;
+                if (!players.isEmpty()) {
+                    IO_Manager.writeInfo(Controller.getInstance().getObjectName(players.getFirst()) + " is fallen off", Controller.filetoWrite != null);
+                    players.getFirst().setFellDown(true);
+                }
+                counter.AddSaboteurPoints(heldWater);
+                heldWater = 0;
             }
-            counter.AddSaboteurPoints(heldWater);
-            heldWater=0;
         }
-
     }
 
     /**
@@ -109,7 +110,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      */
     @Override
     public boolean PlayerEnter(Player player) {
-        if (players.size() != 0) {
+        if (!players.isEmpty()) {
             IO_Manager.writeInfo("Can't move to " + Controller.getInstance().getObjectName(this) + ", "
                     + Controller.getInstance().getObjectName(players.getFirst()) + " is standing on it", Controller.filetoWrite != null);
             return false;
@@ -120,7 +121,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             players.add(player);
 
             if (lubricated){
-                Random random = new Random();
+                SecureRandom random = new SecureRandom();
                 int end = random.nextInt(1,2);
                 boolean ignoreState = Player.isIgnoreStates();
                 Player.setIgnoreStates(true);
@@ -428,7 +429,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         if(broken){
             broken = false;
             readyToPierce = false;
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
             readyToPierceTimer = random.nextInt(4, 9);
             return true;
         } else {

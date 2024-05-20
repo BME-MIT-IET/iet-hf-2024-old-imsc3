@@ -5,10 +5,10 @@ import View.*;
 
 import java.awt.*;
 import java.io.*;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * A modell és a view egymással való működésében segít, a control funkciót látja el, singleton osztály
@@ -16,6 +16,7 @@ import java.util.Random;
 public class Controller implements Serializable {
 
     private static Controller controller = null;
+    private boolean frameCounter = false;
 
     //Singleton
     private Controller() {
@@ -127,7 +128,7 @@ public class Controller implements Serializable {
             }
             //For FPS count
             if(System.currentTimeMillis()-previousTimeInMilliSec>=1000){
-                //System.out.println(frames);
+                if(frameCounter) System.out.println(frames);
                 frames=0;
                 previousTimeInMilliSec=System.currentTimeMillis();
             }
@@ -159,7 +160,6 @@ public class Controller implements Serializable {
 
     /**
      * Visszaadja az éppen aktív játékost, azaz aki a FIFO tetején van
-     * @return
      */
     public Player getActivePlayer() {
         return turnOrder.getFirst();
@@ -248,13 +248,13 @@ public class Controller implements Serializable {
      */
     public void connect(String pipeName, String wNodeName) {
 
-        if (!pipes.contains(objectCatalog.get(pipeName))) {
+        if (!pipes.contains((Pipe)objectCatalog.get(pipeName))) {
             IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
             return;
         }
         Pipe p = (Pipe) objectCatalog.get(pipeName);
 
-        if (!nodes.contains(objectCatalog.get(wNodeName))) {
+        if (!nodes.contains((WaterNode) objectCatalog.get(wNodeName))) {
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
@@ -274,13 +274,13 @@ public class Controller implements Serializable {
      */
     public void move(String playerName, String steppableName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (!steppables.contains(objectCatalog.get(steppableName))) {
+        if (!steppables.contains((Steppable) objectCatalog.get(steppableName))) {
             IO_Manager.writeError("wrong steppable name", Controller.filetoWrite != null);
             return;
         }
@@ -305,7 +305,7 @@ public class Controller implements Serializable {
      */
     public void pierce(String playerName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
@@ -322,7 +322,7 @@ public class Controller implements Serializable {
      */
     public void glue(String playerName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
@@ -341,7 +341,7 @@ public class Controller implements Serializable {
     public void lubricate(String saboteurName) {
 
 
-        if (!saboteurs.contains(objectCatalog.get(saboteurName))) {
+        if (!saboteurs.contains((Saboteur) objectCatalog.get(saboteurName))) {
             IO_Manager.writeError("wrong saboteur name", Controller.filetoWrite != null);
             return;
         }
@@ -357,7 +357,7 @@ public class Controller implements Serializable {
      */
     public void repair(String mechanicName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
             IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
             return;
         }
@@ -365,7 +365,7 @@ public class Controller implements Serializable {
 
         if (m.Repair()) {
             IO_Manager.write(mechanicName + ".standingOn.broken = false", Controller.filetoWrite != null);
-            if (pipes.contains(m.getStandingOn())) {
+            if (pipes.contains((Pipe) m.getStandingOn())) {
                 IO_Manager.write(mechanicName + ".standingOn.readyToPierce = false", Controller.filetoWrite != null);
             }
         }
@@ -380,19 +380,19 @@ public class Controller implements Serializable {
      */
     public void redirect(String playerName, String inPipeName, String outPipeName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (!pipes.contains(objectCatalog.get(inPipeName))) {
+        if (!pipes.contains((Pipe)objectCatalog.get(inPipeName))) {
             IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
             return;
         }
         Pipe in = (Pipe) objectCatalog.get(inPipeName);
 
-        if (!pipes.contains(objectCatalog.get(outPipeName))) {
+        if (!pipes.contains((Pipe)objectCatalog.get(outPipeName))) {
             IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
             return;
         }
@@ -412,13 +412,13 @@ public class Controller implements Serializable {
      */
     public void pickup(String mechanicName, String pickupName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
             IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (!pickupables.contains(objectCatalog.get(pickupName))) {
+        if (!pickupables.contains((PickupAble) objectCatalog.get(pickupName))) {
             IO_Manager.writeError("wrong pickup name", Controller.filetoWrite != null);
             return;
         }
@@ -436,7 +436,7 @@ public class Controller implements Serializable {
      */
     public void placedown(String mechanicName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
             IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
             return;
         }
@@ -456,7 +456,7 @@ public class Controller implements Serializable {
 
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains(o)) {
+        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "fellDown" -> output += Boolean.toString(((Mechanic) o).isFellDown());
                 case "stuck" -> output += Boolean.toString(((Mechanic) o).isStuck());
@@ -465,28 +465,28 @@ public class Controller implements Serializable {
                 case "heldItems" -> output += getObjectName(((Mechanic) o).getHeldItems());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown" -> output += Boolean.toString(((Mechanic) o).isFellDown());
-                case "stuck" -> output += Boolean.toString(((Mechanic) o).isStuck());
-                case "standingOn" -> output += getObjectName(((Mechanic) o).getStandingOn());
-                case "state" -> output += getObjectName(((Mechanic) o).getState());
+                case "fellDown" -> output += Boolean.toString(((Saboteur) o).isFellDown());
+                case "stuck" -> output += Boolean.toString(((Saboteur) o).isStuck());
+                case "standingOn" -> output += getObjectName(((Saboteur) o).getStandingOn());
+                case "state" -> output += getObjectName(((Saboteur) o).getState());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains(objectCatalog.get(objectName))) {
+        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "createdPickupables" -> output += listWrite(((Cistern) o).getCreatedPickupables());
                 case "pipes" -> output += listWrite(((Cistern) o).getPipes());
                 case "players" -> output += listWrite(((Cistern) o).getPlayers());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (springs.contains(objectCatalog.get(objectName))) {
+        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "pipes" -> output += listWrite(((Spring) o).getPipes());
                 case "players" -> output += listWrite(((Spring) o).getPlayers());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (pumps.contains(objectCatalog.get(objectName))) {
+        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "broken" -> output += Boolean.toString(((Pump) o).isBroken());
                 case "waterCapacity" -> output += Integer.toString(((Pump) o).getWaterCapacity());
@@ -498,7 +498,7 @@ public class Controller implements Serializable {
                 case "players" -> output += listWrite(((Pump) o).getPlayers());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (pipes.contains(objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe)objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "broken" -> output += Boolean.toString(((Pipe) o).isBroken());
                 case "waterCapacity" -> output += Integer.toString(((Pipe) o).getWaterCapacity());
@@ -533,7 +533,7 @@ public class Controller implements Serializable {
      */
     public void stateSet(String objectName, String attribName, String attribValue) {
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains(o)) {
+        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "fellDown":
                     ((Mechanic) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -551,7 +551,7 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "fellDown":
                     ((Saboteur) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -570,27 +570,27 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains(objectCatalog.get(objectName))) {
+        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (springs.contains(objectCatalog.get(objectName))) {
+        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (pumps.contains(objectCatalog.get(objectName))) {
+        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "broken" -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
                 case "waterCapacity" -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
                 case "heldWater" -> ((Pump) o).setHeldWater(Integer.parseInt(attribValue));
                 case "maximumPipes" -> ((Pump) o).setMaximumPipes(Integer.parseInt(attribValue));
                 case "activeIn" -> {
-                    if (pipes.contains(objectCatalog.get(attribValue)))
+                    if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveIn((Pipe) objectCatalog.get(attribValue));
                 }
                 case "activeOut" -> {
-                    if (pipes.contains(objectCatalog.get(attribValue)))
+                    if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveOut((Pipe) objectCatalog.get(attribValue));
                 }
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
-        } else if (pipes.contains(objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe)objectCatalog.get(objectName))) {
             switch (attribName) {
                 case "broken" -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
                 case "waterCapacity" -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
@@ -616,7 +616,7 @@ public class Controller implements Serializable {
         turnOrder.getFirst().setState(PlayerActionState.moveAction);
         if (turnOrder.getFirst().isFellDown()) {
             turnOrder.getFirst().setFellDown(false);
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
             boolean ignoreStates = Player.isIgnoreStates();
             Player.setIgnoreStates(true);
@@ -660,7 +660,7 @@ public class Controller implements Serializable {
         }
         if (!deterministic) {
             for (Pump pump : pumps) {
-                Random random = new Random();
+                SecureRandom random = new SecureRandom();
                 int chance = random.nextInt(0, 5);
                 if (chance == 0) {
                     pump.setBroken(true);
@@ -682,7 +682,7 @@ public class Controller implements Serializable {
      * @param pumpName - a generált pumpa neve
      */
     public void generate(String cisternName, String pipeName, String pumpName) {
-        if (!cisterns.contains(objectCatalog.get(cisternName))) {
+        if (!cisterns.contains((Cistern) objectCatalog.get(cisternName))) {
             IO_Manager.writeError("wrong cistern name", Controller.filetoWrite != null);
             return;
         }
@@ -690,6 +690,8 @@ public class Controller implements Serializable {
 
         c.GeneratePickupables();
 
+        IO_Manager.write("This is pipe:" + pipeName);
+        IO_Manager.write("This is pump:" + pumpName);
         IO_Manager.write(cisternName + ".createdPickupables = " + listWrite(((Cistern) objectCatalog.get(cisternName)).getCreatedPickupables()), Controller.filetoWrite != null);
     }
 
@@ -699,7 +701,7 @@ public class Controller implements Serializable {
      */
     public void waterFlow(String wNodeName) {
 
-        if (!nodes.contains(objectCatalog.get(wNodeName))) {
+        if (!nodes.contains((WaterNode) objectCatalog.get(wNodeName))) {
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
@@ -720,7 +722,7 @@ public class Controller implements Serializable {
             ObjectOutputStream oos = new ObjectOutputStream(fops);
             oos.writeObject(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error saving state to " + filename + ": " + e.getMessage());
         }
         IO_Manager.write("saved state to program.txt", Controller.filetoWrite != null);
     }
@@ -735,7 +737,7 @@ public class Controller implements Serializable {
             ObjectInputStream ois = new ObjectInputStream(fis);
             controller = (Controller) ois.readObject();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error loading state from " + filename + ": " + e.getMessage());
         }
         IO_Manager.write("loaded state from program.txt", Controller.filetoWrite != null);
     }
@@ -786,7 +788,7 @@ public class Controller implements Serializable {
         }
         for (Player p : players) {
             p.RemovePlayer();
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
             p.Move(nodes.get(chance));
         }
@@ -799,9 +801,9 @@ public class Controller implements Serializable {
 
         //IDE KELL EGY BFS-KERESES A GRAFIKUSBA
 
-        /** START
-         *  Ha be akarjuk állítani másra a nyerési pontot azt itt kell majd
-         *  counter.setPointsToWin(50);
+        /* START
+           Ha be akarjuk állítani másra a nyerési pontot azt itt kell majd
+           counter.setPointsToWin(50);
          */
         turnOrder.addAll(mechanics);
         turnOrder.addAll(saboteurs);
@@ -827,7 +829,7 @@ public class Controller implements Serializable {
                 if (i != list.size() - 1) out.append(", ");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error occurred while writing the list: " + e.getMessage());
         }
         return out.toString();
 
@@ -835,20 +837,10 @@ public class Controller implements Serializable {
 
     /**
      * Eltávolítja az adott objektumot abból a listá(k)ból, ami(k)ben benne van.
-     * @param o - az objektum amit eltávolítunk
+     * @param p - az objektum amit eltávolítunk (Csak Pipe-ra kell)
      */
-    public void removeObject(Object o) {
-        cisterns.remove(o);
-        mechanics.remove(o);
-        pickupables.remove(o);
-        pipes.remove(o);
-        players.remove(o);
-        pumps.remove(o);
-        saboteurs.remove(o);
-        springs.remove(o);
-        steppables.remove(o);
-        nodes.remove(o);
-        objectCatalog.remove(o);
+    public void removeObject(Pipe p) {
+        pipes.remove(p);
     }
 
     /**
