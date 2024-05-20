@@ -5,9 +5,8 @@ import Model.Saboteur;
 import Controller.Controller;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
-import static View.Pictures.mapPrevButton;
+import static View.Pictures.getMapPrevButton;
 
 public class SaboteurView extends Drawable {
 
@@ -28,7 +27,7 @@ public class SaboteurView extends Drawable {
     public void setColor(Color color) {
         this.color = color;
     }
-    Image imageForScale=ImageUtility.scaleImage(mapPrevButton,200);
+    Image imageForScale=ImageUtility.scaleImage(getMapPrevButton(),200);
     private  int number;
 
     public void setNumber(int number) {

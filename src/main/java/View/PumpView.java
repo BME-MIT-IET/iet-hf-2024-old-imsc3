@@ -21,7 +21,7 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
         pump = p;
         gen = c;
 
-        arrowSprite = pumpIndicatorImg;
+        arrowSprite = getPumpIndicatorImg();
         arrowSprite = ImageUtility.scaleImage(arrowSprite, 20);
 
         if (WindowOptions.windowOption == WindowOptions.game)

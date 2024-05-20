@@ -45,7 +45,7 @@ public class MechanicView extends Drawable {
         this.color = color;
     }
 
-    Image imageForScale = ImageUtility.scaleImage(mapPrevButton, 200);
+    Image imageForScale = ImageUtility.scaleImage(getMapPrevButton(), 200);
 
     private int number;
 

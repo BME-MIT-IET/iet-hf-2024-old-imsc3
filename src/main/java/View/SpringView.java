@@ -28,9 +28,9 @@ public class SpringView extends Drawable implements Clickable, CreatePopUpBar, S
         super(x, y, v);
         this.r = r;
         spring = s;
-        sprite = springFilledImg;
+        sprite = getSpringFilledImg();
         sprite = ImageUtility.scaleImage(sprite, 2*r);
-        arrowSprite = pumpIndicatorImg;
+        arrowSprite = getPumpIndicatorImg();
         arrowSprite = ImageUtility.scaleImage(arrowSprite, 20);
         if (WindowOptions.windowOption == WindowOptions.game)
             gameView = (GameView) v;

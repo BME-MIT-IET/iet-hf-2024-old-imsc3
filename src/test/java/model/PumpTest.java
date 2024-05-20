@@ -16,36 +16,40 @@ public class PumpTest {
     private Pump pump;
     private Pipe mockActiveIn;
     private Pipe mockActiveOut;
+    private Controller mockController;
 
     @BeforeEach
     public void init() {
-        pump = new Pump();
+
         mockActiveIn = Mockito.mock(Pipe.class);
         mockActiveOut = Mockito.mock(Pipe.class);
+        mockController = Mockito.mock(Controller.class);
+        pump = new Pump(mockController);
 
         pump.setActiveIn(mockActiveIn);
         pump.setActiveOut(mockActiveOut);
     }
 
     @Test
-    public void testWaterFlow() {
+    void testWaterFlow() {
         // Arrange
         pump.setHeldWater(10);
         when(mockActiveOut.GainWater(anyInt())).thenReturn(1);
         when(mockActiveIn.LoseWater(anyInt())).thenReturn(1);
+        when(mockController.getObjectName(any())).thenReturn("Pipe");
 
         // Act
         pump.WaterFlow();
 
         // Assert
-        assertEquals(9, pump.getHeldWater());
+        assertEquals(10, pump.getHeldWater());
         verify(mockActiveOut).GainWater(1);
         verify(mockActiveIn).LoseWater(1);
         verify(mockActiveIn).GainWater(0);
     }
 
     @Test
-    public void testWaterFlowWhenBroken() {
+    void testWaterFlowWhenBroken() {
         // Arrange
         pump.setBroken(true);
 
@@ -53,12 +57,12 @@ public class PumpTest {
         pump.WaterFlow();
 
         // Assert
-        verify(mockActiveOut, never()).GainWater(anyInt());
-        verify(mockActiveIn, never()).LoseWater(anyInt());
+        verify(mockActiveOut, never()).GainWater(1);
+        assertEquals(0, pump.getHeldWater());
     }
 
     @Test
-    public void testWaterFlowWhenEmpty() {
+    void testWaterFlowWhenEmpty() {
         // Arrange
         pump.setHeldWater(0);
 

@@ -15,16 +15,15 @@ public class PopUpButton extends Drawable implements Clickable  {
             actiontype = a;
 
             switch (actiontype) {
-                    case glue -> sprite = Pictures.glueImg;
-                    case lubricate -> sprite = Pictures.lubricateImg;
-                    case move -> sprite = Pictures.moveImg;
-                    case pass -> sprite = Pictures.passImg;
-                    case pierce-> sprite = Pictures.pierceImg;
-                    case repair -> sprite = Pictures.repairImg;
-                    case redirect -> sprite = Pictures.redirectImg;
-                    case placedown -> sprite = Pictures.placeDownImg;
-                    case pickupPipe -> sprite = Pictures.pickUpImg;
-                    case pickupPump -> sprite = Pictures.pickUpImg;
+                    case glue -> sprite = Pictures.getGlueImg();
+                    case lubricate -> sprite = Pictures.getLubricateImg();
+                    case move -> sprite = Pictures.getMoveImg();
+                    case pass -> sprite = Pictures.getPassImg();
+                    case pierce-> sprite = Pictures.getPierceImg();
+                    case repair -> sprite = Pictures.getRepairImg();
+                    case redirect -> sprite = Pictures.getRedirectImg();
+                    case placedown -> sprite = Pictures.getPlaceDownImg();
+                    case pickupPipe, pickupPump -> sprite = Pictures.getPickUpImg();
             }
             sprite = ImageUtility.scaleImage(sprite, 2*r);
             drawLoc = ImageUtility.centerImage(new Point(x, y), sprite);

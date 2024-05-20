@@ -48,7 +48,7 @@ public class NewGameView extends Window {
         exit = new Button(screenWidth - 100, 10, 150, 150, this);
         map = new Button(50, screenHeight / 2, 500, 300, this);
         map.option = WindowOptions.map1;
-        map.img = ImageUtility.scaleImage(mapPrevButton, 200);
+        map.img = ImageUtility.scaleImage(getMapPrevButton(), 200);
 
         int offset = 25;
         addSaboteur = new AddPlayerButton(map.x+map.img.getWidth()+140+220, screenHeight / 2 - 35 + 190 + offset, 35, 35, this, 1, "saboteur");
@@ -59,14 +59,14 @@ public class NewGameView extends Window {
         increase = new ChangeMaxPointButton(screenWidth / 2 + 16 * 13, screenHeight / 6 - 8, 35, 35, this, 1);
         decrease = new ChangeMaxPointButton(screenWidth / 2 + 20 * 13, screenHeight / 6 - 8, 35, 35, this, -1);
 
-        start.img = ImageUtility.scaleImage(playButton, 50);
+        start.img = ImageUtility.scaleImage(getPlayButton(), 50);
         start.option = WindowOptions.game;
-        exit.img = ImageUtility.scaleImage(exitButton, 50);
+        exit.img = ImageUtility.scaleImage(getExitButton(), 50);
         exit.option = WindowOptions.exit;
-        addMechanic.img = ImageUtility.scaleImage(plusButton, 35);
-        addSaboteur.img = ImageUtility.scaleImage(plusButton, 35);
-        increase.img = ImageUtility.scaleImage(plusButton, 35);
-        decrease.img = ImageUtility.scaleImage(minusButton, 35);
+        addMechanic.img = ImageUtility.scaleImage(getPlusButton(), 35);
+        addSaboteur.img = ImageUtility.scaleImage(getPlusButton(), 35);
+        increase.img = ImageUtility.scaleImage(getPlusButton(), 35);
+        decrease.img = ImageUtility.scaleImage(getMinusButton(), 35);
 
         addDrawable(start, true);
         addDrawable(exit, true);
@@ -115,7 +115,6 @@ public class NewGameView extends Window {
         g.drawString(points, screenWidth / 2 + 75, screenHeight / 6 + 25);
         g.drawString(pointsToWin, screenWidth / 2, screenHeight / 6 - 35);
         // betűméret és típus beállítása
-        fontSize = 30;
         g.setFont(new Font("Inter", Font.BOLD, fontSize));
         // Játékosok hozzáadása felirat kirajzolása
         // Felvett játékosok kirajzolása

@@ -78,13 +78,13 @@ public class Button extends Drawable implements Clickable {
         if(this.option == WindowOptions.map1){
             this.option = WindowOptions.map2;
             Controller.getInstance().getNewGameView().setMap(2);
-            img =  ImageUtility.scaleImage(mappreview2, 200);
+            img =  ImageUtility.scaleImage(getMapPreview2(), 200);
             return;
         }
         if(this.option == WindowOptions.map2){
             this.option = WindowOptions.map1;
             Controller.getInstance().getNewGameView().setMap(1);
-            img = ImageUtility.scaleImage(mapPrevButton, 200);
+            img = ImageUtility.scaleImage(getMapPrevButton(), 200);
             return;
         }
         // játék indítása

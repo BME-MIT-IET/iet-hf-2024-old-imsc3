@@ -2,7 +2,6 @@ package Controller;
 
 import Model.*;
 import View.*;
-import View.Window;
 
 import java.awt.*;
 import java.io.*;
@@ -76,10 +75,6 @@ public class Controller implements Serializable {
      * Ciszternáknál a csövek nevének generálásához használt futóváltozó
      */
     public int createdPipeNumber = 1;
-    /**
-     * Szöveg méretezésére használt változó, mennyisége a kicsi map-kép hossza
-     */
-    private int scaleForText;
     /**
      * Az új játék ablaknál létrehozott szerelők száma-1(indexe)
      */
@@ -207,7 +202,7 @@ public class Controller implements Serializable {
                 gameView.addSaboteurView(saboteurView);
             }
             case "pump" -> {
-                Pump pump = new Pump();
+                Pump pump = new Pump(Controller.getInstance());
                 steppables.add(pump);
                 nodes.add(pump);
                 pumps.add(pump);
@@ -296,7 +291,7 @@ public class Controller implements Serializable {
             IO_Manager.write(steppableName + ".players = " + listWrite(s.getPlayers()), Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn = " + steppableName, Controller.filetoWrite != null);
             if (prev != null)
-                if (prev.getPlayers().size() == 0)
+                if (prev.getPlayers().isEmpty())
                     IO_Manager.write(getObjectName(prev) + ".players = null", Controller.filetoWrite != null);
                 else
                     IO_Manager.write(getObjectName(prev) + ".players = " + listWrite(prev.getPlayers()), Controller.filetoWrite != null);
@@ -738,8 +733,7 @@ public class Controller implements Serializable {
         try {
             FileInputStream fis = new FileInputStream("program.txt");
             ObjectInputStream ois = new ObjectInputStream(fis);
-            Controller c2 = (Controller) ois.readObject();
-            controller = c2;
+            controller = (Controller) ois.readObject();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -826,16 +820,16 @@ public class Controller implements Serializable {
      * @return - a kiiratott szöveg
      */
     private String listWrite(LinkedList<?> list) {
-        String out = "";
+        StringBuilder out = new StringBuilder();
         try {
             for (int i = 0; i < list.size(); i++) {
-                out += getObjectName(list.get(i));
-                if (i != list.size() - 1) out += ", ";
+                out.append(getObjectName(list.get(i)));
+                if (i != list.size() - 1) out.append(", ");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return out;
+        return out.toString();
 
     }
 

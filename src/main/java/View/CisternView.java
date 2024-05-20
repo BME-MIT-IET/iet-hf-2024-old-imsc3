@@ -31,7 +31,7 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
         super(x, y, v);
         this.r = r;
         cistern = c;
-        sprite = Pictures.cisternFilledImg;
+        sprite = Pictures.getCisternFilledImg();
         sprite = ImageUtility.scaleImage(sprite, 2*r);
         if (WindowOptions.windowOption == WindowOptions.game)
             gameView = (GameView) v;

@@ -60,7 +60,7 @@ public class GameView extends Window {
     public GameView(AppFrame frame) {
         this.frame = frame;
         exit = new Button(frame.getWidth() - 80, 10, 50, 50, this);
-        exit.img = ImageUtility.scaleImage(exitButton, 45);
+        exit.img = ImageUtility.scaleImage(getExitButton(), 45);
         exit.option = WindowOptions.exit;
         addDrawable(exit, true);
         addClickable(exit, true);
@@ -112,7 +112,7 @@ public class GameView extends Window {
             g.setColor(Color.BLACK);
             g.setFont(new Font("Inter", Font.BOLD, 50));
             g.drawString(Integer.toString(PointCounter.getInstance().GetMechanicPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 50, 55);
-            g.drawImage(ImageUtility.scaleImage(scoreDivider, 35), Controller.getInstance().getFrame().getWidth() - 300, 20, null);
+            g.drawImage(ImageUtility.scaleImage(getScoreDivider(), 35), Controller.getInstance().getFrame().getWidth() - 300, 20, null);
             g.drawString(Integer.toString(PointCounter.getInstance().GetSaboteurPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 200, 55);
 
             for (Drawable d : drawables) {

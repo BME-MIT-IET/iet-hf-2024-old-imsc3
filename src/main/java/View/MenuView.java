@@ -13,8 +13,8 @@ public class MenuView extends Window {
 
     Button newGame, exit;
 
-    private BufferedImage background =  ImageUtility.backgroundScale(Pictures.background);
-    private BufferedImage bgText = ImageUtility.scaleImage(menuTitle, 250);
+    private BufferedImage background =  ImageUtility.backgroundScale(getBackground());
+    private BufferedImage bgText = ImageUtility.scaleImage(getMenuTitle(), 250);
 
     /**
      * Konstruktor
@@ -26,12 +26,12 @@ public class MenuView extends Window {
         exit = new Button(760, 370, 250 + 250, 50, this);
 
         newGame.text = "Új játék";
-        newGame.img = ImageUtility.scaleImage(playButton, 50);
+        newGame.img = ImageUtility.scaleImage(getPlayButton(), 50);
 
         newGame.option = WindowOptions.newgame;
 
         exit.text = "Kilépés";
-        exit.img = ImageUtility.scaleImage(exitButton, 50);
+        exit.img = ImageUtility.scaleImage(getExitButton(), 50);
         exit.option = WindowOptions.exit;
         addDrawable(newGame, true);
         addClickable(newGame, true);
