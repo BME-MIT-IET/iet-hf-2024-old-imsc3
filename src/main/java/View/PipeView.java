@@ -212,8 +212,7 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
             endX = endNode.x;
             endY = endNode.y;
         } catch (NullPointerException e) {
-            System.err.println("pipe start or end node is null");
-            e.printStackTrace();
+            System.err.println("pipe start or end node is null" +"/n"+ e.getMessage() );
         }
     }
 

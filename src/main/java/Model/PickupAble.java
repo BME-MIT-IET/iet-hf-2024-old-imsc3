@@ -1,9 +1,11 @@
 package Model;
 
+import java.io.Serializable;
+
 /**
  * Interface azoknak a pályaelemeknek, amelyeket fel lehet venni, illetve le lehet rakni
  */
-public interface PickupAble {
+public interface PickupAble extends Serializable {
     /**
      * Elem felvétele egy másik elemről
      * @param from melyik elemről vesszük le / csatlakoztatjuk le

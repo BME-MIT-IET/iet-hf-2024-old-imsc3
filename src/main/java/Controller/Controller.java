@@ -16,7 +16,7 @@ import java.util.Map;
 public class Controller implements Serializable {
 
     private static Controller controller = null;
-    private boolean frameCounter = false;
+    private final boolean frameCounter = false;
 
     //Singleton
     private Controller() {
@@ -28,7 +28,32 @@ public class Controller implements Serializable {
 
         return controller;
     }
-
+    final String WrongAttr = "wrong attribute name";
+    final String fellDownStr = "fellDown";
+    final String stuckStr = "stuck";
+    final String standingOnStr = "standingOn";
+    final String stateStr = "state";
+    final String heldItemsStr = "heldItems";
+    final String pipesStr = "pipes";
+    final String createdPickupablesStr = "createdPickupables";
+    final String playersStr = "players";
+    final String saboteurPointsStr = "saboteurPoints";
+    final String mechanicPointsStr = "mechanicPoints";
+    final String pointsToWinStr = "pointsToWin";
+    final String moveActionStr = "moveAction";
+    final String specialActionStr = "specialAction";
+    final String turnOverStr = "turnOver";
+    final String brokenStr = "broken";
+    final String waterCapacityStr = "waterCapacity";
+    final String heldWaterStr = "heldWater";
+    final String maximumPipesStr = "maximumPipes";
+    final String activeInStr = "activeIn";
+    final String activeOutStr = "activeOut";
+    final String readyToPierceStr = "readyToPierce";
+    final String lubricatedStr = "lubricated";
+    final String gluedStr = "glued";
+    final String beingHeldStr = "beingHeld";
+    final String nodesStr = "nodes";
     /**
      * Játék elkezdését mutató boolean
      */
@@ -36,29 +61,28 @@ public class Controller implements Serializable {
     /**
      * Játék teljes futását mutató boolean
      */
-    private boolean running = true;
+    private final boolean running = true;
     /**
      *  A játékosok actionkezeléséhez szükséges lista.
      */
-    private LinkedList<Player> turnOrder = new LinkedList<>();
-
+    private final LinkedList<Player> turnOrder = new LinkedList<>();
     /**
      * Adott típusú objektumok tárolása.
      */
-    private LinkedList<Player> players = new LinkedList<>();
-    private LinkedList<Mechanic> mechanics = new LinkedList<>();
-    private LinkedList<Saboteur> saboteurs = new LinkedList<>();
-    private LinkedList<Steppable> steppables = new LinkedList<>(); //ez nincs benne a doksiban de kell
-    private LinkedList<WaterNode> nodes = new LinkedList<>();
-    private LinkedList<Pump> pumps = new LinkedList<>();
-    private LinkedList<Spring> springs = new LinkedList<>();
-    private LinkedList<Cistern> cisterns = new LinkedList<>();
-    private LinkedList<Pipe> pipes = new LinkedList<>();
-    private LinkedList<PickupAble> pickupables = new LinkedList<>();
+    private final LinkedList<Player> players = new LinkedList<>();
+    private final LinkedList<Mechanic> mechanics = new LinkedList<>();
+    private final LinkedList<Saboteur> saboteurs = new LinkedList<>();
+    private final LinkedList<Steppable> steppables = new LinkedList<>(); //ez nincs benne a doksiban de kell
+    private final LinkedList<WaterNode> nodes = new LinkedList<>();
+    private final LinkedList<Pump> pumps = new LinkedList<>();
+    private final LinkedList<Spring> springs = new LinkedList<>();
+    private final LinkedList<Cistern> cisterns = new LinkedList<>();
+    private final LinkedList<Pipe> pipes = new LinkedList<>();
+    private final LinkedList<PickupAble> pickupables = new LinkedList<>();
     /**
      * Hashmap azért, hogy a nevükkel lehessen azonosítani az objektumokat.
      */
-    private HashMap<String, Object> objectCatalog = new HashMap<>();
+    private final HashMap<String, Object> objectCatalog = new HashMap<>();
     public static File filetoWrite = null;
     /**
      * Determinisztikusságot mutató bool
@@ -67,7 +91,7 @@ public class Controller implements Serializable {
     /**
      * Pontok tárolására használt singleton
      */
-    private PointCounter counter = PointCounter.getInstance();
+    private final PointCounter counter = PointCounter.getInstance();
     /**
      * Ciszternáknál a pumpák nevének generálásához használt futóváltozó
      */
@@ -88,23 +112,23 @@ public class Controller implements Serializable {
     /**
      * A panelt (JPanel) reprezentáló osztály
      */
-    private AppPanel panel = new AppPanel();
+    private final AppPanel panel = new AppPanel();
     /**
      * A frame-et (JFrame) reprezentáló osztály
      */
-    private AppFrame frame = new AppFrame(panel);
+    private final AppFrame frame = new AppFrame(panel);
     /**
      * A főmenü ablaka
      */
-    private MenuView menuView = new MenuView();
+    private final MenuView menuView = new MenuView();
     /**
      * Az új játék létrehozásának ablaka
      */
-    private NewGameView newGameView = new NewGameView();
+    private final NewGameView newGameView = new NewGameView();
     /**
      * A futó játék ablaka
      */
-    private GameView gameView = new GameView(frame);
+    private final GameView gameView = new GameView(frame);
 
     /**
      * A gameloop-ért fellelős függvény
@@ -143,6 +167,9 @@ public class Controller implements Serializable {
             case menu -> menuView.update();
             case newgame -> newGameView.update();
             case game -> gameView.update();
+            default -> {
+                throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+            }
         }
     }
 
@@ -155,6 +182,9 @@ public class Controller implements Serializable {
             case menu -> menuView.paint(g);
             case newgame -> newGameView.paint(g);
             case game -> gameView.paint(g);
+            default -> {
+                throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+            }
         }
     }
 
@@ -446,77 +476,75 @@ public class Controller implements Serializable {
             IO_Manager.write(mechanicName + ".heldItems = null", Controller.filetoWrite != null);
 
     }
-
     /**
      * Attribútumok lekérdezésének parancsát teljesítő függvény
      * @param objectName - az objektum neve amit lekérdezünk
      * @param attribName - az objektum egyik attribútumának neve amit le akarunk kérdezni
      */
     public void stateGet(String objectName, String attribName) {
-
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
         if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown" -> output += Boolean.toString(((Mechanic) o).isFellDown());
-                case "stuck" -> output += Boolean.toString(((Mechanic) o).isStuck());
-                case "standingOn" -> output += getObjectName(((Mechanic) o).getStandingOn());
-                case "state" -> output += getObjectName(((Mechanic) o).getState());
-                case "heldItems" -> output += getObjectName(((Mechanic) o).getHeldItems());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case fellDownStr -> output += Boolean.toString(((Mechanic) o).isFellDown());
+                case stuckStr -> output += Boolean.toString(((Mechanic) o).isStuck());
+                case standingOnStr -> output += getObjectName(((Mechanic) o).getStandingOn());
+                case stateStr -> output += getObjectName(((Mechanic) o).getState());
+                case heldItemsStr -> output += getObjectName(((Mechanic) o).getHeldItems());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown" -> output += Boolean.toString(((Saboteur) o).isFellDown());
-                case "stuck" -> output += Boolean.toString(((Saboteur) o).isStuck());
-                case "standingOn" -> output += getObjectName(((Saboteur) o).getStandingOn());
-                case "state" -> output += getObjectName(((Saboteur) o).getState());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case fellDownStr -> output += Boolean.toString(((Saboteur) o).isFellDown());
+                case stuckStr -> output += Boolean.toString(((Saboteur) o).isStuck());
+                case standingOnStr -> output += getObjectName(((Saboteur) o).getStandingOn());
+                case stateStr -> output += getObjectName(((Saboteur) o).getState());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "createdPickupables" -> output += listWrite(((Cistern) o).getCreatedPickupables());
-                case "pipes" -> output += listWrite(((Cistern) o).getPipes());
-                case "players" -> output += listWrite(((Cistern) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case createdPickupablesStr -> output += listWrite(((Cistern) o).getCreatedPickupables());
+                case pipesStr -> output += listWrite(((Cistern) o).getPipes());
+                case playersStr -> output += listWrite(((Cistern) o).getPlayers());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "pipes" -> output += listWrite(((Spring) o).getPipes());
-                case "players" -> output += listWrite(((Spring) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case pipesStr -> output += listWrite(((Spring) o).getPipes());
+                case playersStr -> output += listWrite(((Spring) o).getPlayers());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> output += Boolean.toString(((Pump) o).isBroken());
-                case "waterCapacity" -> output += Integer.toString(((Pump) o).getWaterCapacity());
-                case "heldWater" -> output += Integer.toString(((Pump) o).getHeldWater());
-                case "maximumPipes" -> output += Integer.toString(((Pump) o).getMaximumPipes());
-                case "activeIn" -> output += getObjectName(((Pump) o).getActiveIn());
-                case "activeOut" -> output += getObjectName(((Pump) o).getActiveOut());
-                case "pipes" -> output += listWrite(((Pump) o).getPipes());
-                case "players" -> output += listWrite(((Pump) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case brokenStr -> output += Boolean.toString(((Pump) o).isBroken());
+                case waterCapacityStr -> output += Integer.toString(((Pump) o).getWaterCapacity());
+                case heldWaterStr -> output += Integer.toString(((Pump) o).getHeldWater());
+                case maximumPipesStr -> output += Integer.toString(((Pump) o).getMaximumPipes());
+                case activeInStr -> output += getObjectName(((Pump) o).getActiveIn());
+                case activeOutStr -> output += getObjectName(((Pump) o).getActiveOut());
+                case pipesStr -> output += listWrite(((Pump) o).getPipes());
+                case playersStr -> output += listWrite(((Pump) o).getPlayers());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe)objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> output += Boolean.toString(((Pipe) o).isBroken());
-                case "waterCapacity" -> output += Integer.toString(((Pipe) o).getWaterCapacity());
-                case "heldWater" -> output += Integer.toString(((Pipe) o).getHeldWater());
-                case "readyToPierce" -> output += Boolean.toString(((Pipe) o).isReadyToPierce());
-                case "lubricated" -> output += Boolean.toString(((Pipe) o).isLubricated());
-                case "glued" -> output += Boolean.toString(((Pipe) o).isGlued());
-                case "beingHeld" -> output += Boolean.toString(((Pipe) o).isBeingHeld());
-                case "nodes" -> output += listWrite(((Pipe) o).getNodes());
-                case "players" -> output += listWrite(((Pipe) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case brokenStr -> output += Boolean.toString(((Pipe) o).isBroken());
+                case waterCapacityStr -> output += Integer.toString(((Pipe) o).getWaterCapacity());
+                case heldWaterStr -> output += Integer.toString(((Pipe) o).getHeldWater());
+                case readyToPierceStr -> output += Boolean.toString(((Pipe) o).isReadyToPierce());
+                case lubricatedStr -> output += Boolean.toString(((Pipe) o).isLubricated());
+                case gluedStr -> output += Boolean.toString(((Pipe) o).isGlued());
+                case beingHeldStr -> output += Boolean.toString(((Pipe) o).isBeingHeld());
+                case nodesStr -> output += listWrite(((Pipe) o).getNodes());
+                case playersStr -> output += listWrite(((Pipe) o).getPlayers());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (objectName.equals("counter")) {
             switch (attribName) {
-                case "saboteurPoints" -> output += Integer.toString(PointCounter.getInstance().GetSaboteurPoints());
-                case "mechanicPoints" -> output += Integer.toString(PointCounter.getInstance().GetMechanicPoints());
-                case "pointsToWin" -> output += Integer.toString(PointCounter.getInstance().GetPointsToWin());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case saboteurPointsStr -> output += Integer.toString(PointCounter.getInstance().GetSaboteurPoints());
+                case mechanicPointsStr -> output += Integer.toString(PointCounter.getInstance().GetMechanicPoints());
+                case pointsToWinStr -> output += Integer.toString(PointCounter.getInstance().GetPointsToWin());
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
@@ -535,40 +563,40 @@ public class Controller implements Serializable {
         Object o = objectCatalog.get(objectName);
         if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown":
+                case fellDownStr:
                     ((Mechanic) o).setFellDown(Boolean.parseBoolean(attribValue));
                     break;
-                case "stuck":
+                case stuckStr:
                     ((Mechanic) o).setStuck(Boolean.parseBoolean(attribValue));
                     break;
-                case "state":
+                case stateStr:
                     switch (attribValue) {
-                        case "moveAction" -> ((Mechanic) o).setState(PlayerActionState.moveAction);
-                        case "specialAction" -> ((Mechanic) o).setState(PlayerActionState.specialAction);
-                        case "turnOver" -> ((Mechanic) o).setState(PlayerActionState.turnOver);
+                        case moveActionStr -> ((Mechanic) o).setState(PlayerActionState.moveAction);
+                        case specialActionStr -> ((Mechanic) o).setState(PlayerActionState.specialAction);
+                        case turnOverStr -> ((Mechanic) o).setState(PlayerActionState.turnOver);
                     }
                     break;
                 default:
-                    IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                    IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown":
+                case fellDownStr:
                     ((Saboteur) o).setFellDown(Boolean.parseBoolean(attribValue));
                     break;
-                case "stuck":
+                case stuckStr:
                     ((Saboteur) o).setStuck(Boolean.parseBoolean(attribValue));
                     break;
 
-                case "state":
+                case stateStr:
                     switch (attribValue) {
-                        case "moveAction" -> ((Saboteur) o).setState(PlayerActionState.moveAction);
-                        case "specialAction" -> ((Saboteur) o).setState(PlayerActionState.specialAction);
-                        case "turnOver" -> ((Saboteur) o).setState(PlayerActionState.turnOver);
+                        case moveActionStr -> ((Saboteur) o).setState(PlayerActionState.moveAction);
+                        case specialActionStr -> ((Saboteur) o).setState(PlayerActionState.specialAction);
+                        case turnOverStr -> ((Saboteur) o).setState(PlayerActionState.turnOver);
                     }
                     break;
                 default:
-                    IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                    IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
@@ -576,30 +604,30 @@ public class Controller implements Serializable {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
         } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
-                case "waterCapacity" -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
-                case "heldWater" -> ((Pump) o).setHeldWater(Integer.parseInt(attribValue));
-                case "maximumPipes" -> ((Pump) o).setMaximumPipes(Integer.parseInt(attribValue));
-                case "activeIn" -> {
+                case brokenStr -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
+                case waterCapacityStr -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
+                case heldWaterStr -> ((Pump) o).setHeldWater(Integer.parseInt(attribValue));
+                case maximumPipesStr -> ((Pump) o).setMaximumPipes(Integer.parseInt(attribValue));
+                case activeInStr -> {
                     if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveIn((Pipe) objectCatalog.get(attribValue));
                 }
-                case "activeOut" -> {
+                case activeOutStr -> {
                     if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveOut((Pipe) objectCatalog.get(attribValue));
                 }
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe)objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
-                case "waterCapacity" -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
-                case "heldWater" -> ((Pipe) o).setHeldWater(Integer.parseInt(attribValue));
-                case "readyToPierce" -> ((Pipe) o).setReadyToPierce(Boolean.parseBoolean(attribValue));
-                case "lubricated" -> ((Pipe) o).setLubricated(Boolean.parseBoolean(attribValue));
-                case "glued" -> ((Pipe) o).setGlued(Boolean.parseBoolean(attribValue));
-                case "beingHeld" -> ((Pipe) o).setBeingHeld(Boolean.parseBoolean(attribValue));
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case brokenStr -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
+                case waterCapacityStr -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
+                case heldWaterStr -> ((Pipe) o).setHeldWater(Integer.parseInt(attribValue));
+                case readyToPierceStr -> ((Pipe) o).setReadyToPierce(Boolean.parseBoolean(attribValue));
+                case lubricatedStr -> ((Pipe) o).setLubricated(Boolean.parseBoolean(attribValue));
+                case gluedStr -> ((Pipe) o).setGlued(Boolean.parseBoolean(attribValue));
+                case beingHeldStr -> ((Pipe) o).setBeingHeld(Boolean.parseBoolean(attribValue));
+                default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);

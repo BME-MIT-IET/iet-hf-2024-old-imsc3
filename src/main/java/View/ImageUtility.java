@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
  * ImageUtility is a class that contains static methods for loading and scaling images.
@@ -26,7 +27,7 @@ public class ImageUtility {
 
             image = ImageIO.read(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
         return image;
     }

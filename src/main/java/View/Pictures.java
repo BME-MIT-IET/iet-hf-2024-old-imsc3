@@ -15,8 +15,7 @@ public class Pictures {
             try {
                 images.put(path, ImageUtility.ImageLoad(path));
             } catch (Exception e) {
-                System.err.println("Error loading image: " + path);
-                e.printStackTrace();
+                System.err.println("Error loading image: " + path + "/n " + e.getMessage());
                 images.put(path, null);
             }
         }
