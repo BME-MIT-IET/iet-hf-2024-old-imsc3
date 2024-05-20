@@ -3,7 +3,6 @@ package Model;
 import Controller.Controller;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Szerelő megvalósítására használt osztály
@@ -22,10 +21,10 @@ public class Mechanic extends Player implements Serializable {
         if(isIgnoreStates()) {
             repaired = standingOn.Repaired();
         }
-        else if(state == PlayerActionState.specialAction) {
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
             repaired = standingOn.Repaired();
             if (repaired) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -43,10 +42,10 @@ public class Mechanic extends Player implements Serializable {
         if(isIgnoreStates()) {
             pickedup = standingOn.PickedUpFrom(item);
         }
-        else if(state == PlayerActionState.specialAction) {
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
             pickedup = standingOn.PickedUpFrom(item);
             if (pickedup) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -70,10 +69,10 @@ public class Mechanic extends Player implements Serializable {
         if(isIgnoreStates()) {
             successful = heldItems.PlacedDown(standingOn);
         }
-        else if(state == PlayerActionState.specialAction) {
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
             successful = heldItems.PlacedDown(standingOn);
             if (successful) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -89,37 +88,37 @@ public class Mechanic extends Player implements Serializable {
      */
     public ActionType[] availableActions(Steppable step){
         ActionType[] actions = new ActionType[6];
-        if(state.equals(PlayerActionState.moveAction)){
+        if(state.equals(PlayerActionState.MOVE_ACTION)){
             if(step.canMoveToHere(this)) {
-                actions[2] = ActionType.move;
+                actions[2] = ActionType.MOVE;
                 return actions;
             }
         }
-        if(state.equals(PlayerActionState.specialAction)){
+        if(state.equals(PlayerActionState.SPECIAL_ACTION)){
             //2
             if (step.canMoveToHere(this))
-                actions[2] = ActionType.move;
+                actions[2] = ActionType.MOVE;
             else if (!standingOn.canMoveFromHere() || standingOn == step)
-                actions[2] = ActionType.pass;
+                actions[2] = ActionType.PASS;
             //1
             if(step.canRedirect(this))
-                actions[1] = ActionType.redirect;
+                actions[1] = ActionType.REDIRECT;
             //3
             if(step.canGlue(this))
-                actions[3] = ActionType.glue;
+                actions[3] = ActionType.GLUE;
             //4
             if(step.canPickUpPipe(this)){
-                actions[4] = ActionType.pickupPipe;
+                actions[4] = ActionType.PICKUP_PIPE;
             } else if (step.canPlaceDown(this)) {
-                actions[4] = ActionType.placedown;
+                actions[4] = ActionType.PLACEDOWN;
             }
             //5
             if(step.canPickUpPump(this)){
-                actions[5] = ActionType.pickupPump;
+                actions[5] = ActionType.PICKUP_PUMP;
             } else if (step.canRepair(this)) {
-                actions[5] = ActionType.repair;
+                actions[5] = ActionType.REPAIR;
             } else if (step.canPierce(this)) {
-                actions[5] = ActionType.pierce;
+                actions[5] = ActionType.PIERCE;
             }
             return actions;
         }

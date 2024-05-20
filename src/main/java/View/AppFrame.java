@@ -1,7 +1,5 @@
 package View;
 
-import Controller.Controller;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -27,7 +25,7 @@ public class AppFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //tesztelés
-        WindowOptions.windowOption = WindowOptions.menu;
+        WindowOptions.windowOption = WindowOptions.MENU;
     }
 
     /**

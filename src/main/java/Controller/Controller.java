@@ -164,9 +164,9 @@ public class Controller implements Serializable {
      */
     public void update(){
         switch (WindowOptions.windowOption) {
-            case menu -> menuView.update();
-            case newgame -> newGameView.update();
-            case game -> gameView.update();
+            case MENU -> menuView.update();
+            case NEWGAME -> newGameView.update();
+            case GAME -> gameView.update();
             default -> {
                 throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
             }
@@ -179,9 +179,9 @@ public class Controller implements Serializable {
      */
     public void paint(Graphics g) {
         switch (WindowOptions.windowOption) {
-            case menu -> menuView.paint(g);
-            case newgame -> newGameView.paint(g);
-            case game -> gameView.paint(g);
+            case MENU -> menuView.paint(g);
+            case NEWGAME -> newGameView.paint(g);
+            case GAME -> gameView.paint(g);
             default -> {
                 throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
             }
@@ -199,8 +199,8 @@ public class Controller implements Serializable {
      * A passzolás kivitelezésére használt függvény
      */
     public void pass(){
-        if(turnOrder.getFirst().getState()==PlayerActionState.specialAction) {
-            turnOrder.getFirst().setState(PlayerActionState.turnOver);
+        if(turnOrder.getFirst().getState()==PlayerActionState.SPECIAL_ACTION) {
+            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
         }
     }
@@ -571,9 +571,9 @@ public class Controller implements Serializable {
                     break;
                 case stateStr:
                     switch (attribValue) {
-                        case moveActionStr -> ((Mechanic) o).setState(PlayerActionState.moveAction);
-                        case specialActionStr -> ((Mechanic) o).setState(PlayerActionState.specialAction);
-                        case turnOverStr -> ((Mechanic) o).setState(PlayerActionState.turnOver);
+                        case moveActionStr -> ((Mechanic) o).setState(PlayerActionState.MOVE_ACTION);
+                        case specialActionStr -> ((Mechanic) o).setState(PlayerActionState.SPECIAL_ACTION);
+                        case turnOverStr -> ((Mechanic) o).setState(PlayerActionState.TURN_OVER);
                     }
                     break;
                 default:
@@ -590,9 +590,9 @@ public class Controller implements Serializable {
 
                 case stateStr:
                     switch (attribValue) {
-                        case moveActionStr -> ((Saboteur) o).setState(PlayerActionState.moveAction);
-                        case specialActionStr -> ((Saboteur) o).setState(PlayerActionState.specialAction);
-                        case turnOverStr -> ((Saboteur) o).setState(PlayerActionState.turnOver);
+                        case moveActionStr -> ((Saboteur) o).setState(PlayerActionState.MOVE_ACTION);
+                        case specialActionStr -> ((Saboteur) o).setState(PlayerActionState.SPECIAL_ACTION);
+                        case turnOverStr -> ((Saboteur) o).setState(PlayerActionState.TURN_OVER);
                     }
                     break;
                 default:
@@ -641,7 +641,7 @@ public class Controller implements Serializable {
      */
     public void turnOver() {
         turnOrder.add(turnOrder.removeFirst());
-        turnOrder.getFirst().setState(PlayerActionState.moveAction);
+        turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
         if (turnOrder.getFirst().isFellDown()) {
             turnOrder.getFirst().setFellDown(false);
             SecureRandom random = new SecureRandom();
@@ -650,11 +650,11 @@ public class Controller implements Serializable {
             Player.setIgnoreStates(true);
             turnOrder.getFirst().Move(nodes.get(chance));
             Player.setIgnoreStates(false);
-            turnOrder.getFirst().setState(PlayerActionState.turnOver);
+            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
         }
         if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
-            turnOrder.getFirst().setState(PlayerActionState.specialAction);
+            turnOrder.getFirst().setState(PlayerActionState.SPECIAL_ACTION);
         nextTurn();
         for (Pipe p : pipes) {
             if (!p.isReadyToPierce()) {
@@ -668,7 +668,7 @@ public class Controller implements Serializable {
                 getActivePlayer().setStuck(false);
             else {
                 getActivePlayer().setGlueLength(getActivePlayer().getGlueLength() - 1);
-                getActivePlayer().setState(PlayerActionState.turnOver);
+                getActivePlayer().setState(PlayerActionState.TURN_OVER);
                 turnOver();
             }
         }
@@ -837,9 +837,9 @@ public class Controller implements Serializable {
         turnOrder.addAll(saboteurs);
         started = true;
         gameView.setStarted(true);
-        turnOrder.getFirst().setState(PlayerActionState.moveAction);
+        turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
         if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
-            turnOrder.getFirst().setState(PlayerActionState.specialAction);
+            turnOrder.getFirst().setState(PlayerActionState.SPECIAL_ACTION);
         Player.setIgnoreStates(false);
     }
 

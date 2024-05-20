@@ -69,27 +69,27 @@ public class Button extends Drawable implements Clickable {
     @Override
     public void clickAction(MouseEvent e) {
         // kilépés megvalósítása
-        if(option == WindowOptions.exit)
+        if(option == WindowOptions.EXIT)
             System.exit(0);
         if (option == null)
             return;
 
         // map változtatása
-        if(this.option == WindowOptions.map1){
-            this.option = WindowOptions.map2;
+        if(this.option == WindowOptions.MAP_1){
+            this.option = WindowOptions.MAP_2;
             Controller.getInstance().getNewGameView().setMap(2);
             img =  ImageUtility.scaleImage(getMapPreview2(), 200);
             return;
         }
-        if(this.option == WindowOptions.map2){
-            this.option = WindowOptions.map1;
+        if(this.option == WindowOptions.MAP_2){
+            this.option = WindowOptions.MAP_1;
             Controller.getInstance().getNewGameView().setMap(1);
             img = ImageUtility.scaleImage(getMapPrevButton(), 200);
             return;
         }
         // játék indítása
         WindowOptions.windowOption = option;
-        if(this.option == WindowOptions.game){
+        if(this.option == WindowOptions.GAME){
 
             if (Controller.getInstance().getMechanics().size() >= 2
             && Controller.getInstance().getSaboteurs().size() >= 2) {
@@ -100,7 +100,7 @@ public class Button extends Drawable implements Clickable {
                     Controller.getInstance().getGameView().mapSetup(System.getProperty("user.dir") + File.separator + "src" + File.separator + "Assets" + File.separator + "map2.txt");
                 }
             } else {
-                WindowOptions.windowOption = WindowOptions.newgame;
+                WindowOptions.windowOption = WindowOptions.NEWGAME;
             }
         }
 

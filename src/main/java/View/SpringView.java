@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 
 import static View.Pictures.*;
 
@@ -32,7 +31,7 @@ public class SpringView extends Drawable implements Clickable, CreatePopUpBar, S
         sprite = ImageUtility.scaleImage(sprite, 2*r);
         arrowSprite = getPumpIndicatorImg();
         arrowSprite = ImageUtility.scaleImage(arrowSprite, 20);
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
     private GameView gameView;

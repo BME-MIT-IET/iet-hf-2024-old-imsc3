@@ -15,15 +15,15 @@ public class PopUpButton extends Drawable implements Clickable  {
             actiontype = a;
 
             switch (actiontype) {
-                    case glue -> sprite = Pictures.getGlueImg();
-                    case lubricate -> sprite = Pictures.getLubricateImg();
-                    case move -> sprite = Pictures.getMoveImg();
-                    case pass -> sprite = Pictures.getPassImg();
-                    case pierce-> sprite = Pictures.getPierceImg();
-                    case repair -> sprite = Pictures.getRepairImg();
-                    case redirect -> sprite = Pictures.getRedirectImg();
-                    case placedown -> sprite = Pictures.getPlaceDownImg();
-                    case pickupPipe, pickupPump -> sprite = Pictures.getPickUpImg();
+                    case GLUE -> sprite = Pictures.getGlueImg();
+                    case LUBRICATE -> sprite = Pictures.getLubricateImg();
+                    case MOVE -> sprite = Pictures.getMoveImg();
+                    case PASS -> sprite = Pictures.getPassImg();
+                    case PIERCE -> sprite = Pictures.getPierceImg();
+                    case REPAIR -> sprite = Pictures.getRepairImg();
+                    case REDIRECT -> sprite = Pictures.getRedirectImg();
+                    case PLACEDOWN -> sprite = Pictures.getPlaceDownImg();
+                    case PICKUP_PIPE, PICKUP_PUMP -> sprite = Pictures.getPickUpImg();
             }
             sprite = ImageUtility.scaleImage(sprite, 2*r);
             drawLoc = ImageUtility.centerImage(new Point(x, y), sprite);
@@ -52,18 +52,18 @@ public class PopUpButton extends Drawable implements Clickable  {
                 Player p = c.getActivePlayer();
                 Steppable s = creator.getCorrespondingModelSteppable();
                 switch (actiontype) {
-                        case glue -> c.glue(c.getObjectName(p));
-                        case lubricate -> c.lubricate(c.getObjectName(p));
-                        case move -> c.move(c.getObjectName(p), c.getObjectName(s));
-                        case pass -> c.pass();
-                        case pierce -> c.pierce(c.getObjectName(p));
-                        case repair -> c.repair(c.getObjectName(p));
-                        case redirect -> {
+                        case GLUE -> c.glue(c.getObjectName(p));
+                        case LUBRICATE -> c.lubricate(c.getObjectName(p));
+                        case MOVE -> c.move(c.getObjectName(p), c.getObjectName(s));
+                        case PASS -> c.pass();
+                        case PIERCE -> c.pierce(c.getObjectName(p));
+                        case REPAIR -> c.repair(c.getObjectName(p));
+                        case REDIRECT -> {
                                 waitingForParameter = true;
                                 paramClient = this;
                         }
-                        case placedown -> c.placedown(c.getObjectName(p));
-                        case pickupPipe -> {
+                        case PLACEDOWN -> c.placedown(c.getObjectName(p));
+                        case PICKUP_PIPE -> {
                                 if (((GameView) view).cisterns.contains(creator)) {
                                         Cistern cis = (Cistern) s;
                                         Pipe pipe = cis.getGeneratedPipes().getFirst();
@@ -72,7 +72,7 @@ public class PopUpButton extends Drawable implements Clickable  {
                                         c.pickup(c.getObjectName(p), c.getObjectName(s));
                                 }
                         }
-                        case pickupPump -> {
+                        case PICKUP_PUMP -> {
                                 Cistern cis = (Cistern) s;
                                 Pump pump = cis.getGeneratedPumps().getFirst();
                                 c.pickup(c.getObjectName(p), c.getObjectName(pump));
@@ -97,9 +97,9 @@ public class PopUpButton extends Drawable implements Clickable  {
                         CisternView c = (CisternView) cd.getCreator();
                         g2d.setColor(Color.BLACK);
                         g2d.setFont(new Font("Inter", Font.BOLD, 20));
-                        if (actiontype == ActionType.pickupPipe)
+                        if (actiontype == ActionType.PICKUP_PIPE)
                                 g2d.drawString("csövek: " + ((Cistern)c.getCorrespondingModelElement()).getGeneratedPipes().size(), x + r + 15, y);
-                        if (actiontype == ActionType.pickupPump)
+                        if (actiontype == ActionType.PICKUP_PUMP)
                                 g2d.drawString("pumpák: " + ((Cistern)c.getCorrespondingModelElement()).getGeneratedPumps().size(), x + r + 15, y);
                 }
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -124,7 +124,7 @@ public class PopUpButton extends Drawable implements Clickable  {
                 Controller c = Controller.getInstance();
                 Player p = c.getActivePlayer();
                 Steppable s = paramClient.creator.getCorrespondingModelSteppable();
-                if (paramClient.actiontype == ActionType.redirect) {
+                if (paramClient.actiontype == ActionType.REDIRECT) {
                         c.redirect(c.getObjectName(p), c.getObjectName(parameters.getFirst().getCorrespondingModelElement()), c.getObjectName(parameters.getLast().getCorrespondingModelElement()));
                 }
                 waitingForParameter = false;

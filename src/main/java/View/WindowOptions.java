@@ -4,6 +4,13 @@ package View;
  * Játékállapotok
  */
 public enum WindowOptions {
-    menu, newgame, game, map1,map2, load, save, exit;
-    public static WindowOptions windowOption=menu;
+    MENU,
+    NEWGAME,
+    GAME,
+    MAP_1,
+    MAP_2,
+    LOAD,
+    SAVE,
+    EXIT;
+    public static WindowOptions windowOption= MENU;
 }

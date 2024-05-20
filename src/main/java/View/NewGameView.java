@@ -47,7 +47,7 @@ public class NewGameView extends Window {
         start = new Button(screenWidth - 200, 10, 50, 50, this);
         exit = new Button(screenWidth - 100, 10, 150, 150, this);
         map = new Button(50, screenHeight / 2, 500, 300, this);
-        map.option = WindowOptions.map1;
+        map.option = WindowOptions.MAP_1;
         map.img = ImageUtility.scaleImage(getMapPrevButton(), 200);
 
         int offset = 25;
@@ -60,9 +60,9 @@ public class NewGameView extends Window {
         decrease = new ChangeMaxPointButton(screenWidth / 2 + 20 * 13, screenHeight / 6 - 8, 35, 35, this, -1);
 
         start.img = ImageUtility.scaleImage(getPlayButton(), 50);
-        start.option = WindowOptions.game;
+        start.option = WindowOptions.GAME;
         exit.img = ImageUtility.scaleImage(getExitButton(), 50);
-        exit.option = WindowOptions.exit;
+        exit.option = WindowOptions.EXIT;
         addMechanic.img = ImageUtility.scaleImage(getPlusButton(), 35);
         addSaboteur.img = ImageUtility.scaleImage(getPlusButton(), 35);
         increase.img = ImageUtility.scaleImage(getPlusButton(), 35);

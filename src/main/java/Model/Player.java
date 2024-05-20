@@ -39,7 +39,7 @@ public abstract class Player implements Serializable {
     /**
      * A játékos státusza(nem az ő köre/mozog/akciók)
      */
-    PlayerActionState state =PlayerActionState.turnOver;
+    PlayerActionState state =PlayerActionState.TURN_OVER;
     /**
      * flag, hogy az actionstate-ket figyelembe kell-e venni.
      */
@@ -52,7 +52,7 @@ public abstract class Player implements Serializable {
     public boolean Move(Steppable to) {
         removed=false;
 
-        if(!ignoreStates && state==PlayerActionState.turnOver)
+        if(!ignoreStates && state==PlayerActionState.TURN_OVER)
             return false;
 
         if (fellDown) {
@@ -68,10 +68,10 @@ public abstract class Player implements Serializable {
         if (to.PlayerEnter(this)) {
 
             if (standingOn != null) {
-                if (!ignoreStates && state == PlayerActionState.moveAction)
-                    state = PlayerActionState.specialAction;
-                else if (!ignoreStates && state == PlayerActionState.specialAction) {
-                    state = PlayerActionState.turnOver;
+                if (!ignoreStates && state == PlayerActionState.MOVE_ACTION)
+                    state = PlayerActionState.SPECIAL_ACTION;
+                else if (!ignoreStates && state == PlayerActionState.SPECIAL_ACTION) {
+                    state = PlayerActionState.TURN_OVER;
                     Controller.getInstance().turnOver();
                 }
                 standingOn.PlayerExit(this);
@@ -103,11 +103,11 @@ public abstract class Player implements Serializable {
      * @param out kimeneti  cső
      */
     public boolean Redirect(Pipe in, Pipe out) {
-        if (state != PlayerActionState.specialAction)
+        if (state != PlayerActionState.SPECIAL_ACTION)
             return false;
 
         if (standingOn.PlayerRedirect(in, out)) {
-            state = PlayerActionState.turnOver;
+            state = PlayerActionState.TURN_OVER;
             Controller.getInstance().turnOver();
             return true;
         }
@@ -123,10 +123,10 @@ public abstract class Player implements Serializable {
         if(ignoreStates) {
             pierced = standingOn.Pierced();
         }
-        else if(state == PlayerActionState.specialAction) {
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
             pierced = standingOn.Pierced();
             if (pierced) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -141,10 +141,10 @@ public abstract class Player implements Serializable {
         if(ignoreStates) {
             glued = standingOn.Glued();
         }
-        else if(state == PlayerActionState.specialAction) {
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
             glued = standingOn.Glued();
             if (glued) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }

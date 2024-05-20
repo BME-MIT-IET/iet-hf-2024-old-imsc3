@@ -14,7 +14,7 @@ public class SaboteurView extends Drawable {
     public SaboteurView(int x, int y, Saboteur s, Window v) {
         super(x, y, v);
         saboteur = s;
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
         color = Color.RED;
     }
@@ -35,7 +35,7 @@ public class SaboteurView extends Drawable {
     }
     @Override
     public void paint(Graphics g) {
-        if(WindowOptions.windowOption==WindowOptions.newgame)
+        if(WindowOptions.windowOption==WindowOptions.NEWGAME)
         {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             int screenWidth = (int) screenSize.getWidth() * 3 / 4;

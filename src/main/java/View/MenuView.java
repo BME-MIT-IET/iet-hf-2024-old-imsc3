@@ -28,11 +28,11 @@ public class MenuView extends Window {
         newGame.text = "Új játék";
         newGame.img = ImageUtility.scaleImage(getPlayButton(), 50);
 
-        newGame.option = WindowOptions.newgame;
+        newGame.option = WindowOptions.NEWGAME;
 
         exit.text = "Kilépés";
         exit.img = ImageUtility.scaleImage(getExitButton(), 50);
-        exit.option = WindowOptions.exit;
+        exit.option = WindowOptions.EXIT;
         addDrawable(newGame, true);
         addClickable(newGame, true);
         addDrawable(exit, true);

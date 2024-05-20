@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 
 import static View.Pictures.*;
 import static java.awt.Color.BLACK;
@@ -24,7 +23,7 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
         arrowSprite = getPumpIndicatorImg();
         arrowSprite = ImageUtility.scaleImage(arrowSprite, 20);
 
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
     private GameView gameView;

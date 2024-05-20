@@ -61,7 +61,7 @@ public class GameView extends Window {
         this.frame = frame;
         exit = new Button(frame.getWidth() - 80, 10, 50, 50, this);
         exit.img = ImageUtility.scaleImage(getExitButton(), 45);
-        exit.option = WindowOptions.exit;
+        exit.option = WindowOptions.EXIT;
         addDrawable(exit, true);
         addClickable(exit, true);
     }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -73,4 +73,51 @@ public class PumpTest {
         verify(mockActiveOut, never()).GainWater(anyInt());
         verify(mockActiveIn).LoseWater(1);
     }
+
+    @Test
+    void testWaterFlow_WithMaxCapacity() {
+        // Arrange
+        pump.setHeldWater(20);
+        when(mockActiveOut.GainWater(anyInt())).thenReturn(1);
+        when(mockActiveIn.LoseWater(anyInt())).thenReturn(1);
+
+        // Act
+        pump.WaterFlow();
+
+        // Assert
+        assertEquals(20, pump.getHeldWater());
+        verify(mockActiveOut).GainWater(1);
+        verify(mockActiveIn).LoseWater(1);
+        verify(mockActiveIn).GainWater(0);
+    }
+
+    @Test
+    void testAddPipe() {
+        // Arrange
+        Pipe mockPipe = Mockito.mock(Pipe.class);
+
+        // Act
+        boolean success = pump.AddPipe(mockPipe);
+
+        // Assert
+        assertTrue(success);
+        assertTrue(pump.getPipes().contains(mockPipe));
+    }
+
+    @Test
+    void testAddPipe_MaximumPipesReached() {
+        // Arrange
+        for (int i = 0; i < 10; i++) {
+            pump.AddPipe(Mockito.mock(Pipe.class));
+        }
+        Pipe mockPipe = Mockito.mock(Pipe.class);
+
+        // Act
+        boolean success = pump.AddPipe(mockPipe);
+
+        // Assert
+        assertFalse(success);
+        assertFalse(pump.getPipes().contains(mockPipe)); 
+    }
+
 }

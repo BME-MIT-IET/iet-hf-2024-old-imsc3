@@ -33,7 +33,7 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
         cistern = c;
         sprite = Pictures.getCisternFilledImg();
         sprite = ImageUtility.scaleImage(sprite, 2*r);
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
 
@@ -134,8 +134,8 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      */
     public void displayCreated() {
         ActionType[] at = new ActionType[6];
-        at[4] = ActionType.pickupPipe;
-        at[5] = ActionType.pickupPump;
+        at[4] = ActionType.PICKUP_PIPE;
+        at[5] = ActionType.PICKUP_PUMP;
         createPopUpBarWithActions(x, y, 100, view, this, at);
     }
 }

@@ -30,7 +30,7 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
         this.endNode = endNode;
         pipe = p;
 
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
     public boolean selected;

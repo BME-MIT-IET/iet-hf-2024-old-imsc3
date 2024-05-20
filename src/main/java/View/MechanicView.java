@@ -24,7 +24,7 @@ public class MechanicView extends Drawable {
     public MechanicView(int x, int y, Mechanic m, Window v) {
         super(x, y, v);
         mechanic = m;
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
         color = Color.BLUE;
 
@@ -66,7 +66,7 @@ public class MechanicView extends Drawable {
     @Override
     public void paint(Graphics g) {
         // ha a játék ablakban vagyunk, akkor a játékos színével rajzoljuk ki
-        if (WindowOptions.windowOption == WindowOptions.newgame) {
+        if (WindowOptions.windowOption == WindowOptions.NEWGAME) {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             int screenWidth = (int) screenSize.getWidth() * 3 / 4;
             int screenHeight = (int) screenSize.getHeight() * 3 / 4;

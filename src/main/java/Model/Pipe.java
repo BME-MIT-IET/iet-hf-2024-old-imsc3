@@ -137,10 +137,10 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
                 }
                 Player.setIgnoreStates(ignoreState);
                 players.remove(player);
-                if (player.getState() == PlayerActionState.moveAction)
-                    player.setState(PlayerActionState.specialAction);
-                else if (player.getState() == PlayerActionState.specialAction) {
-                    player.setState(PlayerActionState.turnOver);
+                if (player.getState() == PlayerActionState.MOVE_ACTION)
+                    player.setState(PlayerActionState.SPECIAL_ACTION);
+                else if (player.getState() == PlayerActionState.SPECIAL_ACTION) {
+                    player.setState(PlayerActionState.TURN_OVER);
                     Controller.getInstance().turnOver();
                 }
                 lubricated = false;
@@ -151,7 +151,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
                 player.setStuck(true);
                 player.setGlueLength(1);
                 glued = false;
-                player.setState(PlayerActionState.turnOver);
+                player.setState(PlayerActionState.TURN_OVER);
                 Controller.getInstance().turnOver();
             }
 
