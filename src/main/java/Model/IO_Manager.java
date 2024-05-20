@@ -6,35 +6,35 @@ import java.util.Scanner;
 //A ki és bemenet fájlba, illetve konzolra kiírásáért, beolvasásáért felelős osztály.
 public class IO_Manager {
 
-    static private FileWriter fw = null;
-    static private Scanner scanner = null;
-    static private Scanner stdScanner = null;
+    private static FileWriter fw = null;
+    private static Scanner scanner = null;
+    private static Scanner stdScanner = null;
 
-    static public boolean speak = true;
+    public static boolean speak = true;
 
     //Kiírja a text-et
-    static public void write(String text) {
+    public static void write(String text) {
         if (!speak)
             return;
         System.out.println("> " + text);
     }
 
     //Kiírja az erromessage-t
-    static public void writeError(String errorMessage) {
+    public static void writeError(String errorMessage) {
         if (!speak)
             return;
         System.out.println("ERROR: \"" + errorMessage + "\"" );
     }
 
     //Kiírja a writeinfo-t
-    static public void writeInfo(String info) {
+    public static void writeInfo(String info) {
         if (!speak)
             return;
         System.out.println("INFO: \"" + info + "\"" );
     }
 
     //Fájlba írja a text-et.
-    static public void writeFile(String text) {
+    public static void writeFile(String text) {
         if (!speak)
             return;
         try {
@@ -44,7 +44,7 @@ public class IO_Manager {
         }
     }
 
-    static public void writeErrorFile(String errorMessage) {
+    public static void writeErrorFile(String errorMessage) {
         if (!speak)
             return;
         try {
@@ -54,7 +54,7 @@ public class IO_Manager {
         }
     }
 
-    static public void writeInfoFile(String info) {
+    public static void writeInfoFile(String info) {
         if (!speak)
             return;
         try {
@@ -65,19 +65,19 @@ public class IO_Manager {
     }
 
     //Beolvas egy sort.
-    static public String readLine() {
+    public static String readLine() {
         if (stdScanner == null)
             stdScanner = new Scanner(System.in);
         return stdScanner.nextLine();
     }
 
     //Befejezi az olvasást.
-    static public void endReading() {
+    public static void endReading() {
         stdScanner.close();
     }
 
     //Beolvas egy sort a fájlból.
-    static public String readLineFile() {
+    public static String readLineFile() {
         if (scanner.hasNext())
             return scanner.nextLine();
         else
@@ -85,7 +85,7 @@ public class IO_Manager {
     }
 
     //A FileWriter létrehozása.
-    static public void openFileWrite(String filename) {
+    public static void openFileWrite(String filename) {
         try {
             fw = new FileWriter(filename);
         } catch (IOException ioe) {
@@ -94,7 +94,7 @@ public class IO_Manager {
     }
 
     //A fájl becsukása.
-    static public void closeFile() {
+    public static void closeFile() {
         try {
             if (fw != null) {
                 fw.close();
@@ -111,7 +111,7 @@ public class IO_Manager {
     }
 
     //Megnyitja a fájlt olvasásra.
-    static public void openFileRead(String filename) {
+    public static void openFileRead(String filename) {
         try {
             scanner = new Scanner(new File(filename));
         } catch (FileNotFoundException e) {
@@ -119,7 +119,7 @@ public class IO_Manager {
         }
     }
 
-    static public void write(String text, boolean toFile) {
+    public static void write(String text, boolean toFile) {
         if (!speak)
             return;
         if (toFile)
@@ -128,7 +128,7 @@ public class IO_Manager {
             write(text);
     }
 
-    static public void writeInfo(String info, boolean toFile) {
+    public static void writeInfo(String info, boolean toFile) {
         if (!speak)
             return;
         if (toFile)
@@ -137,7 +137,7 @@ public class IO_Manager {
             writeInfo(info);
     }
 
-    static public void writeError(String errorMessage, boolean toFile) {
+    public static void writeError(String errorMessage, boolean toFile) {
         if (!speak)
             return;
         if (toFile)

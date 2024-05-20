@@ -21,7 +21,7 @@ public abstract class WaterNode extends Steppable implements Serializable {
      * @return a lépés sikeressége
      */
     @Override
-    public boolean PlayerEnter(Player player) {
+    public boolean playerEnter(Player player) {
 
         boolean successful = pipes.contains(player.getStandingOn()) || player.getStandingOn() == null;
         if (successful)
@@ -38,7 +38,7 @@ public abstract class WaterNode extends Steppable implements Serializable {
      * @param player a mezőről lelépő játékos
      */
     @Override
-    public void PlayerExit(Player player) {
+    public void playerExit(Player player) {
         players.remove(player);
     }
 
@@ -48,33 +48,33 @@ public abstract class WaterNode extends Steppable implements Serializable {
      * @param pickup az adott elem, amit fel akarunk venni
      * @return ha sikerült felvenni, akkor true-val tér vissza, különben false-sal
      */
-    public abstract boolean PickedUpFrom(PickupAble pickup);
+    public abstract boolean pickedUpFrom(PickupAble pickup);
 
     /**
      * Egy cső letétele erre az objektumra. Létezik pumpa letételére is ez a függvény.
      * @param pickup a Pipe amit le akarunk rakni
      * @return ha sikerült lerakni, akkor true-val tér vissza, különben false-sal
      */
-    public abstract boolean PlacedDownTo(Pipe pickup);
+    public abstract boolean placedDownTo(Pipe pickup);
 
     /**
      * Egy pumpa letétele erre az objektumra. Létezik cső letételére is ez a függvény.
      * @param pickup a Pump amit le akarunk rakni
      * @return ha sikerült lerakni, akkor true-val tér vissza, különben false-sal
      */
-    public abstract boolean PlacedDownTo(Pump pickup);
+    public abstract boolean placedDownTo(Pump pickup);
 
     /**
      * Víz folyatása ebben a végpontban, absztrakt metódus.
      */
-    public abstract void WaterFlow();
+    public abstract void waterFlow();
 
     /**
      * Cső hozzáadása a WaterNode-hoz
      * @param p hozzáadandó cső
      * @return ha sikerült hozzáadni a csövet a WaterNode-hoz, akkor true-val tér vissza, különben false-sal
      */
-    public boolean AddPipe(Pipe p) {
+    public boolean addPipe(Pipe p) {
         pipes.add(p);
         return true;
 
@@ -84,7 +84,7 @@ public abstract class WaterNode extends Steppable implements Serializable {
      * Cső leválasztása a WaterNode-ról
      * @param p leválasztandó cső
      */
-    public void RemovePipe(Pipe p) {
+    public void removePipe(Pipe p) {
         pipes.remove(p);
     }
 

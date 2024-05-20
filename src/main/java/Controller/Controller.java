@@ -28,35 +28,35 @@ public class Controller implements Serializable {
 
         return controller;
     }
-    final String WrongAttr = "wrong attribute name";
-    final String WrongPipe = "wrong pipe name";
-    final String WrongPlayer = "wrong player name";
-    final String WrongMech = "wrong mechanic name";
-    final String fellDownStr = "fellDown";
-    final String stuckStr = "stuck";
-    final String standingOnStr = "standingOn";
-    final String stateStr = "state";
-    final String heldItemsStr = "heldItems";
-    final String pipesStr = "pipes";
-    final String createdPickupablesStr = "createdPickupables";
-    final String playersStr = "players";
-    final String saboteurPointsStr = "saboteurPoints";
-    final String mechanicPointsStr = "mechanicPoints";
-    final String pointsToWinStr = "pointsToWin";
-    final String moveActionStr = "moveAction";
-    final String specialActionStr = "specialAction";
-    final String turnOverStr = "turnOver";
-    final String brokenStr = "broken";
-    final String waterCapacityStr = "waterCapacity";
-    final String heldWaterStr = "heldWater";
-    final String maximumPipesStr = "maximumPipes";
-    final String activeInStr = "activeIn";
-    final String activeOutStr = "activeOut";
-    final String readyToPierceStr = "readyToPierce";
-    final String lubricatedStr = "lubricated";
-    final String gluedStr = "glued";
-    final String beingHeldStr = "beingHeld";
-    final String nodesStr = "nodes";
+    final static String WrongAttr = "wrong attribute name";
+    final static String WrongPipe = "wrong pipe name";
+    final static String WrongPlayer = "wrong player name";
+    final static String WrongMech = "wrong mechanic name";
+    final static String fellDownStr = "fellDown";
+    final static String stuckStr = "stuck";
+    final static String standingOnStr = "standingOn";
+    final static String stateStr = "state";
+    final static String heldItemsStr = "heldItems";
+    final static String pipesStr = "pipes";
+    final static String createdPickupablesStr = "createdPickupables";
+    final static String playersStr = "players";
+    final static String saboteurPointsStr = "saboteurPoints";
+    final static String mechanicPointsStr = "mechanicPoints";
+    final static String pointsToWinStr = "pointsToWin";
+    final static String moveActionStr = "moveAction";
+    final static String specialActionStr = "specialAction";
+    final static String turnOverStr = "turnOver";
+    final static String brokenStr = "broken";
+    final static String waterCapacityStr = "waterCapacity";
+    final static String heldWaterStr = "heldWater";
+    final static String maximumPipesStr = "maximumPipes";
+    final static String activeInStr = "activeIn";
+    final static String activeOutStr = "activeOut";
+    final static String readyToPierceStr = "readyToPierce";
+    final static String lubricatedStr = "lubricated";
+    final static String gluedStr = "glued";
+    final static String beingHeldStr = "beingHeld";
+    final static String nodesStr = "nodes";
     /**
      * Játék elkezdését mutató boolean
      */
@@ -293,7 +293,7 @@ public class Controller implements Serializable {
         }
         WaterNode w = (WaterNode) objectCatalog.get(wNodeName);
 
-        if (w.AddPipe(p) && p.AddWaterNode(w)) {
+        if (w.addPipe(p) && p.addWaterNode(w)) {
             IO_Manager.write(pipeName + ".nodes = " + listWrite(p.getNodes()), Controller.filetoWrite != null);
             IO_Manager.write(wNodeName + ".pipes = " + listWrite(w.getPipes()), Controller.filetoWrite != null);
         }
@@ -320,7 +320,7 @@ public class Controller implements Serializable {
         Steppable s = (Steppable) objectCatalog.get(steppableName);
         Steppable prev = p.getStandingOn();
 
-        if (p.Move(s)) {
+        if (p.move(s)) {
             IO_Manager.write(steppableName + ".players = " + listWrite(s.getPlayers()), Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn = " + steppableName, Controller.filetoWrite != null);
             if (prev != null)
@@ -344,7 +344,7 @@ public class Controller implements Serializable {
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Pierce())
+        if (p.pierce())
 
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
 
@@ -361,7 +361,7 @@ public class Controller implements Serializable {
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Glue())
+        if (p.glue())
 
             IO_Manager.write(playerName + ".standingOn.glued = " + "true", Controller.filetoWrite != null);
 
@@ -380,7 +380,7 @@ public class Controller implements Serializable {
         }
         Saboteur s = (Saboteur) objectCatalog.get(saboteurName);
 
-        if (s.Lubricate())
+        if (s.lubricate())
             IO_Manager.write(saboteurName + ".standingOn.lubricated = " + "true", Controller.filetoWrite != null);
     }
 
@@ -396,7 +396,7 @@ public class Controller implements Serializable {
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (m.Repair()) {
+        if (m.repair()) {
             IO_Manager.write(mechanicName + ".standingOn.broken = false", Controller.filetoWrite != null);
             if (pipes.contains((Pipe) m.getStandingOn())) {
                 IO_Manager.write(mechanicName + ".standingOn.readyToPierce = false", Controller.filetoWrite != null);
@@ -431,7 +431,7 @@ public class Controller implements Serializable {
         }
         Pipe out = (Pipe) objectCatalog.get(outPipeName);
 
-        if (p.Redirect(in, out)) {
+        if (p.redirect(in, out)) {
             IO_Manager.write(playerName + ".standingOn.activeIn = " + inPipeName, Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn.activeOut = " + outPipeName, Controller.filetoWrite != null);
         }
@@ -457,7 +457,7 @@ public class Controller implements Serializable {
         }
         PickupAble p = (PickupAble) objectCatalog.get(pickupName);
 
-        if (m.PickUp(p)) {
+        if (m.pickUp(p)) {
             IO_Manager.write(mechanicName + ".heldItems = " + pickupName, Controller.filetoWrite != null);
 
         }
@@ -475,7 +475,7 @@ public class Controller implements Serializable {
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (m.PlaceDown())
+        if (m.placeDown())
             IO_Manager.write(mechanicName + ".heldItems = null", Controller.filetoWrite != null);
 
     }
@@ -544,9 +544,9 @@ public class Controller implements Serializable {
             }
         } else if (objectName.equals("counter")) {
             switch (attribName) {
-                case saboteurPointsStr -> output += Integer.toString(PointCounter.getInstance().GetSaboteurPoints());
-                case mechanicPointsStr -> output += Integer.toString(PointCounter.getInstance().GetMechanicPoints());
-                case pointsToWinStr -> output += Integer.toString(PointCounter.getInstance().GetPointsToWin());
+                case saboteurPointsStr -> output += Integer.toString(PointCounter.getInstance().getSaboteurPoints());
+                case mechanicPointsStr -> output += Integer.toString(PointCounter.getInstance().getMechanicPoints());
+                case pointsToWinStr -> output += Integer.toString(PointCounter.getInstance().getPointsToWin());
                 default -> IO_Manager.writeError(WrongAttr, Controller.filetoWrite != null);
             }
         } else {
@@ -651,7 +651,7 @@ public class Controller implements Serializable {
             int chance = random.nextInt(0, nodes.size());
             boolean ignoreStates = Player.isIgnoreStates();
             Player.setIgnoreStates(true);
-            turnOrder.getFirst().Move(nodes.get(chance));
+            turnOrder.getFirst().move(nodes.get(chance));
             Player.setIgnoreStates(false);
             turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
@@ -684,10 +684,10 @@ public class Controller implements Serializable {
      */
     public void nextTurn() {
         for (WaterNode node : nodes) {
-            node.WaterFlow();
+            node.waterFlow();
         }
         for (Cistern cistern : cisterns) {
-            cistern.GeneratePickupables();
+            cistern.generatePickupables();
         }
         if (!deterministic) {
             for (Pump pump : pumps) {
@@ -701,7 +701,7 @@ public class Controller implements Serializable {
         }
         //end of game?
         if (started) {
-            if (counter.GetMechanicPoints() >= counter.GetPointsToWin() || counter.GetSaboteurPoints() >= counter.GetPointsToWin())
+            if (counter.getMechanicPoints() >= counter.getPointsToWin() || counter.getSaboteurPoints() >= counter.getPointsToWin())
                 endGame();
         }
     }
@@ -719,7 +719,7 @@ public class Controller implements Serializable {
         }
         Cistern c = (Cistern) objectCatalog.get(cisternName);
 
-        c.GeneratePickupables();
+        c.generatePickupables();
 
         IO_Manager.write("This is pipe:" + pipeName);
         IO_Manager.write("This is pump:" + pumpName);
@@ -738,7 +738,7 @@ public class Controller implements Serializable {
         }
         WaterNode w = (WaterNode) objectCatalog.get(wNodeName);
 
-        w.WaterFlow();
+        w.waterFlow();
 
 
     }
@@ -807,8 +807,8 @@ public class Controller implements Serializable {
         started = false;
         gameView.end();
         IO_Manager.write("game over", Controller.filetoWrite != null);
-        IO_Manager.write("saboteurPoints = " + counter.GetSaboteurPoints(), Controller.filetoWrite != null);
-        IO_Manager.write("mechanicPoints = " + counter.GetMechanicPoints(), Controller.filetoWrite != null);
+        IO_Manager.write("saboteurPoints = " + counter.getSaboteurPoints(), Controller.filetoWrite != null);
+        IO_Manager.write("mechanicPoints = " + counter.getMechanicPoints(), Controller.filetoWrite != null);
 
     }
     /**
@@ -845,10 +845,10 @@ public class Controller implements Serializable {
             return;
         }
         for (Player p : players) {
-            p.RemovePlayer();
+            p.removePlayer();
             SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
-            p.Move(nodes.get(chance));
+            p.move(nodes.get(chance));
         }
         for (Pipe p : pipes) {
             if (p.getNodes().getFirst() == null || p.getNodes().getLast() == null) {

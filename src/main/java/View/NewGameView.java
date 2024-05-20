@@ -111,7 +111,7 @@ public class NewGameView extends Window {
         graphics2D.drawRect(map.x-30, map.y-50, map.img.getWidth()+60, map.img.getHeight()+100);
         //Célpontszám kiralzolása
         String pointsToWin = "Célpontszám: ";
-        String points = "" + PointCounter.getInstance().GetPointsToWin();
+        String points = "" + PointCounter.getInstance().getPointsToWin();
         g.drawString(points, screenWidth / 2 + 75, screenHeight / 6 + 25);
         g.drawString(pointsToWin, screenWidth / 2, screenHeight / 6 - 35);
         // betűméret és típus beállítása

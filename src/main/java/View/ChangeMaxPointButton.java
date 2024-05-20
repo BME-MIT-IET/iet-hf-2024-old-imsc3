@@ -34,10 +34,10 @@ public class ChangeMaxPointButton extends Button {
         int increment = 10;
 
         if (type == 1) { // ha növelni kell
-            int temp = PointCounter.getInstance().GetPointsToWin() + type * increment;
+            int temp = PointCounter.getInstance().getPointsToWin() + type * increment;
             PointCounter.getInstance().setPointsToWin(temp);
         } else if (type == -1) { // ha csökkenteni kell
-            int temp = PointCounter.getInstance().GetPointsToWin() + type * increment;
+            int temp = PointCounter.getInstance().getPointsToWin() + type * increment;
             if (temp > 0) { // ha a pontszám nem negatív
                 PointCounter.getInstance().setPointsToWin(temp);
             }

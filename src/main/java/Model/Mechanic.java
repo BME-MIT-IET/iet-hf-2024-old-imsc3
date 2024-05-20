@@ -16,13 +16,13 @@ public class Mechanic extends Player implements Serializable {
     /**
      * Pályaelem megjavítására használt függvény, ha specialAction-ben van a játékos, akkor javít.
      */
-    public boolean Repair() {
+    public boolean repair() {
         boolean repaired=false;
         if(isIgnoreStates()) {
-            repaired = standingOn.Repaired();
+            repaired = standingOn.repaired();
         }
         else if(state == PlayerActionState.SPECIAL_ACTION) {
-            repaired = standingOn.Repaired();
+            repaired = standingOn.repaired();
             if (repaired) {
                 state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
@@ -37,20 +37,20 @@ public class Mechanic extends Player implements Serializable {
      * Pályaelem felvételére használt függvény, a felvett pályaelemet a játékosnak beadjuk, és csak akkor tudja felvenni ha mellette áll
      * @param item - felvett pályaelem
      */
-    public boolean PickUp(PickupAble item) {
+    public boolean pickUp(PickupAble item) {
         boolean pickedup=false;
         if(isIgnoreStates()) {
-            pickedup = standingOn.PickedUpFrom(item);
+            pickedup = standingOn.pickedUpFrom(item);
         }
         else if(state == PlayerActionState.SPECIAL_ACTION) {
-            pickedup = standingOn.PickedUpFrom(item);
+            pickedup = standingOn.pickedUpFrom(item);
             if (pickedup) {
                 state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
         if (pickedup) {
-            item.PickedUp(standingOn);
+            item.pickedUp(standingOn);
             heldItems = item;
         }
         else
@@ -63,14 +63,14 @@ public class Mechanic extends Player implements Serializable {
      * Pályaelem lerakására használt függvény.
      * Változott az előző dokumentum óta, nem kell paraméter hiszen csak saját attribútumot kezel.
      */
-    public boolean PlaceDown() {
+    public boolean placeDown() {
 
         boolean successful = false;
         if(isIgnoreStates()) {
-            successful = heldItems.PlacedDown(standingOn);
+            successful = heldItems.placedDown(standingOn);
         }
         else if(state == PlayerActionState.SPECIAL_ACTION) {
-            successful = heldItems.PlacedDown(standingOn);
+            successful = heldItems.placedDown(standingOn);
             if (successful) {
                 state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();

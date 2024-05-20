@@ -10,14 +10,14 @@ public interface PickupAble extends Serializable {
      * Elem felvétele egy másik elemről
      * @param from melyik elemről vesszük le / csatlakoztatjuk le
      */
-    void PickedUp(Steppable from);
+    void pickedUp(Steppable from);
 
     /**
      * Elem letétele egy másik elemre, az előző dokumentumhoz képest van visszatérési értéke
      * @param to melyik elemre tesszük le / csatlakoztatjuk rá
      * @return a letétel sikeressége
      */
-    boolean PlacedDown(Steppable to);
+    boolean placedDown(Steppable to);
 
     /**
      * Elemet fel lehet-e venni onnan amit átadunk

@@ -2,12 +2,15 @@ package model;
 
 import Model.Pump;
 import Model.Pipe;
+import Model.PickupAble;
 import Controller.Controller;
+import Model.Steppable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static junit.framework.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -31,21 +34,90 @@ public class PumpTest {
     }
 
     @Test
+    void testGetController() {
+        assertEquals(mockController, pump.getController());
+    }
+
+    @Test
+    void testSetController() {
+        Controller newController = Mockito.mock(Controller.class);
+        pump.setController(newController);
+        assertEquals(newController, pump.getController());
+    }
+
+    @Test
+    void testPickedUp() {
+        Steppable mockSteppable = Mockito.mock(Steppable.class);
+        assertThrows(UnsupportedOperationException.class, () -> pump.pickedUp(mockSteppable));
+    }
+
+    @Test
+    void testPlacedDown() {
+        Steppable mockSteppable = Mockito.mock(Steppable.class);
+        when(mockSteppable.placedDownTo(any(Pump.class))).thenReturn(true);
+
+        boolean result = pump.placedDown(mockSteppable);
+
+        assertTrue(result);
+        verify(mockSteppable).placedDownTo(pump);
+    }
+
+    @Test
+    void testPickedUpFrom() {
+        pump.addPipe(mockActiveIn);
+
+        boolean result = pump.pickedUpFrom(mockActiveIn);
+
+        assertTrue(result);
+        assertFalse(pump.getPipes().contains(mockActiveIn));
+    }
+
+    @Test
+    void testPickedUpFromNonExistingPipe() {
+        PickupAble mockPickup = Mockito.mock(PickupAble.class);
+
+        boolean result = pump.pickedUpFrom(mockPickup);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void testPlacedDownToPipe() {
+        Pipe mockPipe = Mockito.mock(Pipe.class);
+        when(mockPipe.addWaterNode(any(Pump.class))).thenReturn(true);
+
+        boolean result = pump.placedDownTo(mockPipe);
+
+        assertTrue(result);
+        assertTrue(pump.getPipes().contains(mockPipe));
+        verify(mockPipe).addWaterNode(pump);
+    }
+
+    @Test
+    void testPlacedDownToPump() {
+        Pump mockPump = Mockito.mock(Pump.class);
+
+        boolean result = pump.placedDownTo(mockPump);
+
+        assertFalse(result);
+    }
+
+    @Test
     void testWaterFlow() {
         // Arrange
         pump.setHeldWater(10);
-        when(mockActiveOut.GainWater(anyInt())).thenReturn(1);
-        when(mockActiveIn.LoseWater(anyInt())).thenReturn(1);
+        when(mockActiveOut.gainWater(anyInt())).thenReturn(1);
+        when(mockActiveIn.loseWater(anyInt())).thenReturn(1);
         when(mockController.getObjectName(any())).thenReturn("Pipe");
 
         // Act
-        pump.WaterFlow();
+        pump.waterFlow();
 
         // Assert
         assertEquals(10, pump.getHeldWater());
-        verify(mockActiveOut).GainWater(1);
-        verify(mockActiveIn).LoseWater(1);
-        verify(mockActiveIn).GainWater(0);
+        verify(mockActiveOut).gainWater(1);
+        verify(mockActiveIn).loseWater(1);
+        verify(mockActiveIn).gainWater(0);
     }
 
     @Test
@@ -54,10 +126,10 @@ public class PumpTest {
         pump.setBroken(true);
 
         // Act
-        pump.WaterFlow();
+        pump.waterFlow();
 
         // Assert
-        verify(mockActiveOut, never()).GainWater(1);
+        verify(mockActiveOut, never()).gainWater(1);
         assertEquals(0, pump.getHeldWater());
     }
 
@@ -67,28 +139,28 @@ public class PumpTest {
         pump.setHeldWater(0);
 
         // Act
-        pump.WaterFlow();
+        pump.waterFlow();
 
         // Assert
-        verify(mockActiveOut, never()).GainWater(anyInt());
-        verify(mockActiveIn).LoseWater(1);
+        verify(mockActiveOut, never()).gainWater(anyInt());
+        verify(mockActiveIn).loseWater(1);
     }
 
     @Test
     void testWaterFlow_WithMaxCapacity() {
         // Arrange
         pump.setHeldWater(20);
-        when(mockActiveOut.GainWater(anyInt())).thenReturn(1);
-        when(mockActiveIn.LoseWater(anyInt())).thenReturn(1);
+        when(mockActiveOut.gainWater(anyInt())).thenReturn(1);
+        when(mockActiveIn.loseWater(anyInt())).thenReturn(1);
 
         // Act
-        pump.WaterFlow();
+        pump.waterFlow();
 
         // Assert
         assertEquals(20, pump.getHeldWater());
-        verify(mockActiveOut).GainWater(1);
-        verify(mockActiveIn).LoseWater(1);
-        verify(mockActiveIn).GainWater(0);
+        verify(mockActiveOut).gainWater(1);
+        verify(mockActiveIn).loseWater(1);
+        verify(mockActiveIn).gainWater(0);
     }
 
     @Test
@@ -97,7 +169,7 @@ public class PumpTest {
         Pipe mockPipe = Mockito.mock(Pipe.class);
 
         // Act
-        boolean success = pump.AddPipe(mockPipe);
+        boolean success = pump.addPipe(mockPipe);
 
         // Assert
         assertTrue(success);
@@ -108,12 +180,12 @@ public class PumpTest {
     void testAddPipe_MaximumPipesReached() {
         // Arrange
         for (int i = 0; i < 10; i++) {
-            pump.AddPipe(Mockito.mock(Pipe.class));
+            pump.addPipe(Mockito.mock(Pipe.class));
         }
         Pipe mockPipe = Mockito.mock(Pipe.class);
 
         // Act
-        boolean success = pump.AddPipe(mockPipe);
+        boolean success = pump.addPipe(mockPipe);
 
         // Assert
         assertFalse(success);

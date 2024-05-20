@@ -53,7 +53,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @param from melyik elemről vesszük le / csatlakoztatjuk le a pumpát
      */
     @Override
-    public void PickedUp(Steppable from) {
+    public void pickedUp(Steppable from) {
         throw new UnsupportedOperationException();
     }
 
@@ -63,8 +63,8 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return ha sikerül letenni, akkor true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PlacedDown(Steppable to) {
-        return to.PlacedDownTo(this);
+    public boolean placedDown(Steppable to) {
+        return to.placedDownTo(this);
     }
     /**
      * A pickup felvétele a pumpárópl
@@ -72,7 +72,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return amennyiben az elemet sikeresen felvették true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
 
         int pickupIdx = pipes.indexOf(pickup);
         if (pickupIdx != -1) {
@@ -95,10 +95,10 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return amennyiben sikeresen le lehet helyezni a csövet a pumpára true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
-        boolean successful = AddPipe(pickup);
+    public boolean placedDownTo(Pipe pickup) {
+        boolean successful = addPipe(pickup);
         if (successful)
-            pickup.AddWaterNode(this);
+            pickup.addWaterNode(this);
         return successful;
     }
 
@@ -108,7 +108,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return mindig false-szal tér vissza, hiszen pump-ra nem lehet másik pump-ot helyezni
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
+    public boolean placedDownTo(Pump pickup) {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
@@ -117,7 +117,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * a vízfolyás függvénye, először átadja a vizet a kimenő csőnek, ha a pumpa nem romlott, vagy a tárolója nem üres, majd elveszi a vizet a bemeneti csőtől
      */
     @Override
-    public void WaterFlow() {
+    public void waterFlow() {
 
         if (broken) {
             IO_Manager.writeInfo(controller.getObjectName(this) + " is broken", controller.filetoWrite != null);
@@ -125,7 +125,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
         int gained=0;
         if(!broken && heldWater != 0 && activeOut != null)
         {
-            gained= activeOut.GainWater(1);
+            gained= activeOut.gainWater(1);
             if(gained==1){
                 heldWater--;
             }
@@ -136,9 +136,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
         if (activeIn != null) {
 
-            int lost = activeIn.LoseWater(1);
+            int lost = activeIn.loseWater(1);
             int excess = (heldWater + lost > waterCapacity) ? (heldWater + lost - waterCapacity) : 0;
-            activeIn.GainWater(excess);
+            activeIn.gainWater(excess);
             heldWater +=lost-excess;
             IO_Manager.write(controller.getObjectName(activeIn) + " lost " + (lost - excess), controller.filetoWrite != null);
         }
@@ -152,7 +152,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * különben false-szal
      */
     @Override
-    public boolean PlayerRedirect(Pipe in, Pipe out) {
+    public boolean playerRedirect(Pipe in, Pipe out) {
         if(pipes.contains(in) && pipes.contains(out)) {
             activeIn = in;
             activeOut = out;
@@ -227,7 +227,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return ha sikerült a csövet a pumpára kötni, akkor true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean AddPipe(Pipe p) {
+    public boolean addPipe(Pipe p) {
         boolean valid = pipes.size() < maximumPipes;
         if(valid)
             pipes.add(p);
@@ -243,7 +243,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return sikeresség
      */
     @Override
-    public boolean Repaired(){
+    public boolean repaired(){
         if(broken){
             broken = false;
             return true;

@@ -13,13 +13,13 @@ public class Saboteur extends Player implements Serializable {
      * Csúszóssá teszi azt amin áll, ha tudja, meghívja azon pályaelem Lubricated függvényét.
      * @return sikeresség
      */
-    public boolean Lubricate(){
+    public boolean lubricate(){
         boolean lubricated=false;
         if(isIgnoreStates()) {
-            lubricated = standingOn.Lubricated();
+            lubricated = standingOn.lubricated();
         }
         else if(state == PlayerActionState.SPECIAL_ACTION) {
-            lubricated = standingOn.Lubricated();
+            lubricated = standingOn.lubricated();
             if (lubricated) {
                 state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();

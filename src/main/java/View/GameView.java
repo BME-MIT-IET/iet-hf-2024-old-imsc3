@@ -97,11 +97,11 @@ public class GameView extends Window implements Serializable {
                 graphics2D.fillRect(Controller.getInstance().getFrame().getWidth() - 1100 + 2, -20, 1100, 98);
                 g.setColor(Color.ORANGE);
                 g.setFont(new Font("Inter", Font.BOLD, 50));
-                if (PointCounter.getInstance().GetMechanicPoints() > PointCounter.getInstance().GetSaboteurPoints())
+                if (PointCounter.getInstance().getMechanicPoints() > PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("A SZERELŐK NYERTEK!", Controller.getInstance().getFrame().getWidth() - 1050, 55);
-                else if (PointCounter.getInstance().GetMechanicPoints() < PointCounter.getInstance().GetSaboteurPoints())
+                else if (PointCounter.getInstance().getMechanicPoints() < PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("A SZABOTŐRÖK NYERTEK!", Controller.getInstance().getFrame().getWidth() - 1050, 55);
-                else if (PointCounter.getInstance().GetMechanicPoints() == PointCounter.getInstance().GetSaboteurPoints())
+                else if (PointCounter.getInstance().getMechanicPoints() == PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("DÖNTETLEN", Controller.getInstance().getFrame().getWidth() - 1050, 55);
 
             } else {
@@ -112,9 +112,9 @@ public class GameView extends Window implements Serializable {
             }
             g.setColor(Color.BLACK);
             g.setFont(new Font("Inter", Font.BOLD, 50));
-            g.drawString(Integer.toString(PointCounter.getInstance().GetMechanicPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 50, 55);
+            g.drawString(Integer.toString(PointCounter.getInstance().getMechanicPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 50, 55);
             g.drawImage(ImageUtility.scaleImage(getScoreDivider(), 35), Controller.getInstance().getFrame().getWidth() - 300, 20, null);
-            g.drawString(Integer.toString(PointCounter.getInstance().GetSaboteurPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 200, 55);
+            g.drawString(Integer.toString(PointCounter.getInstance().getSaboteurPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 200, 55);
 
             for (Drawable d : drawables) {
                 d.paint(g);

@@ -1,8 +1,6 @@
 package View;
 
 import Controller.Controller;
-import Model.PointCounter;
-
 import java.awt.event.MouseEvent;
 
 /**

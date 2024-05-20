@@ -34,14 +34,14 @@ public class PointCounter implements Serializable {
     /**
      * @param amount az a mennyiség, amivel a szabotőrök pontjai nőnek
      */
-    public void AddSaboteurPoints(int amount) {
+    public void addSaboteurPoints(int amount) {
         saboteurPoints+=amount;
     }
 
     /**
      * @param amount az a mennyiség, amivel a szerelők pontjai nőnek
      */
-    public void AddMechanicPoints(int amount) {
+    public void addMechanicPoints(int amount) {
         mechanicPoints+=amount;
     }
 
@@ -49,7 +49,7 @@ public class PointCounter implements Serializable {
      * A szabotőrök pontjainak gettere
      * @return a pontok
      */
-    public int GetSaboteurPoints(){
+    public int getSaboteurPoints(){
         return saboteurPoints;
     }
 
@@ -57,7 +57,7 @@ public class PointCounter implements Serializable {
      * A szerelők pontjainak gettere
      * @return a pontok
      */
-    public int GetMechanicPoints(){
+    public int getMechanicPoints(){
         return mechanicPoints;
     }
 
@@ -65,7 +65,7 @@ public class PointCounter implements Serializable {
      * A győzelemhez szükséges pontok gettere
      * @return a pontok
      */
-    public int GetPointsToWin(){ return pointsToWin;}
+    public int getPointsToWin(){ return pointsToWin;}
 
     /**
      * A győzelemhez szükséges pontok settere

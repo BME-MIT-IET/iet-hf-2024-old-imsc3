@@ -44,7 +44,7 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
         generatedPumps.remove(pickup);
         generatedPipes.remove(pickup);
         boolean result = createdPickupables.remove(pickup);
@@ -60,10 +60,10 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye(mivel ciszternára lehet csövet kötni ezért ez mindig kivitelezhető)
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
+    public boolean placedDownTo(Pipe pickup) {
 
-        AddPipe(pickup);
-        pickup.AddWaterNode(this);
+        addPipe(pickup);
+        pickup.addWaterNode(this);
         return true;
 
     }
@@ -74,7 +74,7 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye(mivel ciszternára nem lehet pumpát kötni ezért ez sose kivitelezhető)
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
+    public boolean placedDownTo(Pump pickup) {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
@@ -87,10 +87,10 @@ public class Cistern extends WaterNode implements Serializable {
      * szerelők pontszáma.
      */
     @Override
-    public void WaterFlow() {
+    public void waterFlow() {
         for (Pipe p : pipes) {
-            int lost = p.LoseWater(1);
-            counter.AddMechanicPoints(lost);
+            int lost = p.loseWater(1);
+            counter.addMechanicPoints(lost);
             IO_Manager.write(Controller.getInstance().getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
         }
     }
@@ -98,7 +98,7 @@ public class Cistern extends WaterNode implements Serializable {
     /**
      * A generálás függvénye, ami random generál egy pumpát vagy csövet. Ha már van 3 generált akkor nem készít többet
      */
-    public void GeneratePickupables() {
+    public void generatePickupables() {
         if (createdPickupables.size() > 3)
             return;
         SecureRandom rand = new SecureRandom();
@@ -115,8 +115,8 @@ public class Cistern extends WaterNode implements Serializable {
             Pipe pi = (Pipe) Controller.getInstance().getObjectCatalog().get(pipeName);
             createdPickupables.add(pi);
             generatedPipes.add(pi);
-            pi.AddWaterNode(this);
-            AddPipe(pi);
+            pi.addWaterNode(this);
+            addPipe(pi);
 
             GameView gameView = Controller.getInstance().getGameView();
             PipeView pipeView = new PipeView(
