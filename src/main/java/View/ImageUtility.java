@@ -18,7 +18,7 @@ public class ImageUtility {
      * @return The loaded image.
      */
     public static BufferedImage ImageLoad(String file) {
-        BufferedImage image = null;
+        BufferedImage image;
         try {
 
             String nameOfFile = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"

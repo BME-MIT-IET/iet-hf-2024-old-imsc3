@@ -23,7 +23,7 @@ public abstract class WaterNode extends Steppable implements Serializable {
     @Override
     public boolean playerEnter(Player player) {
 
-        boolean successful = pipes.contains(player.getStandingOn()) || player.getStandingOn() == null;
+        boolean successful = pipes.contains((Pipe) player.getStandingOn()) || player.getStandingOn() == null;
         if (successful)
             players.add(player);
         else
@@ -101,8 +101,10 @@ public abstract class WaterNode extends Steppable implements Serializable {
     public boolean canMoveFromHere() {
         boolean canMove=false;
         for(Pipe p:pipes){
-            if(p.players.isEmpty())
-                canMove=true;
+            if (p.players.isEmpty()) {
+                canMove = true;
+                break;
+            }
         }
         return canMove;
     }
@@ -114,6 +116,6 @@ public abstract class WaterNode extends Steppable implements Serializable {
      */
     @Override
     public boolean canMoveToHere(Player p){
-        return pipes.contains(p.getStandingOn());
+        return pipes.contains((Pipe) p.getStandingOn());
     }
 }

@@ -100,7 +100,7 @@ public class Spring extends WaterNode implements Serializable {
      */
     @Override
     public boolean addPipe(Pipe p) {
-        boolean valid = pipes.size() < 1;
+        boolean valid = pipes.isEmpty();
         if (valid)
             pipes.add(p);
         else

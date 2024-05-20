@@ -15,15 +15,15 @@ public class Cistern extends WaterNode implements Serializable {
     /**
      * Ciszternáról felvehető elemek, amik generálódtak rajta
      */
-    private LinkedList<PickupAble> createdPickupables = new LinkedList<>();
+    private final LinkedList<PickupAble> createdPickupables = new LinkedList<>();
     /**
      * Ciszternán keletkezett csövek listája
      */
-    private LinkedList<Pipe> generatedPipes = new LinkedList<>();
+    private final LinkedList<Pipe> generatedPipes = new LinkedList<>();
     /**
      * Ciszternán keletkezett pumpák listája
      */
-    private LinkedList<Pump> generatedPumps = new LinkedList<>();
+    private final LinkedList<Pump> generatedPumps = new LinkedList<>();
 
     /**
      * Pontszámításhoz használt singleton
@@ -176,8 +176,10 @@ public class Cistern extends WaterNode implements Serializable {
     public boolean canMoveFromHere() {
         boolean canMove=false;
         for(Pipe p:pipes){
-            if(p.players.isEmpty() && !generatedPipes.contains(p))
-                canMove=true;
+            if (p.players.isEmpty() && !generatedPipes.contains(p)) {
+                canMove = true;
+                break;
+            }
         }
         return canMove;
     }

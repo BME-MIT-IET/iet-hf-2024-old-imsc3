@@ -42,8 +42,7 @@ import javax.swing.*;
  * <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/colorchooser.html">Java Color Picker</a>
  */
 public class ColorPicker extends JPanel {
-    private JColorChooser tcc;
-    private  JTextField userName;
+    private final JColorChooser tcc;
 
     /**
      * constructor - creates a text field for the username, a color picker area
@@ -52,7 +51,7 @@ public class ColorPicker extends JPanel {
         super(new BorderLayout());
 
         // creating a text field for the player's name
-        userName = new JTextField("User");
+        JTextField userName = new JTextField("User");
         userName.setBounds(new Rectangle(300, 100));
         JPanel userNamePanel = new JPanel(new BorderLayout());
         userNamePanel.setBorder(BorderFactory.createTitledBorder("Username:"));

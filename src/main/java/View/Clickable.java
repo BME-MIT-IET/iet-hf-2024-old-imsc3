@@ -12,17 +12,17 @@ public interface Clickable {
      * @return - igaz, ha a kattintható objektumon belül van az egér
      */
 
-    public boolean isIn(MouseEvent e);
+    boolean isIn(MouseEvent e);
 
     /**
      * clickAction - kattintás eseménye
      * @param e - egérkattintás
      */
-    public void clickAction(MouseEvent e);
+    void clickAction(MouseEvent e);
 
     /**
      * isDraggable - megadja, hogy a kattintható objektum húzható-e
      * @return - igaz, ha mozgatható
      */
-    public boolean isDraggable();
+    boolean isDraggable();
 }

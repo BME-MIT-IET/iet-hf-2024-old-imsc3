@@ -20,7 +20,7 @@ public class SaboteurView extends Drawable {
     }
     private GameView gameView;
     private Color color;
-    private Saboteur saboteur;
+    private final Saboteur saboteur;
     private double angle;
     private Point rotationCenter = new Point(0, 0);
 
@@ -44,7 +44,7 @@ public class SaboteurView extends Drawable {
             Graphics2D graphics2D = (Graphics2D) g.create();
             graphics2D.setColor(color);
             graphics2D.setFont(new Font("Inter",Font.BOLD,30));
-            graphics2D.drawString(""+color.getRed()+"/"+color.getGreen()+"/"+color.getBlue(),50+imageForScale.getWidth(null)+100+220, screenHeight/2+20+number*50);
+            graphics2D.drawString(color.getRed()+"/"+color.getGreen()+"/"+color.getBlue(),50+imageForScale.getWidth(null)+100+220, screenHeight/2+20+number*50);
         }
         if (!saboteur.isRemoved()) {
             AppFrame.setGraphicQuality(g);
@@ -56,14 +56,10 @@ public class SaboteurView extends Drawable {
             pointsY[1] = y - 8;
             pointsX[2] = x + 6;
             pointsY[2] = y - 8;
-            int[] capX = new int[3];
-            int[] capY = new int[3];
-            capX[0] = x;
-            capY[0] = y - 22;
-            capX[1] = x - 8;
-            capY[1] = y - 15;
-            capX[2] = x + 8;
-            capY[2] = y - 15;
+
+            int[] capX = super.setCapX(x);
+            int[] capY = super.setCapY(y);
+
             Graphics2D graphics2D = (Graphics2D) g.create();
             graphics2D.setStroke(new BasicStroke(3));
             AffineTransform at = new AffineTransform();

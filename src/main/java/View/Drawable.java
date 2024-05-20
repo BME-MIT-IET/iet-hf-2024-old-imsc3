@@ -1,7 +1,10 @@
 package View;
 
+import Model.Player;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedList;
 
 /**
  * Drawable - kirajzolható objektumok absztrakt ősosztálya, leszármazottja a JComponent osztály
@@ -47,4 +50,26 @@ public abstract class Drawable extends JComponent {
 
     }
 
+    public double getPlayerAngle(Player p, LinkedList<Player> players) {
+        double[] angles = new double[players.size()];
+        for (int i = 0; i < angles.length; ++i) {
+            angles[i] = i * 20 - (angles.length - 1) * 10;
+        }
+        return angles[players.indexOf(p)];
+    }
+    public int[] setCapX(int x){
+        int[] capX = new int[3];
+        capX[0] = x;
+        capX[1] = x-8;
+        capX[2] = x+8;
+        return capX;
+    }
+
+    public int[] setCapY(int y) {
+        int[] capY = new int[3];
+        capY[0] = y - 22;
+        capY[1] = y - 15;
+        capY[2] = y - 15;
+        return capY;
+    }
 }

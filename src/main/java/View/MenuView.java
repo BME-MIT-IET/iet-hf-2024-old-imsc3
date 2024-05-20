@@ -13,8 +13,8 @@ public class MenuView extends Window {
 
     Button newGame, exit;
 
-    private BufferedImage background =  ImageUtility.backgroundScale(getBackground());
-    private BufferedImage bgText = ImageUtility.scaleImage(getMenuTitle(), 250);
+    private final BufferedImage background =  ImageUtility.backgroundScale(getBackground());
+    private final BufferedImage bgText = ImageUtility.scaleImage(getMenuTitle(), 250);
 
     /**
      * Konstruktor

@@ -211,6 +211,17 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         return false;
     }
 
+    private Pipe setPipesAttr(Pipe newPipe){
+        newPipe.waterCapacity = this.waterCapacity;
+        newPipe.heldWater = this.heldWater;
+        newPipe.broken = this.broken;
+        newPipe.readyToPierce = this.readyToPierce;
+        newPipe.lubricated = this.lubricated;
+        newPipe.glued = this.glued;
+        newPipe.beingHeld = this.beingHeld;
+        newPipe.readyToPierceTimer = this.readyToPierceTimer;
+        return newPipe;
+    }
     /**
      * Akkor hívódik meg, amikor egy pumpát a szerelő lehelyez
      * a csőre, a kettévágást kezeli.
@@ -266,23 +277,9 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         if (node2activeOut == this)
             node2.setActiveOut(newPipe2);
 
-        newPipe1.waterCapacity=this.waterCapacity;
-        newPipe1.heldWater=this.heldWater;
-        newPipe1.broken= this.broken;
-        newPipe1.readyToPierce=this.readyToPierce;
-        newPipe1.lubricated=this.lubricated;
-        newPipe1.glued=this.glued;
-        newPipe1.beingHeld= this.beingHeld;
-        newPipe1.readyToPierceTimer=this.readyToPierceTimer;
+        newPipe1 = setPipesAttr(newPipe1);
 
-        newPipe2.waterCapacity=this.waterCapacity;
-        newPipe2.heldWater=this.heldWater;
-        newPipe2.broken= this.broken;
-        newPipe2.readyToPierce=this.readyToPierce;
-        newPipe2.lubricated=this.lubricated;
-        newPipe2.glued=this.glued;
-        newPipe2.beingHeld= this.beingHeld;
-        newPipe2.readyToPierceTimer=this.readyToPierceTimer;
+        newPipe2 = setPipesAttr(newPipe2);
 
         boolean ignoreStates = Player.isIgnoreStates();
         Player.setIgnoreStates(true);
@@ -293,7 +290,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         Controller.getInstance().getGameView().remove(Controller.getInstance().getGameView().getPipeViewByCorrespondingModel(this));
 
         Controller.getInstance().getGameView().remove(Controller.getInstance().getGameView().getDrawableByCorrespondingModel(pump));
-        PumpView pumpView = new PumpView(x,y,25,pump,null,Controller.getInstance().getGameView());
+        PumpView pumpView = new PumpView(x,y,25,pump, Controller.getInstance().getGameView());
         Controller.getInstance().getGameView().addPumpView(pumpView);
 
         PipeView pipeView1 = new PipeView(

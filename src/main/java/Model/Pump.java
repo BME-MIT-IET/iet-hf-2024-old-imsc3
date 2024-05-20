@@ -122,10 +122,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
         if (broken) {
             IO_Manager.writeInfo(controller.getObjectName(this) + " is broken", controller.filetoWrite != null);
         }
-        int gained=0;
         if(!broken && heldWater != 0 && activeOut != null)
         {
-            gained= activeOut.gainWater(1);
+            int gained = activeOut.gainWater(1);
             if(gained==1){
                 heldWater--;
             }

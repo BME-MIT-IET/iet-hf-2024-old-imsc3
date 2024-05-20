@@ -35,14 +35,14 @@ public class SpringView extends Drawable implements Clickable, CreatePopUpBar, S
             gameView = (GameView) v;
     }
     private GameView gameView;
-    private BufferedImage sprite = null;
-    private Spring spring;
-    private int r;
+    private BufferedImage sprite;
+    private final Spring spring;
+    private final int r;
     private int arrowLocX;
     private int arrowLocY;
     private double arrowAngle;
     private PipeView outPipe = null;
-    private BufferedImage arrowSprite = null;
+    private BufferedImage arrowSprite;
 
     /**
      * A forrás kirajzolásáért felelős függvény
@@ -55,7 +55,7 @@ public class SpringView extends Drawable implements Clickable, CreatePopUpBar, S
             AffineTransform at = new AffineTransform();
             at.translate(arrowLocX, arrowLocY);
             at.rotate(Math.toRadians(-arrowAngle));
-            at.translate(-arrowSprite.getWidth()/2, -arrowSprite.getHeight()/2);
+            at.translate((double) -arrowSprite.getWidth() /2, (double) -arrowSprite.getHeight() /2);
             Graphics2D g2 = (Graphics2D) g;
             g2.drawImage(arrowSprite, at, null);
         }
@@ -123,17 +123,11 @@ public class SpringView extends Drawable implements Clickable, CreatePopUpBar, S
     public Point getRotationCenter() {
         //meg kéne nézni hány játékos van rajta
 
-        Point ret = new Point(x, y);
-        return ret;
+        return new Point(x, y);
     }
 
-    @Override
     public double getPlayerAngle(Player p) {
-        double[] angles = new double[spring.getPlayers().size()];
-        for (int i = 0; i < angles.length; ++i) {
-            angles[i] = i * 20 - (angles.length - 1) * 10;
-        }
-        return angles[spring.getPlayers().indexOf(p)];
+        return super.getPlayerAngle(p, spring.getPlayers());
     }
 
     @Override

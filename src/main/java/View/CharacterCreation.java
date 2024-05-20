@@ -20,7 +20,7 @@ public class CharacterCreation {
 
 
 
-    private ColorPicker characterCreationPanel;
+    private final ColorPicker characterCreationPanel;
 
     /**
      * constructor - creates the frame and sets up the layout (a color picker, a text field for the player's name, and a button for saving the data and return to the main menu)

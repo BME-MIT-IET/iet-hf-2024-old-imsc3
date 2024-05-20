@@ -1,14 +1,9 @@
 package View;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -50,10 +45,6 @@ public abstract class Window implements Serializable {
             clickables.addFirst(c);
         } else
             clickables.add(c);
-    }
-
-    public void addComponent(JComponent component) {
-        components.add(component);
     }
 
     public void remove(Object o) {

@@ -29,10 +29,10 @@ public class PopUpButton extends Drawable implements Clickable  {
             drawLoc = ImageUtility.centerImage(new Point(x, y), sprite);
             this.creator = creator;
         }
-        private SteppableView creator;
-        private ActionType actiontype;
+        private final SteppableView creator;
+        private final ActionType actiontype;
         private BufferedImage sprite = null;
-        private int r;
+        private final int r;
         Point drawLoc;
         public static boolean waitingForParameter = false;
         public static LinkedList<PipeView> parameters = new LinkedList<>();
@@ -40,10 +40,7 @@ public class PopUpButton extends Drawable implements Clickable  {
         private float opacity = 0.0f;
         @Override
         public boolean isIn(MouseEvent e) {
-                if (Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r) {
-                        return true;
-                }
-                return false;
+            return Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
         }
 
         @Override
@@ -64,7 +61,7 @@ public class PopUpButton extends Drawable implements Clickable  {
                         }
                         case PLACEDOWN -> c.placedown(c.getObjectName(p));
                         case PICKUP_PIPE -> {
-                                if (((GameView) view).cisterns.contains(creator)) {
+                                if (((GameView) view).cisterns.contains((CisternView) creator)) {
                                         Cistern cis = (Cistern) s;
                                         Pipe pipe = cis.getGeneratedPipes().getFirst();
                                         c.pickup(c.getObjectName(p), c.getObjectName(pipe));
@@ -123,7 +120,6 @@ public class PopUpButton extends Drawable implements Clickable  {
         public static void paramsReceived() {
                 Controller c = Controller.getInstance();
                 Player p = c.getActivePlayer();
-                Steppable s = paramClient.creator.getCorrespondingModelSteppable();
                 if (paramClient.actiontype == ActionType.REDIRECT) {
                         c.redirect(c.getObjectName(p), c.getObjectName(parameters.getFirst().getCorrespondingModelElement()), c.getObjectName(parameters.getLast().getCorrespondingModelElement()));
                 }

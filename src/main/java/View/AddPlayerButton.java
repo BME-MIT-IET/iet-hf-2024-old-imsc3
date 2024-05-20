@@ -42,13 +42,6 @@ public class AddPlayerButton extends Button {
                 // karakter nevének és színének megadása
                 cc = new CharacterCreation(temp, name);
             }
-
-        } else if (type == -1) {
-            if (name.equals("mechanic")) {
-
-            } else if (name.equals("saboteur")) {
-
-            }
         }
 
 

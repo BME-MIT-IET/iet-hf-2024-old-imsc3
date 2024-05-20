@@ -2,7 +2,6 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import Model.PointCounter;
 
@@ -145,14 +144,6 @@ public class NewGameView extends Window {
      */
     @Override
     public void update() {
-
-    }
-
-    /**
-     * A billentyűlenyomásokat kezeli
-     * @param e leütött billentyű
-     */
-    public void keyTyped(KeyEvent e) {
 
     }
 

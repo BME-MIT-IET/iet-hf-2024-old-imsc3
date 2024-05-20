@@ -35,12 +35,12 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
     }
     public boolean selected;
     private GameView gameView;
-    private Pipe pipe;
+    private final Pipe pipe;
     private int endX;
     private int endY;
-    private int width;
-    private Drawable startNode = null;
-    private Drawable endNode = null;
+    private final int width;
+    private Drawable startNode;
+    private Drawable endNode;
 
     /**
      * Cső kirajzolása
@@ -57,14 +57,14 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
         double unitNormY = pipeNormal.y / getLength();
         int x1 = (int) Math.ceil(unitNormX * width *1.4) + x;
         int y1 = (int) Math.ceil(unitNormY * width *1.4) + y;
-        int x2 = (int) Math.ceil(-unitNormX * width *1.4) + x;;
+        int x2 = (int) Math.ceil(-unitNormX * width *1.4) + x;
         int y2 = (int) Math.ceil(-unitNormY * width *1.4) + y;
-        int x3 = (int) Math.ceil(unitNormX * width *1.4) + endX;
-        int y3 = (int) Math.ceil(unitNormY * width *1.4) + endY;
-        int x4 = (int) Math.ceil(-unitNormX * width *1.4) + endX;
-        int y4 = (int) Math.ceil(-unitNormY * width *1.4) + endY;
+        int x3 = x1 -x +endX;
+        int y3 = y1-y +endY;
+        int x4 = x2 -x +endX;
+        int y4 = y2 -y +endY;
 
-        Color mainColor = BLACK;
+        Color mainColor;
         Color brokenColor = RED;
         Color miscColor = CYAN;
         boolean drawBroken = false;
@@ -83,54 +83,25 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
         if (pipe.getHeldWater() == 1) {
             mainColor = new Color(47, 178, 245);
 
-            if (pipe.isBroken()) {
-                drawBroken = true;
-            }
-
-            if (pipe.isGlued()) {
-                drawMisc = true;
-                miscColor = new Color(61, 153, 3);
-            } else if (pipe.isLubricated()) {
-                drawMisc = true;
-                miscColor = new Color(44, 121, 131);
-            }
-
         }
         else if (
                 pipe.getNodes().getFirst().getActiveIn() != pipe &&
                 pipe.getNodes().getFirst().getActiveOut() != pipe &&
                 pipe.getNodes().getLast().getActiveIn() != pipe &&
                 pipe.getNodes().getLast().getActiveOut() != pipe)
-        {
-            mainColor = LIGHT_GRAY;
+        {mainColor = LIGHT_GRAY;}
+        else {mainColor = BLACK;}
 
-            if (pipe.isBroken()) {
-                drawBroken = true;
-            }
+        if (pipe.isBroken()) {
+            drawBroken = true;
+        }
 
-            if (pipe.isGlued()) {
-                drawMisc = true;
-                miscColor = new Color(61, 153, 3);
-            } else if (pipe.isLubricated()) {
-                drawMisc = true;
-                miscColor = new Color(44, 121, 131);
-            }
-
-        } else {
-
-            mainColor = BLACK;
-
-            if (pipe.isBroken()) {
-                drawBroken = true;
-            }
-
-            if (pipe.isGlued()) {
-                drawMisc = true;
-                miscColor = new Color(61, 153, 3);
-            } else if (pipe.isLubricated()) {
-                drawMisc = true;
-                miscColor = new Color(44, 121, 131);
-            }
+        if (pipe.isGlued()) {
+            drawMisc = true;
+            miscColor = new Color(61, 153, 3);
+        } else if (pipe.isLubricated()) {
+            drawMisc = true;
+            miscColor = new Color(44, 121, 131);
         }
 
         if (drawBroken) {
@@ -232,7 +203,7 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
         int[] pointsY = new int[4];
         pointsX[0] = (int) Math.ceil(unitNormX * width * 4) + x;
         pointsY[0] = (int) Math.ceil(unitNormY * width * 4) + y;
-        pointsX[1] = (int) Math.ceil(-unitNormX * width * 4) + x;;
+        pointsX[1] = (int) Math.ceil(-unitNormX * width * 4) + x;
         pointsY[1] = (int) Math.ceil(-unitNormY * width * 4) + y;
         pointsX[2] = (int) Math.ceil(-unitNormX * width * 4) + endX;
         pointsY[2] = (int) Math.ceil(-unitNormY * width * 4) + endY;
@@ -276,7 +247,7 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
 
     /**
      * Visszaadja, hogy egy új játékost melyik pontban lehet kirajzolni
-     * @return
+     * @return a pont
      */
     @Override
     public Point getDefaultPlayerPosition() {

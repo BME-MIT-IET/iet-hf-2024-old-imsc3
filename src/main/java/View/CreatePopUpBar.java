@@ -16,7 +16,7 @@ public interface CreatePopUpBar {
      * @param view - ablak
      * @param creator - létrehozó
      */
-    public default void createPopUpBar(int x, int y, int r, Window view, SteppableView creator){
+    default void createPopUpBar(int x, int y, int r, Window view, SteppableView creator){
 
         GameView gameView = (GameView) view;
         PopUpBar p = new PopUpBar(x, y, r, view, creator, null);
@@ -24,8 +24,10 @@ public interface CreatePopUpBar {
 
         boolean notNull = false;
         for (ActionType a : Controller.getInstance().getActivePlayer().availableActions(creator.getCorrespondingModelSteppable())) {
-            if (a != null)
+            if (a != null) {
                 notNull = true;
+                break;
+            }
         }
         if (!notNull)
             gameView.removePopUpBar();
@@ -41,7 +43,7 @@ public interface CreatePopUpBar {
      * @param creator - létrehozó
      * @param at - akciók
      */
-    public default void createPopUpBarWithActions(int x, int y, int r, Window view, SteppableView creator, ActionType[] at) {
+    default void createPopUpBarWithActions(int x, int y, int r, Window view, SteppableView creator, ActionType[] at) {
         GameView gameView = (GameView) view;
         PopUpBar p = new PopUpBar(x, y, r, view, creator, at);
         gameView.addCisternDisplay(p);

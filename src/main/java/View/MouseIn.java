@@ -18,6 +18,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseClicked(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseClicked(e);
             case GAME -> Controller.getInstance().getGameView().mouseClicked(e);
+            default -> {}
         }
     }
 
@@ -31,6 +32,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mousePressed(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mousePressed(e);
             case GAME -> Controller.getInstance().getGameView().mousePressed(e);
+            default -> {}
         }
     }
 
@@ -44,6 +46,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseReleased(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseReleased(e);
             case GAME -> Controller.getInstance().getGameView().mouseReleased(e);
+            default -> {}
         }
     }
 
@@ -57,6 +60,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseEntered(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseEntered(e);
             case GAME -> Controller.getInstance().getGameView().mouseEntered(e);
+            default -> {}
         }
     }
 
@@ -70,6 +74,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseExited(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseExited(e);
             case GAME -> Controller.getInstance().getGameView().mouseExited(e);
+            default -> {}
         }
     }
 
@@ -83,6 +88,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseDragged(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseDragged(e);
             case GAME -> Controller.getInstance().getGameView().mouseDragged(e);
+            default -> {}
         }
     }
 
@@ -96,6 +102,7 @@ public class MouseIn implements MouseListener, MouseMotionListener {
             case MENU -> Controller.getInstance().getMenuView().mouseMoved(e);
             case NEWGAME -> Controller.getInstance().getNewGameView().mouseMoved(e);
             case GAME -> Controller.getInstance().getGameView().mouseMoved(e);
+            default -> {}
         }
     }
 }

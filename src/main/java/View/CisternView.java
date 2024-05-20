@@ -17,7 +17,7 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
     private final Cistern cistern;
     private final int r;
     private GameView gameView = null;
-    private BufferedImage sprite = null;
+    private BufferedImage sprite;
 
     /**
      * CisternView konstruktor
@@ -106,13 +106,8 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      * @param p - játékos
      * @return - játékos szöge
      */
-    @Override
     public double getPlayerAngle(Player p) {
-        double[] angles = new double[cistern.getPlayers().size()];
-        for (int i = 0; i < angles.length; ++i) {
-            angles[i] = i * 20 - (angles.length - 1) * 10;
-        }
-        return angles[cistern.getPlayers().indexOf(p)];
+        return super.getPlayerAngle(p, cistern.getPlayers());
     }
 
     @Override
