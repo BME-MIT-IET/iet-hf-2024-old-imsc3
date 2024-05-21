@@ -7,7 +7,7 @@
     <groupId>iet-hf-2024-old-imsc3</groupId>
     <artifactId>iet-hf-2024-old-imsc3</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -17,31 +17,24 @@
     </properties>
 
     <dependencies>
-        <!-- Cucumber Dependencies -->
+        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.0.0</version>
-            <scope>test</scope>
+            <version>7.18.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>7.0.0</version>
+            <version>7.18.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- JUnit 5 Dependency -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Additional dependencies, if needed -->
     </dependencies>
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -55,28 +48,9 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
-                <configuration>
-                    <includes>
-                        <include>**/CucumberTesztFuttato.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
-            <!-- Cucumber Plugin for generating reports -->
-            <plugin>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-maven-plugin</artifactId>
-                <version>7.0.0</version>
-                <executions>
-                    <execution>
-                        <id>execute-tests</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
+
     </build>
+
 </project>
