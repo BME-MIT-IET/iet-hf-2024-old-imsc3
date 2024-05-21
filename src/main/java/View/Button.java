@@ -95,9 +95,9 @@ public class Button extends Drawable implements Clickable {
             && Controller.getInstance().getSaboteurs().size() >= 2) {
 
                 if (Controller.getInstance().getNewGameView().getMap() == 1) {
-                    Controller.getInstance().getGameView().mapSetup(System.getProperty("user.dir") + File.separator + "src" + File.separator + "Assets" + File.separator + "map1.txt");
+                    Controller.getInstance().getGameView().mapSetup(System.getProperty("user.dir") + File.separator + "src" + File.separator + "src/Assets" + File.separator + "map1.txt");
                 } else if (Controller.getInstance().getNewGameView().getMap() == 2) {
-                    Controller.getInstance().getGameView().mapSetup(System.getProperty("user.dir") + File.separator + "src" + File.separator + "Assets" + File.separator + "map2.txt");
+                    Controller.getInstance().getGameView().mapSetup(System.getProperty("user.dir") + File.separator + "src" + File.separator + "src/Assets" + File.separator + "map2.txt");
                 }
             } else {
                 WindowOptions.windowOption = WindowOptions.newgame;

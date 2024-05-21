@@ -1,12 +1,15 @@
 package steps;
 
 import io.cucumber.java.en.*;
+import Controller.Controller;
+
 
 public class LoginSteps {
 
     @Given("the user is on the login page")
     public void the_user_is_on_the_login_page() {
         // Code to navigate to the login page
+        System.out.println("Navigated to the login page");
     }
 
     @When("the user enters valid credentials")

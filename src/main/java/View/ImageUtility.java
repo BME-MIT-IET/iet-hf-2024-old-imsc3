@@ -20,7 +20,7 @@ public class ImageUtility {
         BufferedImage image = null;
         try {
 
-            String nameOfFile = System.getProperty("user.dir") + File.separator + "src" + File.separator + "Assets" + File.separator + file;
+            String nameOfFile = System.getProperty("user.dir") + File.separator + "src" + File.separator + "src/Assets" + File.separator + file;
             File in = new File(nameOfFile);
 
             image = ImageIO.read(in);
