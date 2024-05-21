@@ -30,9 +30,7 @@ public class Pictures {
         public static final BufferedImage passImg = ImageUtility.ImageLoad("3-popup-passzol.png");
         public static final BufferedImage glueImg = ImageUtility.ImageLoad("3-popup-ragaszt.png");
         public static final BufferedImage repairImg = ImageUtility.ImageLoad("3-popup-szerel.png");
-
         public static final BufferedImage pumpIndicatorImg = ImageUtility.ImageLoad("3-pump-indicator.png");
-
         public static final BufferedImage mappreview2 = ImageUtility.ImageLoad("palya2.png");
 }
 
