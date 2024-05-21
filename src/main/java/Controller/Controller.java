@@ -2,7 +2,6 @@ package Controller;
 
 import Model.*;
 import View.*;
-import View.Window;
 
 import java.awt.*;
 import java.io.*;
@@ -109,6 +108,13 @@ public class Controller implements Serializable {
      * A futó játék ablaka
      */
     private GameView gameView = new GameView(frame);
+
+    /**
+     * Adja a countert
+     */
+    public PointCounter getCounter() {
+        return counter;
+    }
 
     /**
      * A gameloop-ért fellelős függvény
@@ -454,10 +460,12 @@ public class Controller implements Serializable {
 
     /**
      * Attribútumok lekérdezésének parancsát teljesítő függvény
+     *
      * @param objectName - az objektum neve amit lekérdezünk
      * @param attribName - az objektum egyik attribútumának neve amit le akarunk kérdezni
+     * @return
      */
-    public void stateGet(String objectName, String attribName) {
+    public Object stateGet(String objectName, String attribName, boolean str) {
 
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
@@ -486,7 +494,7 @@ public class Controller implements Serializable {
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
             }
         } else if (springs.contains(objectCatalog.get(objectName))) {
-            switch (attribName) {
+            switch (attribName)  {
                 case "pipes" -> output += listWrite(((Spring) o).getPipes());
                 case "players" -> output += listWrite(((Spring) o).getPlayers());
                 default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
@@ -528,7 +536,12 @@ public class Controller implements Serializable {
         }
 
         IO_Manager.write(output, Controller.filetoWrite != null);
+        if (str)
+            return output;
+        return o;
     }
+
+
 
     /**
      * Attribútumok beállításának parancsát teljesítő függvény
@@ -610,7 +623,7 @@ public class Controller implements Serializable {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
         }
         //Kiírjuk a változást
-        stateGet(objectName, attribName);
+        stateGet(objectName, attribName, false);
     }
 
     /**

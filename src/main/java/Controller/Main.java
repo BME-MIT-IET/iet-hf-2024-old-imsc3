@@ -173,7 +173,7 @@ public class Main {
                     if (cmd.length != 4)
                         IO_Manager.writeError("state get requires 2 parameters", Controller.filetoWrite != null);
                     else
-                        controller.stateGet(cmd[2], cmd[3]);
+                        controller.stateGet(cmd[2], cmd[3], false);
                 else if (cmd[1].equals("set"))
                     if (cmd.length != 5)
                         IO_Manager.writeError("state set requires 3 parameters", Controller.filetoWrite != null);

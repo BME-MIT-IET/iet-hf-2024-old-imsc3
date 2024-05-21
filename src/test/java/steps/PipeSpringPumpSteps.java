@@ -84,12 +84,13 @@ public class PipeSpringPumpSteps {
 
     @When("the saboteur gains a point")
     public void the_saboteur_gains_a_point() {
-        controller.stateSet("counter", "saboteurPoints", "1");
+        controller.getCounter().AddSaboteurPoints(1);
     }
 
     @Then("the saboteur's points should be {int}")
     public void the_saboteur_s_points_should_be(int points) {
-        controller.stateGet("counter", "saboteurPoints");
-        System.out.println("ladskéjfkldsafhjopasdfjoisadfjosdfk");
+        Object counter_saboteur = controller.stateGet("counter", "saboteurPoints", true);
+        assertEquals("counter.saboteurPoints = 1", counter_saboteur);
+        System.out.println("-----");
     }
 }
