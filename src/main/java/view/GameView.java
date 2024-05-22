@@ -161,8 +161,8 @@ public class GameView extends Window implements Serializable {
                 if (c.isDraggable() && c.isIn(e)) {
                     dragged = c;
                     //a drag-elt dolog legyen a legfelső elem amit megjelenítünk
-                    if (drawables.contains(c)) {
-                        drawables.remove(c);
+                    if (drawables.contains((Drawable) c)) {
+                        drawables.remove((Drawable) c);
                         drawables.add((Drawable) c);
                     }
                     clickables.remove(c);
@@ -193,7 +193,7 @@ public class GameView extends Window implements Serializable {
     @Override
     public void mouseDragged(MouseEvent e) {
         synchronized (sync) {
-            if (dragged != null && drawables.contains(dragged)) {
+            if (dragged != null && drawables.contains((Drawable) dragged)) {
                 Drawable d = (Drawable) dragged;
                 d.x = e.getX();
                 d.y = e.getY();

@@ -63,7 +63,7 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      */
     @Override
     public boolean isIn(MouseEvent e) {
-        return Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
+        return Math.sqrt(Math.pow((double)e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
     }
 
     /**

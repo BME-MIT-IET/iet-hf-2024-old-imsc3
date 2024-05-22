@@ -26,8 +26,8 @@ public class PopUpBar extends Drawable {
         Point[] buttonLocations = new Point[6];
         for (int i = 0; i < buttonLocations.length; ++i) {
             buttonLocations[i] = new Point();
-            buttonLocations[i].x = (int) (Math.cos(Math.toRadians(i * -60 - 90)) * r + x);
-            buttonLocations[i].y = (int) (Math.sin(Math.toRadians(i * -60 - 90)) * r + y);
+            buttonLocations[i].x = (int) (Math.cos(Math.toRadians((double)i * -60 - 90)) * r + x);
+            buttonLocations[i].y = (int) (Math.sin(Math.toRadians((double)i * -60 - 90)) * r + y);
 
         }
 

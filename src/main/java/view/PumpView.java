@@ -122,7 +122,7 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
 
     @Override
     public boolean isIn(MouseEvent e) {
-        return Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
+        return Math.sqrt(Math.pow((double)e.getX() - x, 2) + Math.pow(((double)e.getY() - y), 2)) < r;
     }
 
     @Override

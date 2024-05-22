@@ -295,7 +295,7 @@ public class PipeView extends Drawable implements Clickable, CreatePopUpBar, Ste
     public double getLength() {
         int vecX = endX - x;
         int vecY = endY - y;
-        return Math.sqrt(vecX * vecX + vecY * vecY);
+        return Math.sqrt(vecX * vecX + (double)vecY * vecY);
     }
     /**
      * Visszaadja a cső szélességét
