@@ -8,19 +8,7 @@ import java.io.Serializable;
  * Pumpa funkcióinak megvalósítása
  */
 public class Pump extends WaterNode implements PickupAble, Serializable {
-    private Controller controller;
 
-    public Pump(Controller controller) {
-        this.controller = controller;
-    }
-
-    public Controller getController() {
-        return controller;
-    }
-
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
     /**
      * törött-e a pumpa
      */
@@ -63,6 +51,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Akkor hívódik, ha egy játékos felveszi ezt a pumpát(amit nem tud)
+     *
      * @param from melyik elemről vesszük le / csatlakoztatjuk le a pumpát
      */
     @Override
@@ -72,6 +61,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Pumpa letétele
+     *
      * @param to melyik elemre tesszük le / csatlakoztatjuk rá a pumpát
      * @return ha sikerül letenni, akkor true-val tér vissza, különben false-szal
      */
@@ -79,8 +69,10 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
     public boolean placedDown(Steppable to) {
         return to.placedDownTo(this);
     }
+
     /**
      * A pickup felvétele a pumpárópl
+     *
      * @param pickup az adott elem, amit fel akarunk venni
      * @return amennyiben az elemet sikeresen felvették true-val tér vissza, különben false-szal
      */
@@ -90,10 +82,10 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
         int pickupIdx = pipes.indexOf(pickup);
         if (pickupIdx != -1) {
             pipes.remove(pickupIdx);
-            if(pickup == activeIn){
+            if (pickup == activeIn) {
                 activeIn = null;
             }
-            if(pickup == activeOut){
+            if (pickup == activeOut) {
                 activeOut = null;
             }
             return true;
@@ -104,6 +96,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Egy cső lerakása a pumpára
+     *
      * @param pickup a Pipe amit le akarunk rakni
      * @return amennyiben sikeresen le lehet helyezni a csövet a pumpára true-val tér vissza, különben false-szal
      */
@@ -117,6 +110,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Egy pumpa lerakása a pumpára
+     *
      * @param pickup a Pump amit le akarunk rakni
      * @return mindig false-szal tér vissza, hiszen pump-ra nem lehet másik pump-ot helyezni
      */
@@ -135,10 +129,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
         if (broken) {
             IO_Manager.writeInfo(controller.getObjectName(this) + " is broken", controller.filetoWrite != null);
         }
-        if(!broken && heldWater != 0 && activeOut != null)
-        {
+        if (!broken && heldWater != 0 && activeOut != null) {
             int gained = activeOut.gainWater(1);
-            if(gained==1){
+            if (gained == 1) {
                 heldWater--;
             }
             IO_Manager.write(controller.getObjectName(activeOut) + " gained " + gained, controller.filetoWrite != null);
@@ -151,7 +144,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
             int lost = activeIn.loseWater(1);
             int excess = (heldWater + lost > waterCapacity) ? (heldWater + lost - waterCapacity) : 0;
             activeIn.gainWater(excess);
-            heldWater +=lost-excess;
+            heldWater += lost - excess;
             IO_Manager.write(controller.getObjectName(activeIn) + " lost " + (lost - excess), Controller.filetoWrite != null);
         }
     }
@@ -165,12 +158,11 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      */
     @Override
     public boolean playerRedirect(Pipe in, Pipe out) {
-        if(pipes.contains(in) && pipes.contains(out)) {
+        if (pipes.contains(in) && pipes.contains(out)) {
             activeIn = in;
             activeOut = out;
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     /**
@@ -189,7 +181,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * @param p bemeneti cső
-     * beállítja a p csövet a bemeneti csőre
+     *          beállítja a p csövet a bemeneti csőre
      */
     public void setActiveIn(Pipe p) {
         activeIn = p;
@@ -197,7 +189,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * @param p kimeneti cső
-     * beállítja a p csövet az aktív kimeneti csőre
+     *          beállítja a p csövet az aktív kimeneti csőre
      */
     public void setActiveOut(Pipe p) {
         activeOut = p;
@@ -205,6 +197,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Elemet fel lehet-e venni onnan amit átadunk
+     *
      * @param to - ahonnan felvesszük
      * @return fel lehet-e venni
      */
@@ -215,16 +208,18 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Le lehet-e rakni erre csövet
+     *
      * @param p - a cső amit lerakunk
      * @return le lehet-e rakni
      */
     @Override
     boolean canBePlacedDown(Pipe p) {
-        return maximumPipes>pipes.size();
+        return maximumPipes > pipes.size();
     }
 
     /**
      * Erre nem lehet rakni pumpát
+     *
      * @param p - pumpa
      * @return nem lehet
      */
@@ -235,13 +230,13 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * @param p hozzáadandó cső
-     * ha a pumpára kötött csövek száma kisebb a maximális értéknél, akkor a csövet a pumpára köti
+     *          ha a pumpára kötött csövek száma kisebb a maximális értéknél, akkor a csövet a pumpára köti
      * @return ha sikerült a csövet a pumpára kötni, akkor true-val tér vissza, különben false-szal
      */
     @Override
     public boolean addPipe(Pipe p) {
         boolean valid = pipes.size() < maximumPipes;
-        if(valid)
+        if (valid)
             pipes.add(p);
         else
             IO_Manager.writeInfo("Can't place " + controller.getObjectName(p) + " here, because " +
@@ -252,11 +247,12 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Megjavítja a pumpát, ha törött
+     *
      * @return sikeresség
      */
     @Override
-    public boolean repaired(){
-        if(broken){
+    public boolean repaired() {
+        if (broken) {
             broken = false;
             return true;
         } else {
@@ -267,33 +263,37 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
 
     /**
      * Lehet-e átirányítani a pumpát
+     *
      * @param p - a játékos aki átirányítja
      * @return lehet-e
      */
     @Override
-    public boolean canRedirect(Player p){
-        return p.standingOn==this && pipes.size()>1;
+    public boolean canRedirect(Player p) {
+        return p.standingOn == this && pipes.size() > 1;
     }
+
     /**
      * Lehet-e megjavítani a pumpát
+     *
      * @param p - a játékos aki megjavítja
      * @return lehet-e
      */
     @Override
-    public boolean canRepair(Player p){
-        return p.standingOn==this && broken;
+    public boolean canRepair(Player p) {
+        return p.standingOn == this && broken;
     }
 
     /**
      * Le lehet-e rakni erre azt amit a szerelő fog
+     *
      * @param m - a szerelő aki lerakná
      * @return le lehet-e
      */
     @Override
-    public boolean canPlaceDown(Mechanic m){
+    public boolean canPlaceDown(Mechanic m) {
         if (m.getHeldItems() == null)
             return false;
-        return m.standingOn==this && m.getHeldItems().canBePlacedDownTo(this);
+        return m.standingOn == this && m.getHeldItems().canBePlacedDownTo(this);
     }
 
     //Visszatér a broken értékével.
@@ -302,7 +302,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
     }
 
     //Visszatér a WaterCapacity értékével.
-    public int getWaterCapacity() {return waterCapacity;}
+    public int getWaterCapacity() {
+        return waterCapacity;
+    }
 
     //Visszatér a heldWater értékével.
     public int getHeldWater() {

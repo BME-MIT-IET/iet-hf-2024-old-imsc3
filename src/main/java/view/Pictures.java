@@ -1,36 +1,116 @@
 package view;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Előre definiált képek
  */
 public class Pictures {
-        public static final BufferedImage background = ImageUtility.ImageLoad("1-bg.png");
-        public static final BufferedImage menuTitle = ImageUtility.ImageLoad("1-title.png");
-        public static final BufferedImage playButton = ImageUtility.ImageLoad("1-button-1.png");
-        public static final BufferedImage loadButton = ImageUtility.ImageLoad("1-button-2.png");
-        public static final BufferedImage exitButton = ImageUtility.ImageLoad("1-button-3.png");
-        public static final BufferedImage minusButton = ImageUtility.ImageLoad("2-button-minus.png");
-        public static final BufferedImage plusButton = ImageUtility.ImageLoad("2-button-plus.png");
-        public static final BufferedImage mapPrevButton = ImageUtility.ImageLoad("2-map-preview.png");
+        private static final Map<String, BufferedImage> images = new HashMap<>();
 
-        public static final BufferedImage saveButton = ImageUtility.ImageLoad("3-button-save.png");
-        public static final BufferedImage scoreDivider = ImageUtility.ImageLoad("3-score-divider.png");
+        private static BufferedImage loadImage(String path) {
+                if (!images.containsKey(path)) {
+                        try {
+                                images.put(path, ImageUtility.ImageLoad(path));
+                        } catch (Exception e) {
+                                System.err.println("Error loading image: " + path + "/n " + e.getMessage());
+                                images.put(path, null);
+                        }
+                }
+                return images.get(path);
+        }
 
-        public static final BufferedImage cisternFilledImg = ImageUtility.ImageLoad("3-cistern-filled.png");
-        public static final BufferedImage springFilledImg = ImageUtility.ImageLoad("3-spring-filled.png");
+        public static BufferedImage getBackground() {
+                return loadImage("1-bg.png");
+        }
 
-        public static final BufferedImage redirectImg = ImageUtility.ImageLoad("3-popup-atallit.png");
-        public static final BufferedImage pickUpImg = ImageUtility.ImageLoad("3-popup-felemel.png");
-        public static final BufferedImage placeDownImg = ImageUtility.ImageLoad("3-popup-lerak.png");
-        public static final BufferedImage pierceImg = ImageUtility.ImageLoad("3-popup-lyukaszt.png");
-        public static final BufferedImage lubricateImg = ImageUtility.ImageLoad("3-popup-megken.png");
-        public static final BufferedImage moveImg = ImageUtility.ImageLoad("3-popup-mozog.png");
-        public static final BufferedImage passImg = ImageUtility.ImageLoad("3-popup-passzol.png");
-        public static final BufferedImage glueImg = ImageUtility.ImageLoad("3-popup-ragaszt.png");
-        public static final BufferedImage repairImg = ImageUtility.ImageLoad("3-popup-szerel.png");
-        public static final BufferedImage pumpIndicatorImg = ImageUtility.ImageLoad("3-pump-indicator.png");
-        public static final BufferedImage mappreview2 = ImageUtility.ImageLoad("palya2.png");
+        public static BufferedImage getMenuTitle() {
+                return loadImage("1-title.png");
+        }
+
+        public static BufferedImage getPlayButton() {
+                return loadImage("1-button-1.png");
+        }
+
+        public static BufferedImage getLoadButton() {
+                return loadImage("1-button-2.png");
+        }
+
+        public static BufferedImage getExitButton() {
+                return loadImage("1-button-3.png");
+        }
+
+        public static BufferedImage getMinusButton() {
+                return loadImage("2-button-minus.png");
+        }
+
+        public static BufferedImage getPlusButton() {
+                return loadImage("2-button-plus.png");
+        }
+
+        public static BufferedImage getMapPrevButton() {
+                return loadImage("2-map-preview.png");
+        }
+
+        public static BufferedImage getSaveButton() {
+                return loadImage("3-button-save.png");
+        }
+
+        public static BufferedImage getScoreDivider() {
+                return loadImage("3-score-divider.png");
+        }
+
+        public static BufferedImage getCisternFilledImg() {
+                return loadImage("3-cistern-filled.png");
+        }
+
+        public static BufferedImage getSpringFilledImg() {
+                return loadImage("3-spring-filled.png");
+        }
+
+        public static BufferedImage getRedirectImg() {
+                return loadImage("3-popup-atallit.png");
+        }
+
+        public static BufferedImage getPickUpImg() {
+                return loadImage("3-popup-felemel.png");
+        }
+
+        public static BufferedImage getPlaceDownImg() {
+                return loadImage("3-popup-lerak.png");
+        }
+
+        public static BufferedImage getPierceImg() {
+                return loadImage("3-popup-lyukaszt.png");
+        }
+
+        public static BufferedImage getLubricateImg() {
+                return loadImage("3-popup-megken.png");
+        }
+
+        public static BufferedImage getMoveImg() {
+                return loadImage("3-popup-mozog.png");
+        }
+
+        public static BufferedImage getPassImg() {
+                return loadImage("3-popup-passzol.png");
+        }
+
+        public static BufferedImage getGlueImg() {
+                return loadImage("3-popup-ragaszt.png");
+        }
+
+        public static BufferedImage getRepairImg() {
+                return loadImage("3-popup-szerel.png");
+        }
+
+        public static BufferedImage getPumpIndicatorImg() {
+                return loadImage("3-pump-indicator.png");
+        }
+
+        public static BufferedImage getMapPreview2() {
+                return loadImage("palya2.png");
+        }
 }
-

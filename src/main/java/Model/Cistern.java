@@ -12,26 +12,12 @@ import java.util.LinkedList;
  * Ciszterna megvalósítására szolgáló osztály
  */
 public class Cistern extends WaterNode implements Serializable {
-    private Controller controller;
 
     /**
      * Pontszámításhoz használt singleton
      */
     private final PointCounter counter;
 
-    public Cistern(Controller controller, PointCounter counter) {
-        this.controller = controller;
-        this.counter = counter;
-    }
-
-
-    public Controller getController() {
-        return controller;
-    }
-
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
 
     /**
      * Ciszternáról felvehető elemek, amik generálódtak rajta
@@ -49,8 +35,8 @@ public class Cistern extends WaterNode implements Serializable {
     private Controller controller;
 
     public Cistern(Controller controller, PointCounter counter) {
-         this.controller= controller;
-         this.counter = counter;
+        this.controller = controller;
+        this.counter = counter;
     }
 
     public Controller getController() {
@@ -59,10 +45,12 @@ public class Cistern extends WaterNode implements Serializable {
 
     public void setController(Controller controller) {
         this.controller = controller;
+    }
 
     /**
      * PickupAble felvétele esetén hívódik, a
      * ciszternában lerendezi a Pickupable felvételének következményeit.
+     *
      * @param pickup az adott elem, amit fel akarunk venni
      * @return a felvétel eredménye
      */
@@ -79,6 +67,7 @@ public class Cistern extends WaterNode implements Serializable {
     /**
      * PickupAble lerakása esetén hívja egy
      * mechanic ha a ciszternán áll, ekkor beköti a ciszternába a kezében lévő csövet
+     *
      * @param pickup a Pipe amit le akarunk rakni
      * @return a felvétel eredménye(mivel ciszternára lehet csövet kötni ezért ez mindig kivitelezhető)
      */
@@ -93,6 +82,7 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * Ez a ciszternára pumpa lerakásának függvénye, visszatérve jelzi, hogy ez nem lehetséges
+     *
      * @param pickup a Pump amit le akarunk rakni
      * @return a felvétel eredménye(mivel ciszternára nem lehet pumpát kötni ezért ez sose kivitelezhető)
      */
@@ -101,7 +91,6 @@ public class Cistern extends WaterNode implements Serializable {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
-
 
 
     /**
@@ -154,6 +143,7 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * A createdPickupables gettere
+     *
      * @return felvehető elemek a ciszternáról
      */
     public LinkedList<PickupAble> getCreatedPickupables() {
@@ -162,47 +152,52 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * Fel tud-e venni innen pumpát a szerelő
+     *
      * @param m - a szerelő
      * @return - fel tud-e venni
      */
     @Override
-    public boolean canPickUpPump(Mechanic m){
+    public boolean canPickUpPump(Mechanic m) {
 
         System.out.println(generatedPumps);
-        return m.standingOn==this && !generatedPumps.isEmpty() && m.getHeldItems()==null;
+        return m.standingOn == this && !generatedPumps.isEmpty() && m.getHeldItems() == null;
     }
+
     /**
      * Fel tud-e venni innen csövet a szerelő
+     *
      * @param m - a szerelő
      * @return - fel tud-e venni
      */
     @Override
-    public boolean canPickUpPipe(Mechanic m){
+    public boolean canPickUpPipe(Mechanic m) {
 
         System.out.println(m.getHeldItems());
-        return m.standingOn==this && !generatedPipes.isEmpty() && m.getHeldItems()==null;
+        return m.standingOn == this && !generatedPipes.isEmpty() && m.getHeldItems() == null;
     }
 
     /**
      * Le tudja-e rakni a kezében lévő dolgot a szerelő ide
+     *
      * @param m - a szerelő
      * @return - le tudja-e rakni
      */
     @Override
-    public boolean canPlaceDown(Mechanic m){
+    public boolean canPlaceDown(Mechanic m) {
         if (m.getHeldItems() == null)
             return false;
-        return m.standingOn==this && m.getHeldItems().canBePlacedDownTo(this);
+        return m.standingOn == this && m.getHeldItems().canBePlacedDownTo(this);
     }
 
     /**
      * El tud-e innen mozogni a játékos bárhova
+     *
      * @return el tud-e
      */
     @Override
     public boolean canMoveFromHere() {
-        boolean canMove=false;
-        for(Pipe p:pipes){
+        boolean canMove = false;
+        for (Pipe p : pipes) {
             if (p.players.isEmpty() && !generatedPipes.contains(p)) {
                 canMove = true;
                 break;
@@ -213,6 +208,7 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * Le lehet rakni ide csövet
+     *
      * @param p - cső
      * @return Le lehet
      */
@@ -223,6 +219,7 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * Le lehet rakni ide pumpát
+     *
      * @param p - pumpa
      * @return Nem lehet
      */
@@ -233,13 +230,16 @@ public class Cistern extends WaterNode implements Serializable {
 
     /**
      * A generált csövek listájának gettere
+     *
      * @return a lista
      */
     public LinkedList<Pipe> getGeneratedPipes() {
         return generatedPipes;
     }
+
     /**
      * A generált pumpák listájának gettere
+     *
      * @return a lista
      */
     public LinkedList<Pump> getGeneratedPumps() {
@@ -248,3 +248,4 @@ public class Cistern extends WaterNode implements Serializable {
 
 
 }
+
