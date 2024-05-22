@@ -489,7 +489,7 @@ public class Controller implements Serializable {
     public Object stateGet(String objectName, String attribName, boolean str) {
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
+        if (mechanics.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR -> output += Boolean.toString(((Mechanic) o).isFellDown());
                 case STUCK_STR -> output += Boolean.toString(((Mechanic) o).isStuck());
@@ -498,7 +498,7 @@ public class Controller implements Serializable {
                 case HELD_ITEMS_STR -> output += getObjectName(((Mechanic) o).getHeldItems());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR -> output += Boolean.toString(((Saboteur) o).isFellDown());
                 case STUCK_STR -> output += Boolean.toString(((Saboteur) o).isStuck());
@@ -506,20 +506,20 @@ public class Controller implements Serializable {
                 case STATE_STR -> output += getObjectName(((Saboteur) o).getState());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
+        } else if (cisterns.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case CREATED_PICKUPABLES_STR -> output += listWrite(((Cistern) o).getCreatedPickupables());
                 case PIPES_STR -> output += listWrite(((Cistern) o).getPipes());
                 case PLAYERS_STR -> output += listWrite(((Cistern) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
+        } else if (springs.contains(objectCatalog.get(objectName))) {
             switch (attribName)  {
                 case PIPES_STR -> output += listWrite(((Spring) o).getPipes());
                 case PLAYERS_STR -> output += listWrite(((Spring) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
+        } else if (pumps.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> output += Boolean.toString(((Pump) o).isBroken());
                 case WATER_CAPACITY_STR -> output += Integer.toString(((Pump) o).getWaterCapacity());
@@ -531,7 +531,7 @@ public class Controller implements Serializable {
                 case PLAYERS_STR -> output += listWrite(((Pump) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
+        } else if (pipes.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> output += Boolean.toString(((Pipe) o).isBroken());
                 case WATER_CAPACITY_STR -> output += Integer.toString(((Pipe) o).getWaterCapacity());
@@ -572,7 +572,7 @@ public class Controller implements Serializable {
      */
     public void stateSet(String objectName, String attribName, String attribValue) {
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
+        if (mechanics.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR:
                     ((Mechanic) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -592,7 +592,7 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR:
                     ((Saboteur) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -613,11 +613,11 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
+        } else if (cisterns.contains(objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
+        } else if (springs.contains(objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
+        } else if (pumps.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
                 case WATER_CAPACITY_STR -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
@@ -633,7 +633,7 @@ public class Controller implements Serializable {
                 }
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
+        } else if (pipes.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
                 case WATER_CAPACITY_STR -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));

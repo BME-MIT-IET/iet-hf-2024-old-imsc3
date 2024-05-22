@@ -24,6 +24,6 @@ public class SaboteurSteps {
 
     @When("the saboteur gains a point")
     public void the_saboteur_gains_a_point() {
-        controller.getCounter().AddSaboteurPoints(1);
+        controller.getCounter().addSaboteurPoints(1);
     }
 }
