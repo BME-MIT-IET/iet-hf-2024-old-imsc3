@@ -14,10 +14,10 @@ import Model.Steppable;
  */
 public class CisternView extends Drawable implements Clickable, CreatePopUpBar, SteppableView {
 
-    private Cistern cistern;
-    private int r;
+    private final Cistern cistern;
+    private final int r;
     private GameView gameView = null;
-    private BufferedImage sprite = null;
+    private BufferedImage sprite;
 
     /**
      * CisternView konstruktor
@@ -31,9 +31,9 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
         super(x, y, v);
         this.r = r;
         cistern = c;
-        sprite = Pictures.cisternFilledImg;
+        sprite = Pictures.getCisternFilledImg();
         sprite = ImageUtility.scaleImage(sprite, 2*r);
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
 
@@ -63,7 +63,7 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      */
     @Override
     public boolean isIn(MouseEvent e) {
-        return Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
+        return Math.sqrt(Math.pow((double)e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r;
     }
 
     /**
@@ -106,13 +106,8 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      * @param p - játékos
      * @return - játékos szöge
      */
-    @Override
     public double getPlayerAngle(Player p) {
-        double[] angles = new double[cistern.getPlayers().size()];
-        for (int i = 0; i < angles.length; ++i) {
-            angles[i] = i * 20 - (angles.length - 1) * 10;
-        }
-        return angles[cistern.getPlayers().indexOf(p)];
+        return super.getPlayerAngle(p, cistern.getPlayers());
     }
 
     @Override
@@ -134,8 +129,8 @@ public class CisternView extends Drawable implements Clickable, CreatePopUpBar, 
      */
     public void displayCreated() {
         ActionType[] at = new ActionType[6];
-        at[4] = ActionType.pickupPipe;
-        at[5] = ActionType.pickupPump;
+        at[4] = ActionType.PICKUP_PIPE;
+        at[5] = ActionType.PICKUP_PUMP;
         createPopUpBarWithActions(x, y, 100, view, this, at);
     }
 }

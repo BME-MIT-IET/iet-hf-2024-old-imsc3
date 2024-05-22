@@ -7,15 +7,17 @@ import Model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.LinkedList;
 
+import static assets.Strings.INTER;
 import static view.Pictures.*;
 import static view.PopUpButton.*;
 
 /**
  * A játék nézetét megvalósító osztály.
  */
-public class GameView extends Window {
+public class GameView extends Window implements Serializable {
 
     /**
      * Map beállítása.
@@ -38,19 +40,7 @@ public class GameView extends Window {
     protected PopUpBar popUpBar = null;
     protected PopUpBar cisternDisplay = null;
     private boolean ended = false;
-    private Button exit;
-
-
-    private AppFrame frame;
-
-    /**
-     * Frame beállítása.
-     *
-     * @param frame - a beállítandó frame.
-     */
-    public void setFrame(AppFrame frame) {
-        this.frame = frame;
-    }
+    private final Button exit;
 
     /**
      * Konstruktor.
@@ -58,10 +48,9 @@ public class GameView extends Window {
      * @param frame - a frame, amelyen a játék nézet megjelenik.
      */
     public GameView(AppFrame frame) {
-        this.frame = frame;
         exit = new Button(frame.getWidth() - 80, 10, 50, 50, this);
-        exit.img = ImageUtility.scaleImage(exitButton, 45);
-        exit.option = WindowOptions.exit;
+        exit.img = ImageUtility.scaleImage(getExitButton(), 45);
+        exit.option = WindowOptions.EXIT;
         addDrawable(exit, true);
         addClickable(exit, true);
     }
@@ -76,7 +65,7 @@ public class GameView extends Window {
     }
 
 
-    private Object sync = new Object();
+    private final Object sync = new Object();
 
     /**
      * kirajzolás megvalósítása.
@@ -95,12 +84,12 @@ public class GameView extends Window {
                 graphics2D.setColor(Color.WHITE);
                 graphics2D.fillRect(Controller.getInstance().getFrame().getWidth() - 1100 + 2, -20, 1100, 98);
                 g.setColor(Color.ORANGE);
-                g.setFont(new Font("Inter", Font.BOLD, 50));
-                if (PointCounter.getInstance().GetMechanicPoints() > PointCounter.getInstance().GetSaboteurPoints())
+                g.setFont(new Font(INTER, Font.BOLD, 50));
+                if (PointCounter.getInstance().getMechanicPoints() > PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("A SZERELŐK NYERTEK!", Controller.getInstance().getFrame().getWidth() - 1050, 55);
-                else if (PointCounter.getInstance().GetMechanicPoints() < PointCounter.getInstance().GetSaboteurPoints())
+                else if (PointCounter.getInstance().getMechanicPoints() < PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("A SZABOTŐRÖK NYERTEK!", Controller.getInstance().getFrame().getWidth() - 1050, 55);
-                else if (PointCounter.getInstance().GetMechanicPoints() == PointCounter.getInstance().GetSaboteurPoints())
+                else if (PointCounter.getInstance().getMechanicPoints() == PointCounter.getInstance().getSaboteurPoints())
                     g.drawString("DÖNTETLEN", Controller.getInstance().getFrame().getWidth() - 1050, 55);
 
             } else {
@@ -110,10 +99,10 @@ public class GameView extends Window {
                 graphics2D.fillRect(Controller.getInstance().getFrame().getWidth() - 450 + 2, -20, 450, 98);
             }
             g.setColor(Color.BLACK);
-            g.setFont(new Font("Inter", Font.BOLD, 50));
-            g.drawString(Integer.toString(PointCounter.getInstance().GetMechanicPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 50, 55);
-            g.drawImage(ImageUtility.scaleImage(scoreDivider, 35), Controller.getInstance().getFrame().getWidth() - 300, 20, null);
-            g.drawString(Integer.toString(PointCounter.getInstance().GetSaboteurPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 200, 55);
+            g.setFont(new Font(INTER, Font.BOLD, 50));
+            g.drawString(Integer.toString(PointCounter.getInstance().getMechanicPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 50, 55);
+            g.drawImage(ImageUtility.scaleImage(getScoreDivider(), 35), Controller.getInstance().getFrame().getWidth() - 300, 20, null);
+            g.drawString(Integer.toString(PointCounter.getInstance().getSaboteurPoints()), Controller.getInstance().getFrame().getWidth() - 450 + 200, 55);
 
             for (Drawable d : drawables) {
                 d.paint(g);
@@ -133,8 +122,7 @@ public class GameView extends Window {
             if (PopUpButton.waitingForParameter) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.BLACK);
-                g2d.setFont(new Font("Inter", Font.BOLD, 20));
-                AppFrame f = Controller.getInstance().getFrame();
+                g2d.setFont(new Font(INTER, Font.BOLD, 20));
                 g2d.drawString("Válaszd ki a két átirányítandó csövet!", 40, 40);
             }
         }
@@ -173,8 +161,8 @@ public class GameView extends Window {
                 if (c.isDraggable() && c.isIn(e)) {
                     dragged = c;
                     //a drag-elt dolog legyen a legfelső elem amit megjelenítünk
-                    if (drawables.contains(c)) {
-                        drawables.remove(c);
+                    if (drawables.contains((Drawable) c)) {
+                        drawables.remove((Drawable) c);
                         drawables.add((Drawable) c);
                     }
                     clickables.remove(c);
@@ -194,18 +182,18 @@ public class GameView extends Window {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         synchronized (sync) {
-            if (dragged != null && drawables.contains(dragged)) {
+            if (dragged != null && drawables.contains((Drawable) dragged)) {
                 Drawable d = (Drawable) dragged;
                 d.x = e.getX();
                 d.y = e.getY();

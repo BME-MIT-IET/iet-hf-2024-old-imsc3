@@ -5,12 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.EmptyStackException;
 
 /**
  * CharacterCreationMenu - creates a frame which includes a color picker panel
  */
-public class CharacterCreation {
+public class CharacterCreation implements Serializable {
     JFrame frame;
 
     JPanel mainPanel;
@@ -20,7 +21,7 @@ public class CharacterCreation {
 
 
 
-    private ColorPicker characterCreationPanel;
+    private final ColorPicker characterCreationPanel;
 
     /**
      * constructor - creates the frame and sets up the layout (a color picker, a text field for the player's name, and a button for saving the data and return to the main menu)

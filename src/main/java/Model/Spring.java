@@ -29,7 +29,7 @@ public class Spring extends WaterNode implements Serializable {
      * @return amennyiben az adott elemet fel lehet venni a forrásról true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
 
         int pickupIdx = pipes.indexOf(pickup);
         if (pickupIdx != -1) {
@@ -45,10 +45,10 @@ public class Spring extends WaterNode implements Serializable {
      * @return amennyiben sikeresen le lehet helyezni a forrásra a csövet, true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
-        boolean successful = AddPipe(pickup);
+    public boolean placedDownTo(Pipe pickup) {
+        boolean successful = addPipe(pickup);
         if (successful)
-            pickup.AddWaterNode(this);
+            pickup.addWaterNode(this);
         return successful;
 
     }
@@ -59,7 +59,7 @@ public class Spring extends WaterNode implements Serializable {
      * @return false-szal tér vissza, mivel egy forrásra nem lehet pumpát helyezni
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
+    public boolean placedDownTo(Pump pickup) {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
@@ -101,9 +101,9 @@ public class Spring extends WaterNode implements Serializable {
      * A vízfolyással foglalkozik, a rákötött csőnek ad egy egységnyi vizet
      */
     @Override
-    public void WaterFlow() {
+    public void waterFlow() {
         if(pipes.getFirst()!=null) {
-            int gained = pipes.getFirst().GainWater(1);
+            int gained = pipes.getFirst().gainWater(1);
             IO_Manager.write(controller.getObjectName(pipes.get(0)) + " gained " + gained, Controller.filetoWrite != null);
         }
     }
@@ -113,8 +113,8 @@ public class Spring extends WaterNode implements Serializable {
      * @return ha a forrásra még nincsen cső kötve, akkor rákötik a forrásra, és visszatér true-val, különben false-szal
      */
     @Override
-    public boolean AddPipe(Pipe p) {
-        boolean valid = pipes.size() < 1;
+    public boolean addPipe(Pipe p) {
+        boolean valid = pipes.isEmpty();
         if (valid)
             pipes.add(p);
         else

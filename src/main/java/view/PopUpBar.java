@@ -22,13 +22,12 @@ public class PopUpBar extends Drawable {
      */
     public PopUpBar(int x, int y, int r, Window v, SteppableView creator, ActionType[] at) {
         super(x, y, v);
-        this.r = r;
 
-        buttonLocations = new Point[6];
+        Point[] buttonLocations = new Point[6];
         for (int i = 0; i < buttonLocations.length; ++i) {
             buttonLocations[i] = new Point();
-            buttonLocations[i].x = (int) (Math.cos(Math.toRadians(i * -60 - 90)) * r + x);
-            buttonLocations[i].y = (int) (Math.sin(Math.toRadians(i * -60 - 90)) * r + y);
+            buttonLocations[i].x = (int) (Math.cos(Math.toRadians((double)i * -60 - 90)) * r + x);
+            buttonLocations[i].y = (int) (Math.sin(Math.toRadians((double)i * -60 - 90)) * r + y);
 
         }
 
@@ -48,16 +47,13 @@ public class PopUpBar extends Drawable {
         this.creator = creator;
     }
 
-    private SteppableView creator;
+    private final SteppableView creator;
 
     public SteppableView getCreator() {
         return creator;
     }
 
-    private Point[] buttonLocations;
-    private int r;
-
-    private List<PopUpButton> buttons = new LinkedList<PopUpButton>();
+    private final List<PopUpButton> buttons = new LinkedList<>();
     /**
      * A popup menü kirajzolása
      * @param g Graphics

@@ -10,14 +10,13 @@ import java.awt.*;
  */
 public class AppPanel extends JPanel {
 
-    private MouseIn mouseIn=new MouseIn();
-
     /**
      * Konstruktor, beállítja a paramétereket
      */
     public AppPanel(){
         setFocusable(true);
         requestFocusInWindow();
+        MouseIn mouseIn = new MouseIn();
         addMouseListener(mouseIn);
         addMouseMotionListener(mouseIn);
     }

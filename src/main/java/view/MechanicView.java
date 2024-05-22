@@ -24,14 +24,14 @@ public class MechanicView extends Drawable {
     public MechanicView(int x, int y, Mechanic m, Window v) {
         super(x, y, v);
         mechanic = m;
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
         color = Color.BLUE;
 
     }
 
     private GameView gameView;
-    private Mechanic mechanic;
+    private final Mechanic mechanic;
     private Color color;
     private double angle;
     private Point rotationCenter = new Point(0, 0);
@@ -45,7 +45,7 @@ public class MechanicView extends Drawable {
         this.color = color;
     }
 
-    Image imageForScale = ImageUtility.scaleImage(mapPrevButton, 200);
+    Image imageForScale = ImageUtility.scaleImage(getMapPrevButton(), 200);
 
     private int number;
 
@@ -66,15 +66,14 @@ public class MechanicView extends Drawable {
     @Override
     public void paint(Graphics g) {
         // ha a játék ablakban vagyunk, akkor a játékos színével rajzoljuk ki
-        if (WindowOptions.windowOption == WindowOptions.newgame) {
+        if (WindowOptions.windowOption == WindowOptions.NEWGAME) {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            int screenWidth = (int) screenSize.getWidth() * 3 / 4;
             int screenHeight = (int) screenSize.getHeight() * 3 / 4;
             AppFrame.setGraphicQuality(g);
             Graphics2D graphics2D = (Graphics2D) g.create();
             graphics2D.setColor(color);
             graphics2D.setFont(new Font("Inter", Font.BOLD, 30));
-            graphics2D.drawString("" + color.getRed() + "/" + color.getGreen() + "/" + color.getBlue(), 50 + imageForScale.getWidth(null) + 100, screenHeight / 2 + 20 + number * 50);
+            graphics2D.drawString(color.getRed() + "/" + color.getGreen() + "/" + color.getBlue(), 50 + imageForScale.getWidth(null) + 100, screenHeight / 2 + 20 + number * 50);
 
         }
         // ha a mechanic még nincs eltávolítva
@@ -83,20 +82,14 @@ public class MechanicView extends Drawable {
             int[] pointsX = new int[3];
             int[] pointsY = new int[3];
             pointsX[0] = x;
-            pointsY[0] = y + 12 + 1;
+            pointsY[0] = y + 13;
             pointsX[1] = x - 8 + 1;
             pointsY[1] = y - 10 - 1;
             pointsX[2] = x + 8 + 1;
             pointsY[2] = y - 10 - 1;
 
-            int[] capX = new int[3];
-            int[] capY = new int[3];
-            capX[0] = x;
-            capY[0] = y - 22;
-            capX[1] = x - 8;
-            capY[1] = y - 15;
-            capX[2] = x + 8;
-            capY[2] = y - 15;
+            int[] capX = super.setCapX(x);
+            int[] capY = super.setCapY(y);
 
             g.setColor(color);
             Graphics2D graphics2D = (Graphics2D) g.create();

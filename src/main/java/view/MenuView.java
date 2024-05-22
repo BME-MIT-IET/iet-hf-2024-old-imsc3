@@ -13,8 +13,8 @@ public class MenuView extends Window {
 
     Button newGame, exit;
 
-    private BufferedImage background =  ImageUtility.backgroundScale(Pictures.background);
-    private BufferedImage bgText = ImageUtility.scaleImage(menuTitle, 250);
+    private final BufferedImage background =  ImageUtility.backgroundScale(getBackground());
+    private final BufferedImage bgText = ImageUtility.scaleImage(getMenuTitle(), 250);
 
     /**
      * Konstruktor
@@ -26,13 +26,13 @@ public class MenuView extends Window {
         exit = new Button(760, 370, 250 + 250, 50, this);
 
         newGame.text = "Új játék";
-        newGame.img = ImageUtility.scaleImage(playButton, 50);
+        newGame.img = ImageUtility.scaleImage(getPlayButton(), 50);
 
-        newGame.option = WindowOptions.newgame;
+        newGame.option = WindowOptions.NEWGAME;
 
         exit.text = "Kilépés";
-        exit.img = ImageUtility.scaleImage(exitButton, 50);
-        exit.option = WindowOptions.exit;
+        exit.img = ImageUtility.scaleImage(getExitButton(), 50);
+        exit.option = WindowOptions.EXIT;
         addDrawable(newGame, true);
         addClickable(newGame, true);
         addDrawable(exit, true);
@@ -80,27 +80,27 @@ public class MenuView extends Window {
     }
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     /**

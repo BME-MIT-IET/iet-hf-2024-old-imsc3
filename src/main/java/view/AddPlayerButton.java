@@ -1,7 +1,6 @@
 package view;
 
 import Controller.Controller;
-
 import java.awt.event.MouseEvent;
 
 /**
@@ -10,7 +9,7 @@ import java.awt.event.MouseEvent;
 public class AddPlayerButton extends Button {
     int type;
     String name;
-    static int counter = 0;
+    int counter = 0;
 
     CharacterCreation cc = null;
 
@@ -42,13 +41,6 @@ public class AddPlayerButton extends Button {
                 Controller.getInstance().create(temp, name, 0, 0);
                 // karakter nevének és színének megadása
                 cc = new CharacterCreation(temp, name);
-            }
-
-        } else if (type == -1) {
-            if (name.equals("mechanic")) {
-
-            } else if (name.equals("saboteur")) {
-
             }
         }
 

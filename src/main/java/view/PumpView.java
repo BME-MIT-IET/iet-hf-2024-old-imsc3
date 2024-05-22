@@ -14,26 +14,23 @@ import static java.awt.Color.BLACK;
 
 public class PumpView extends Drawable implements Clickable, CreatePopUpBar, SteppableView {
 
-    public PumpView(int x, int y, int r, Pump p, CisternView c, Window v) {
+    public PumpView(int x, int y, int r, Pump p, Window v) {
         super(x, y, v);
         this.r = r;
         pump = p;
-        gen = c;
 
-        arrowSprite = pumpIndicatorImg;
+        arrowSprite = getPumpIndicatorImg();
         arrowSprite = ImageUtility.scaleImage(arrowSprite, 20);
 
-        if (WindowOptions.windowOption == WindowOptions.game)
+        if (WindowOptions.windowOption == WindowOptions.GAME)
             gameView = (GameView) v;
     }
     private GameView gameView;
-    private Pump pump;
-    private boolean generated;
-    private CisternView gen;
-    private int r;
+    private final Pump pump;
+    private final int r;
     private PipeView outPipe = null;
 
-    private BufferedImage arrowSprite = null;
+    private BufferedImage arrowSprite;
     private int arrowLocX;
     private int arrowLocY;
     private double arrowAngle;
@@ -42,24 +39,12 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
     @Override
     public void paint(Graphics g) {
         AppFrame.setGraphicQuality(g);
-        Color color=new Color(0,0,0);
-        if(pump.isBroken())
-            color=new Color(250,100,100);
-        else {
-            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.25 && pump.getHeldWater()!=0)
-                color=new Color(0,0,150);
-            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.5 && pump.getHeldWater()>=pump.getWaterCapacity()*0.25)
-                color=new Color(0,0,200);
-            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.75 && pump.getHeldWater()>=pump.getWaterCapacity()*0.5)
-                color=new Color(20,20,255);
-            if(pump.getHeldWater()<=pump.getWaterCapacity() && pump.getHeldWater()>=pump.getWaterCapacity()*0.75)
-                color=new Color(60,170,255);
-        }
+        Color color = getColor();
         if (outPipe != null) {
             AffineTransform at = new AffineTransform();
             at.translate(arrowLocX, arrowLocY);
             at.rotate(Math.toRadians(-arrowAngle));
-            at.translate(-arrowSprite.getWidth() / 2, -arrowSprite.getHeight() / 2);
+            at.translate((double) -arrowSprite.getWidth() / 2, (double) -arrowSprite.getHeight() / 2);
             Graphics2D g2 = (Graphics2D) g.create();
             g2.drawImage(arrowSprite, at, null);
             g2.setTransform(new AffineTransform());
@@ -77,6 +62,23 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
         g.drawString(Integer.toString(pump.getHeldWater()), x - 20, y+5);
         g.drawString("/" , x - 2, y+5);
         g.drawString( Integer.toString(pump.getWaterCapacity()), x + 5, y+5);
+    }
+
+    private Color getColor() {
+        Color color=new Color(0,0,0);
+        if(pump.isBroken())
+            color=new Color(250,100,100);
+        else {
+            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.25 && pump.getHeldWater()!=0)
+                color=new Color(0,0,150);
+            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.5 && pump.getHeldWater()>=pump.getWaterCapacity()*0.25)
+                color=new Color(0,0,200);
+            if(pump.getHeldWater()<=pump.getWaterCapacity()*0.75 && pump.getHeldWater()>=pump.getWaterCapacity()*0.5)
+                color=new Color(20,20,255);
+            if(pump.getHeldWater()<=pump.getWaterCapacity() && pump.getHeldWater()>=pump.getWaterCapacity()*0.75)
+                color=new Color(60,170,255);
+        }
+        return color;
     }
 
     @Override
@@ -120,10 +122,7 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
 
     @Override
     public boolean isIn(MouseEvent e) {
-        if (Math.sqrt(Math.pow(e.getX() - x, 2) + Math.pow((e.getY() - y), 2)) < r) {
-            return true;
-        }
-        return false;
+        return Math.sqrt(Math.pow((double)e.getX() - x, 2) + Math.pow(((double)e.getY() - y), 2)) < r;
     }
 
     @Override
@@ -143,8 +142,6 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
 
     /**
      * Visszaadja, hogy egy új játékost melyik pontban lehet kirajzolni
-     *
-     * @return
      */
     @Override
     public Point getDefaultPlayerPosition() {
@@ -154,17 +151,11 @@ public class PumpView extends Drawable implements Clickable, CreatePopUpBar, Ste
     public Point getRotationCenter() {
         //meg kéne nézni hány játékos van rajta
 
-        Point ret = new Point(x, y);
-        return ret;
+        return new Point(x, y);
     }
 
-    @Override
     public double getPlayerAngle(Player p) {
-        double[] angles = new double[pump.getPlayers().size()];
-        for (int i = 0; i < angles.length; ++i) {
-            angles[i] = i * 20 - (angles.length - 1) * 10;
-        }
-        return angles[pump.getPlayers().indexOf(p)];
+        return super.getPlayerAngle(p, pump.getPlayers());
     }
 
     @Override

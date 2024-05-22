@@ -5,8 +5,8 @@ import view.PipeView;
 import view.PumpView;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Csövet reprezentáló osztály
@@ -70,8 +70,11 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     /**
      * Csatlakozási pontok
      */
-    private LinkedList<WaterNode> nodes = new LinkedList<>();
+    private final LinkedList<WaterNode> nodes = new LinkedList<>();
 
+    public Pipe(PointCounter pointCounter) {
+        counter = pointCounter;
+    }
 
     /**
      * A cső felvételét megvalósító metódus. Mechanic tudja meghívni, ezáltal felemeli a kezébe
@@ -79,20 +82,21 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @param from melyik elemről vesszük le / csatlakoztatjuk le
      */
     @Override
-    public void PickedUp(Steppable from) {
-        int pickupIdx = nodes.indexOf(from);
-        if (pickupIdx != -1) {
-            if (nodes.size() > 1)
-                nodes.remove(pickupIdx);
-            beingHeld=true;
-            if (players.size() != 0) {
+    public void pickedUp(Steppable from) {
+        if(nodes.contains(from)) {
+            int pickupIdx = nodes.indexOf(from);
+            if (pickupIdx != -1) {
+                if (nodes.size() > 1)
+                    nodes.remove(pickupIdx);
+                beingHeld = true;
+                if (!players.isEmpty()) {
                 IO_Manager.writeInfo(controller.getObjectName(players.getFirst()) + " is fallen off", Controller.filetoWrite != null);
-                players.getFirst().setFellDown(true);
+                    players.getFirst().setFellDown(true);
+                }
+                counter.addSaboteurPoints(heldWater);
+                heldWater = 0;
             }
-            counter.AddSaboteurPoints(heldWater);
-            heldWater=0;
         }
-
     }
 
     /**
@@ -102,8 +106,8 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return igaz, ha sikeres a letétel
      */
     @Override
-    public boolean PlacedDown(Steppable to) {
-        if (to.PlacedDownTo(this)) {
+    public boolean placedDown(Steppable to) {
+        if (to.placedDownTo(this)) {
             beingHeld = false;
             return true;
         }
@@ -118,8 +122,8 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return a lépés sikeressége
      */
     @Override
-    public boolean PlayerEnter(Player player) {
-        if (players.size() != 0) {
+    public boolean playerEnter(Player player) {
+        if (!players.isEmpty()) {
             IO_Manager.writeInfo("Can't move to " + controller.getObjectName(this) + ", "
                     + controller.getObjectName(players.getFirst()) + " is standing on it", Controller.filetoWrite != null);
             return false;
@@ -136,42 +140,50 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             players.add(player);
 
             if (lubricated){
-                Random random = new Random();
-                int end = random.nextInt(1,2);
-                boolean ignoreState = Player.isIgnoreStates();
-                Player.setIgnoreStates(true);
-                if(end == 1){
-                    player.getStandingOn().PlayerExit(player);
-                    player.setStandingOn(null);
-                    player.Move(nodes.getFirst());
-                }
-                else if(end == 2){
-                    player.getStandingOn().PlayerExit(player);
-                    player.setStandingOn(null);
-                    player.Move(nodes.getLast());
-                }
-                Player.setIgnoreStates(ignoreState);
-                players.remove(player);
-                if (player.getState() == PlayerActionState.moveAction)
-                    player.setState(PlayerActionState.specialAction);
-                else if (player.getState() == PlayerActionState.specialAction) {
-                    player.setState(PlayerActionState.turnOver);
-                    controller.turnOver();
-                }
-                lubricated = false;
+                handleLubricatedPlayer(player);
                 successful = false;
             }
 
             if (glued) {
-                player.setStuck(true);
-                player.setGlueLength(1);
-                glued = false;
-                player.setState(PlayerActionState.turnOver);
-                controller.turnOver();
+                handleGluedPlayer(player);
             }
 
         }
         return successful;
+    }
+
+    private void handleLubricatedPlayer(Player player) {
+        SecureRandom random = new SecureRandom();
+        int end = random.nextInt(1, 3); // 1 or 2
+        boolean ignoreState = Player.isIgnoreStates();
+        Player.setIgnoreStates(true);
+
+        player.getStandingOn().playerExit(player);
+        player.setStandingOn(null);
+
+        if (end == 1) {
+            player.move(nodes.getFirst());
+        } else {
+            player.move(nodes.getLast());
+        }
+
+        Player.setIgnoreStates(ignoreState);
+        players.remove(player);
+        if (player.getState() == PlayerActionState.MOVE_ACTION) {
+            player.setState(PlayerActionState.SPECIAL_ACTION);
+        } else if (player.getState() == PlayerActionState.SPECIAL_ACTION) {
+            player.setState(PlayerActionState.TURN_OVER);
+            controller.turnOver();
+        }
+        lubricated = false;
+    }
+
+    private void handleGluedPlayer(Player player) {
+        player.setStuck(true);
+        player.setGlueLength(1);
+        glued = false;
+        player.setState(PlayerActionState.TURN_OVER);
+        controller.turnOver();
     }
 
     /**
@@ -180,7 +192,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @param player a mezőről lelépő játékos
      */
     @Override
-    public void PlayerExit(Player player) {
+    public void playerExit(Player player) {
         players.remove(player);
     }
 
@@ -190,7 +202,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return mindig hamis, mivel csőről nem vehetünk fel semmit
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
         return false;
     }
 
@@ -202,8 +214,8 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return lerakás sikeressége
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
-        CutInHalf(pickup);
+    public boolean placedDownTo(Pump pickup) {
+        cutInHalf(pickup);
         return true;
 
     }
@@ -214,17 +226,28 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return hamis, mivel nem lehet csövet csőre rakni
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
+    public boolean placedDownTo(Pipe pickup) {
         return false;
     }
 
+    private Pipe setPipesAttr(Pipe newPipe){
+        newPipe.waterCapacity = this.waterCapacity;
+        newPipe.heldWater = this.heldWater;
+        newPipe.broken = this.broken;
+        newPipe.readyToPierce = this.readyToPierce;
+        newPipe.lubricated = this.lubricated;
+        newPipe.glued = this.glued;
+        newPipe.beingHeld = this.beingHeld;
+        newPipe.readyToPierceTimer = this.readyToPierceTimer;
+        return newPipe;
+    }
     /**
      * Akkor hívódik meg, amikor egy pumpát a szerelő lehelyez
      * a csőre, a kettévágást kezeli.
      * @param pump lerakandó pumpa
      */
     @Override
-    public void CutInHalf(Pump pump) {
+    public void cutInHalf(Pump pump) {
 
         String newP1="GenPipe"+ controller.createdPipeNumber++;
         String newP2="GenPipe"+controller.createdPipeNumber++;
@@ -233,11 +256,11 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
 
         Pipe newPipe1 =((Pipe)controller.getObjectCatalog().get(newP1));
         Pipe newPipe2 =((Pipe)controller.getObjectCatalog().get(newP2));
-        newPipe1.AddWaterNode(pump);
-        newPipe2.AddWaterNode(pump);
+        newPipe1.addWaterNode(pump);
+        newPipe2.addWaterNode(pump);
 
-        pump.AddPipe(newPipe1);
-        pump.AddPipe(newPipe2);
+        pump.addPipe(newPipe1);
+        pump.addPipe(newPipe2);
 
         Player player=players.getFirst();
         int x=controller.getGameView().getDrawableByCorrespondingModel(player).getX();
@@ -250,14 +273,14 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         WaterNode node1 = nodes.getFirst();
         WaterNode node2 = nodes.getLast();
 
-        node1.RemovePipe(this);
-        node1.AddPipe(newPipe1);
+        node1.removePipe(this);
+        node1.addPipe(newPipe1);
 
-        node2.AddPipe(newPipe2);
-        node2.RemovePipe(this);
+        node2.addPipe(newPipe2);
+        node2.removePipe(this);
 
-        newPipe1.AddWaterNode(node1);
-        newPipe2.AddWaterNode(node2);
+        newPipe1.addWaterNode(node1);
+        newPipe2.addWaterNode(node2);
 
         Pipe node1activeIn = node1.getActiveIn();
         Pipe node1activeOut = node1.getActiveOut();
@@ -273,34 +296,20 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         if (node2activeOut == this)
             node2.setActiveOut(newPipe2);
 
-        newPipe1.waterCapacity=this.waterCapacity;
-        newPipe1.heldWater=this.heldWater;
-        newPipe1.broken= this.broken;
-        newPipe1.readyToPierce=this.readyToPierce;
-        newPipe1.lubricated=this.lubricated;
-        newPipe1.glued=this.glued;
-        newPipe1.beingHeld= this.beingHeld;
-        newPipe1.readyToPierceTimer=this.readyToPierceTimer;
+        newPipe1 = setPipesAttr(newPipe1);
 
-        newPipe2.waterCapacity=this.waterCapacity;
-        newPipe2.heldWater=this.heldWater;
-        newPipe2.broken= this.broken;
-        newPipe2.readyToPierce=this.readyToPierce;
-        newPipe2.lubricated=this.lubricated;
-        newPipe2.glued=this.glued;
-        newPipe2.beingHeld= this.beingHeld;
-        newPipe2.readyToPierceTimer=this.readyToPierceTimer;
+        newPipe2 = setPipesAttr(newPipe2);
 
         boolean ignoreStates = Player.isIgnoreStates();
         Player.setIgnoreStates(true);
-        player.Move(newPipe1);
+        player.move(newPipe1);
         Player.setIgnoreStates(ignoreStates);
 
         controller.removeObject(this);
         controller.getGameView().remove(controller.getGameView().getPipeViewByCorrespondingModel(this));
 
         controller.getGameView().remove(controller.getGameView().getDrawableByCorrespondingModel(pump));
-        PumpView pumpView = new PumpView(x,y,25,pump,null,controller.getGameView());
+        PumpView pumpView = new PumpView(x,y,25,pump,controller.getGameView());
         controller.getGameView().addPumpView(pumpView);
 
         PipeView pipeView1 = new PipeView(
@@ -328,7 +337,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return igaz, ha nem volt eleve törött a cső
      */
     @Override
-    public boolean Pierced() {
+    public boolean pierced() {
         if (broken) {
             controller.setLastMessage(controller.getObjectName(this) + " is already broken");
             IO_Manager.writeInfo(controller.getObjectName(this) + " is already broken", Controller.filetoWrite != null);
@@ -351,10 +360,10 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @param amount beérkező víz mennyiség
      * @return amennyivel ténylegesen nőtt a cső tartalma
      */
-    public int GainWater(int amount) {
+    public int gainWater(int amount) {
 
         if (broken || beingHeld) {
-            counter.AddSaboteurPoints(amount);
+            counter.addSaboteurPoints(amount);
             return 0;
         }
         else {
@@ -372,7 +381,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @param amount csökkenteni kívánt mennyiség
      * @return ténylegesen vesztett vízmennyiség
      */
-    public int LoseWater(int amount) {
+    public int loseWater(int amount) {
         int lost = Math.min(heldWater, amount);
         heldWater -= lost;
         return lost;
@@ -384,7 +393,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @param w hozzáadandó elem
      * @return igaz, ha sikeres a hozzáadás
      */
-    public boolean AddWaterNode(WaterNode w) {
+    public boolean addWaterNode(WaterNode w) {
         if (nodes.size() > 1) {
             return false;
         }
@@ -394,18 +403,10 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     }
 
     /**
-     * Végpont lecsatolása a csőről
-     * @param w lecsatolandó elem
-     */
-    public void RemoveWaterNode(WaterNode w) {
-        nodes.remove(w);
-    }
-
-    /**
      * Ragasztáskor lefutó függvény, ami megmondja hogy lehetett-e ragasztani
      * @return sikeresség
      */
-    public boolean Glued(){
+    public boolean glued(){
         if(glued){
             return false;
         }
@@ -418,7 +419,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * Csúszósításkor lefutó függvény, ami megmondja hogy lehetett-e csúszósítani
      * @return sikeresség
      */
-    public boolean Lubricated(){
+    public boolean lubricated(){
         if(lubricated){
             return false;
         }
@@ -442,11 +443,11 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      * @return sikeres-e a javítás
      */
     @Override
-    public boolean Repaired(){
+    public boolean repaired(){
         if(broken){
             broken = false;
             readyToPierce = false;
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
             readyToPierceTimer = random.nextInt(4, 9);
             return true;
         } else {
