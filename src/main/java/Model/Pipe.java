@@ -114,6 +114,12 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
                     + Controller.getInstance().getObjectName(players.getFirst()) + " is standing on it", Controller.filetoWrite != null);
             return false;
         }
+
+        if (nodes.isEmpty() || nodes.getFirst() == null || nodes.getLast() == null) {
+            IO_Manager.writeInfo("Pipe " + Controller.getInstance().getObjectName(this) + " is not properly connected", Controller.filetoWrite != null);
+            return false;
+        }
+
         boolean successful = nodes.getFirst()!=null && nodes.getLast()!=null && (nodes.contains(player.getStandingOn()) || player.getStandingOn() == null);
 
         if (successful){
@@ -314,6 +320,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     @Override
     public boolean Pierced() {
         if (broken) {
+            Controller.getInstance().setLastMessage(Controller.getInstance().getObjectName(this) + " is already broken");
             IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is already broken", Controller.filetoWrite != null);
             return false;
         }
@@ -321,6 +328,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             broken = true;
         }
         else
+            Controller.getInstance().setLastMessage(Controller.getInstance().getObjectName(this) + " is not ready to be pierced again");
             IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is not ready to be pierced again", Controller.filetoWrite != null);
         return broken;
     }

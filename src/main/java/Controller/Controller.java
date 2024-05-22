@@ -332,9 +332,10 @@ public class Controller implements Serializable {
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Pierce())
+        if (p.Pierce()) {
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
-        setLastMessage(playerName + " pierced");
+            setLastMessage(playerName + " pierced");
+        }
     }
     /**
      * A ragacsozás parancs függvénye, a neki adott játékos bekeni ragaccsal azt az elemet amin áll(csövet),ha tudja
@@ -349,9 +350,10 @@ public class Controller implements Serializable {
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Glue())
+        if (p.Glue()) {
             IO_Manager.write(playerName + ".standingOn.glued = " + "true", Controller.filetoWrite != null);
-        setLastMessage(playerName + " glued");
+            setLastMessage(playerName + " glued");
+        }
     }
 
     /**
