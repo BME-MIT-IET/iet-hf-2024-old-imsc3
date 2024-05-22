@@ -29,7 +29,6 @@ public class CisternTest {
     public void setUp() {
         mockController = mock(Controller.class);
         mockPointCounter = mock(PointCounter.class);
-        mockGameView = mock(GameView.class);
 
         cistern = new Cistern(mockController, mockPointCounter);
     }
