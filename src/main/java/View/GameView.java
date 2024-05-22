@@ -41,25 +41,12 @@ public class GameView extends Window implements Serializable {
     private boolean ended = false;
     private final Button exit;
 
-
-    private AppFrame frame;
-
-    /**
-     * Frame beállítása.
-     *
-     * @param frame - a beállítandó frame.
-     */
-    public void setFrame(AppFrame frame) {
-        this.frame = frame;
-    }
-
     /**
      * Konstruktor.
      *
      * @param frame - a frame, amelyen a játék nézet megjelenik.
      */
     public GameView(AppFrame frame) {
-        this.frame = frame;
         exit = new Button(frame.getWidth() - 80, 10, 50, 50, this);
         exit.img = ImageUtility.scaleImage(getExitButton(), 45);
         exit.option = WindowOptions.EXIT;

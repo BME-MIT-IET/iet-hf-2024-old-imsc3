@@ -80,27 +80,27 @@ public class MenuView extends Window {
     }
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        // Not used, intentionally left blank
     }
 
     /**

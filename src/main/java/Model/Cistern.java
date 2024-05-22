@@ -29,12 +29,21 @@ public class Cistern extends WaterNode implements Serializable {
      * Pontszámításhoz használt singleton
      */
     private final PointCounter counter;
-
+    private Controller controller;
     /**
      * Ciszterna konstruktora
      */
-    public Cistern() {
-        counter = PointCounter.getInstance();
+    public Cistern(Controller controller, PointCounter counter) {
+         this.controller= controller;
+         this.counter = counter;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 
     /**
@@ -144,6 +153,8 @@ public class Cistern extends WaterNode implements Serializable {
      */
     @Override
     public boolean canPickUpPump(Mechanic m){
+
+        System.out.println(generatedPumps);
         return m.standingOn==this && !generatedPumps.isEmpty() && m.getHeldItems()==null;
     }
     /**
@@ -153,6 +164,8 @@ public class Cistern extends WaterNode implements Serializable {
      */
     @Override
     public boolean canPickUpPipe(Mechanic m){
+
+        System.out.println(m.getHeldItems());
         return m.standingOn==this && !generatedPipes.isEmpty() && m.getHeldItems()==null;
     }
 
@@ -211,6 +224,9 @@ public class Cistern extends WaterNode implements Serializable {
     public LinkedList<Pipe> getGeneratedPipes() {
         return generatedPipes;
     }
+    public void addGeneratedPipe(Pipe p) {
+        generatedPipes.add(p);
+    }
     /**
      * A generált pumpák listájának gettere
      * @return a lista
@@ -219,5 +235,8 @@ public class Cistern extends WaterNode implements Serializable {
         return generatedPumps;
     }
 
+    public void addGeneratedPump(Pump p) {
+        generatedPumps.add(p);
+    }
 
 }

@@ -228,7 +228,7 @@ public class Controller implements Serializable {
                 gameView.addSpringView(springView);
             }
             case "cistern" -> {
-                Cistern cistern = new Cistern();
+                Cistern cistern = new Cistern(Controller.getInstance(),PointCounter.getInstance());
                 steppables.add(cistern);
                 nodes.add(cistern);
                 cisterns.add(cistern);
