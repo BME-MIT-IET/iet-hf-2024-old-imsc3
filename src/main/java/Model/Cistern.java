@@ -100,7 +100,7 @@ public class Cistern extends WaterNode implements Serializable {
         for (Pipe p : pipes) {
             int lost = p.loseWater(1);
             counter.addMechanicPoints(lost);
-            IO_Manager.write(Controller.getInstance().getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
         }
     }
 

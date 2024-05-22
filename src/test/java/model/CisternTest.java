@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 public class CisternTest {
 
