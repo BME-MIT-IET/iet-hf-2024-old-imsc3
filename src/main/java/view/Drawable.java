@@ -16,6 +16,7 @@ public abstract class Drawable extends JComponent {
 
     /**
      * A kirajzolásért felelős függvény
+     *
      * @param g - a kirajzolásért felelős Graphics objektum
      */
     @Override
@@ -23,6 +24,7 @@ public abstract class Drawable extends JComponent {
 
     /**
      * Rajzolható objektumok konstruktora
+     *
      * @param x - x koordináta
      * @param y - y koordináta
      * @param v - a hozzá tartozó ablak
@@ -30,7 +32,7 @@ public abstract class Drawable extends JComponent {
     public Drawable(int x, int y, Window v) {
         this.x = x;
         this.y = y;
-        this.view=v;
+        this.view = v;
     }
 
     /**
@@ -41,12 +43,13 @@ public abstract class Drawable extends JComponent {
     public abstract Object getCorrespondingModelElement();
 
     /**
-     *  Megjelenítés
-     * @param x - x koordináta
-     * @param y - y koordináta
+     * Megjelenítés
+     *
+     * @param x          - x koordináta
+     * @param y          - y koordináta
      * @param graphics2D - a kirajzolásért felelős Graphics2D objektum
      */
-    public void paintOnPlayer(int x, int y, Graphics2D graphics2D){
+    public void paintOnPlayer(int x, int y, Graphics2D graphics2D) {
 
     }
 
@@ -55,19 +58,18 @@ public abstract class Drawable extends JComponent {
         for (int i = 0; i < angles.length; ++i) {
             angles[i] = i * 20 - (angles.length - 1) * 10;
         }
-
-        int index = players.indexOf(p);
-        if (index != -1) { // Check if player is in the list
-            return angles[index];
-        } else {
-            throw new IllegalArgumentException("Player not found in the list");
+        try {
+            return angles[players.indexOf(p)];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Player not found in the list", e);
         }
     }
-    public int[] setCapX(int x){
+
+    public int[] setCapX(int x) {
         int[] capX = new int[3];
         capX[0] = x;
-        capX[1] = x-8;
-        capX[2] = x+8;
+        capX[1] = x - 8;
+        capX[2] = x + 8;
         return capX;
     }
 
