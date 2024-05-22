@@ -314,4 +314,22 @@
 
 
 
+## Kihívások, Eredmények, Tanulságok
+
+### Kihívások
+1. **Komplexitás kezelése**: A játék funkcióinak részletes és átfogó tesztelése nagy odafigyelést igényelt.
+2. **Bugok és hibák dokumentálása**: A tesztelési folyamat során számos apró, de kritikus hibát kellett azonosítani és pontosan dokumentálni, ez időigényes volt.
+
+### Eredmények
+1. **Funkcionalitás**: A játék legtöbb funkciója megfelelően működött, beleértve a játék indítását, különböző akciók végrehajtását és a játék vége eseményeket.
+2. **Felhasználói élmény**: A menük és a játékmenet navigációja nagyrészt kielégítő volt, bár néhány kisebb UX hiba javítása szükséges.
+3. **Hibák azonosítása**: Számos hibát sikerült azonosítani és dokumentálni, mint például a karakterek neve helyett színkódok megjelenítése, illetve a hibaüzenetek hiánya.
+
+### Tanulságok
+1. **Tesztelési terv fontossága**: A részletes és jól kidolgozott tesztelési terv segített abban, hogy minden funkciót alaposan ellenőrizzünk, és azonosítsuk a hibákat.
+2. **Átfogó tesztelés**: A játék minden részletét és funkcióját érdemes alaposan tesztelni, hogy biztosak lehessünk a játék minőségében. Ez manuális teszteléssel időigényes, de szükséges és hatékony folyamat.
+
+
+
+
 
