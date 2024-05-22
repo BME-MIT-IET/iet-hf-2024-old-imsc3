@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import Model.Player;
 import Model.Spring;
@@ -8,9 +8,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 
-import static View.Pictures.*;
+import static view.Pictures.*;
 
 /**
  * Forrás kirajzolásáért felelős osztály, leszármazottja a Drawable osztálynak, megvalósítja a Clickable, CreatePopUpBar és SteppableView interfészeket.

@@ -1,8 +1,8 @@
 package Controller;
 
 import Model.IO_Manager;
-import View.AppFrame;
-import View.AppPanel;
+import view.AppFrame;
+import view.AppPanel;
 
 import java.io.File;
 import java.util.ConcurrentModificationException;

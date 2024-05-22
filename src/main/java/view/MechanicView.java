@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import Controller.Controller;
 import Model.Mechanic;
@@ -7,7 +7,7 @@ import Model.Player;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
-import static View.Pictures.*;
+import static view.Pictures.*;
 
 /**
  * Mechannic kiiratásáért felelős osztály

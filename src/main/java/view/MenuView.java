@@ -1,10 +1,10 @@
-package View;
+package view;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import static View.Pictures.*;
+import static view.Pictures.*;
 
 /**
  * Megjeleníti a menüt, leszármazik a Window osztályból

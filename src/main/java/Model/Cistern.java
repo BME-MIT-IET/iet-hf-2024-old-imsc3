@@ -1,8 +1,8 @@
 package Model;
 
 import Controller.Controller;
-import View.GameView;
-import View.PipeView;
+import view.GameView;
+import view.PipeView;
 
 import java.io.Serializable;
 import java.util.LinkedList;

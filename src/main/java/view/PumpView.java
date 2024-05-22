@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import Model.Player;
 import Model.Pump;
@@ -8,9 +8,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 
-import static View.Pictures.*;
+import static view.Pictures.*;
 import static java.awt.Color.BLACK;
 
 public class PumpView extends Drawable implements Clickable, CreatePopUpBar, SteppableView {

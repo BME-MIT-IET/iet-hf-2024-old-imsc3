@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import Model.PointCounter;
 
-import static View.Pictures.*;
+import static view.Pictures.*;
 
 /**
  * Megjeleníti az új játkot, leszármazik a Window osztályból

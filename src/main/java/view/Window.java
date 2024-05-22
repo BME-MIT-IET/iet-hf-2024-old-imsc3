@@ -1,15 +1,9 @@
-package View;
+package view;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.awt.image.BufferedImage;
-import java.io.*;
 
 /**
  * A játék ablakát reprezentáló osztály

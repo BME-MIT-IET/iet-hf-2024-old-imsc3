@@ -1,13 +1,12 @@
-package View;
+package view;
 
 import Model.Player;
 import Model.Saboteur;
 import Controller.Controller;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
-import static View.Pictures.mapPrevButton;
+import static view.Pictures.mapPrevButton;
 
 public class SaboteurView extends Drawable {
 

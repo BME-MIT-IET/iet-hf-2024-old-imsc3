@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import Controller.Controller;
 
@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import static View.Pictures.*;
+import static view.Pictures.*;
 
 /**
  * Button - gomb osztály

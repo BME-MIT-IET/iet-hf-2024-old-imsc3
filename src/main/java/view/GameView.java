@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import Controller.Controller;
 import Controller.Main;
@@ -9,8 +9,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
-import static View.Pictures.*;
-import static View.PopUpButton.*;
+import static view.Pictures.*;
+import static view.PopUpButton.*;
 
 /**
  * A játék nézetét megvalósító osztály.
