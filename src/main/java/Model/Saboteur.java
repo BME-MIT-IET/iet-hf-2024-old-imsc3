@@ -66,5 +66,12 @@ public class Saboteur extends Player implements Serializable {
         return actions;
     }
 
+    /**
+     * A szabotőr pozícióját adja vissza
+     * @return - A szabotőr pozíciója
+     */
+    public Steppable getLocation() {
+        return standingOn;
+    }
 
 }

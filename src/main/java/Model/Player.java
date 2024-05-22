@@ -66,7 +66,6 @@ public abstract class Player implements Serializable {
         }
 
         if (to.PlayerEnter(this)) {
-
             if (standingOn != null) {
                 if (!ignoreStates && state == PlayerActionState.moveAction)
                     state = PlayerActionState.specialAction;

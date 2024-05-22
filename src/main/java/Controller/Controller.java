@@ -15,6 +15,8 @@ import java.util.Random;
  */
 public class Controller implements Serializable {
 
+    private String lastMessage = "";
+
     private static Controller controller = null;
 
     //Singleton
@@ -193,8 +195,7 @@ public class Controller implements Serializable {
      * @param x - a játékelem kirajzolásához tartozó x koordináta
      * @param y - a játékelem kirajzolásához tartozó y koordináta
      */
-    public void create(String name, String type,int x, int y) {
-
+    public void create(String name, String type, int x, int y) {
         switch (type) {
             case "mechanic" -> {
                 Mechanic mechanic = new Mechanic();
@@ -249,6 +250,7 @@ public class Controller implements Serializable {
             }
             default -> IO_Manager.writeError("not valid type name", Controller.filetoWrite != null);
         }
+        setLastMessage(name + " created");
         IO_Manager.write(name + " created", Controller.filetoWrite != null);
     }
 
@@ -260,12 +262,14 @@ public class Controller implements Serializable {
     public void connect(String pipeName, String wNodeName) {
 
         if (!pipes.contains(objectCatalog.get(pipeName))) {
+            setLastMessage("wrong pipe name");
             IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
             return;
         }
         Pipe p = (Pipe) objectCatalog.get(pipeName);
 
         if (!nodes.contains(objectCatalog.get(wNodeName))) {
+            setLastMessage("wrong node name");
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
@@ -275,6 +279,7 @@ public class Controller implements Serializable {
             IO_Manager.write(pipeName + ".nodes = " + listWrite(p.getNodes()), Controller.filetoWrite != null);
             IO_Manager.write(wNodeName + ".pipes = " + listWrite(w.getPipes()), Controller.filetoWrite != null);
         }
+        setLastMessage(pipeName + " connected to " + wNodeName);
 
     }
 
@@ -284,14 +289,14 @@ public class Controller implements Serializable {
      * @param steppableName - az az elem amire mozog
      */
     public void move(String playerName, String steppableName) {
-
         if (!players.contains(objectCatalog.get(playerName))) {
+            setLastMessage("wrong player name");
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
-
         if (!steppables.contains(objectCatalog.get(steppableName))) {
+            setLastMessage("wrong steppable name");
             IO_Manager.writeError("wrong steppable name", Controller.filetoWrite != null);
             return;
         }
@@ -299,6 +304,7 @@ public class Controller implements Serializable {
         Steppable prev = p.getStandingOn();
 
         if (p.Move(s)) {
+            setLastMessage(playerName + " moves to " + steppableName);
             IO_Manager.write(steppableName + ".players = " + listWrite(s.getPlayers()), Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn = " + steppableName, Controller.filetoWrite != null);
             if (prev != null)
@@ -307,7 +313,10 @@ public class Controller implements Serializable {
                 else
                     IO_Manager.write(getObjectName(prev) + ".players = " + listWrite(prev.getPlayers()), Controller.filetoWrite != null);
 
+        }else{
+            setLastMessage(playerName + " can't move to " + steppableName);
         }
+
     }
 
     /**
@@ -317,15 +326,15 @@ public class Controller implements Serializable {
     public void pierce(String playerName) {
 
         if (!players.contains(objectCatalog.get(playerName))) {
+            setLastMessage("wrong player name");
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
         if (p.Pierce())
-
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
-
+        setLastMessage(playerName + " pierced");
     }
     /**
      * A ragacsozás parancs függvénye, a neki adott játékos bekeni ragaccsal azt az elemet amin áll(csövet),ha tudja
@@ -334,15 +343,15 @@ public class Controller implements Serializable {
     public void glue(String playerName) {
 
         if (!players.contains(objectCatalog.get(playerName))) {
+            setLastMessage("wrong player name");
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
         if (p.Glue())
-
             IO_Manager.write(playerName + ".standingOn.glued = " + "true", Controller.filetoWrite != null);
-
+        setLastMessage(playerName + " glued");
     }
 
     /**
@@ -350,8 +359,6 @@ public class Controller implements Serializable {
      * @param saboteurName - a csúszóssá tévő szabotőr
      */
     public void lubricate(String saboteurName) {
-
-
         if (!saboteurs.contains(objectCatalog.get(saboteurName))) {
             IO_Manager.writeError("wrong saboteur name", Controller.filetoWrite != null);
             return;
@@ -390,7 +397,6 @@ public class Controller implements Serializable {
      * @param outPipeName - az a cső amit kivezetőnek akar
      */
     public void redirect(String playerName, String inPipeName, String outPipeName) {
-
         if (!players.contains(objectCatalog.get(playerName))) {
             IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
             return;
@@ -413,6 +419,7 @@ public class Controller implements Serializable {
             IO_Manager.write(playerName + ".standingOn.activeIn = " + inPipeName, Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn.activeOut = " + outPipeName, Controller.filetoWrite != null);
         }
+        setLastMessage(playerName + " redirected");
 
     }
 
@@ -623,6 +630,7 @@ public class Controller implements Serializable {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
         }
         //Kiírjuk a változást
+        setLastMessage(objectName + "." + attribName + " = " + attribValue);
         stateGet(objectName, attribName, false);
     }
 
@@ -630,22 +638,28 @@ public class Controller implements Serializable {
      * A következő játékos/kör parancsának függvénye, elintéz mindent ami egy körben történik
      */
     public void turnOver() {
-        turnOrder.add(turnOrder.removeFirst());
-        turnOrder.getFirst().setState(PlayerActionState.moveAction);
-        if (turnOrder.getFirst().isFellDown()) {
-            turnOrder.getFirst().setFellDown(false);
-            Random random = new Random();
-            int chance = random.nextInt(0, nodes.size());
-            boolean ignoreStates = Player.isIgnoreStates();
-            Player.setIgnoreStates(true);
-            turnOrder.getFirst().Move(nodes.get(chance));
-            Player.setIgnoreStates(false);
-            turnOrder.getFirst().setState(PlayerActionState.turnOver);
-            turnOver();
+        if (!turnOrder.isEmpty()) {
+            turnOrder.add(turnOrder.removeFirst());
         }
-        if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
-            turnOrder.getFirst().setState(PlayerActionState.specialAction);
-        nextTurn();
+
+        if (!turnOrder.isEmpty()) {
+            turnOrder.getFirst().setState(PlayerActionState.moveAction);
+            if (turnOrder.getFirst().isFellDown()) {
+                turnOrder.getFirst().setFellDown(false);
+                Random random = new Random();
+                int chance = random.nextInt(nodes.size());
+                boolean ignoreStates = Player.isIgnoreStates();
+                Player.setIgnoreStates(true);
+                turnOrder.getFirst().Move(nodes.get(chance));
+                Player.setIgnoreStates(false);
+                turnOrder.getFirst().setState(PlayerActionState.turnOver);
+                turnOver();
+            }
+            if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
+                turnOrder.getFirst().setState(PlayerActionState.specialAction);
+            nextTurn();
+        }
+
         for (Pipe p : pipes) {
             if (!p.isReadyToPierce()) {
                 p.setReadyToPierceTimer(p.getReadyToPierceTimer() - 1);
@@ -653,7 +667,8 @@ public class Controller implements Serializable {
                     p.setReadyToPierce(true);
             }
         }
-        if (getActivePlayer().isStuck()) {
+
+        if (!turnOrder.isEmpty() && getActivePlayer().isStuck()) {
             if (getActivePlayer().getGlueLength() == 0)
                 getActivePlayer().setStuck(false);
             else {
@@ -663,6 +678,7 @@ public class Controller implements Serializable {
             }
         }
     }
+
 
     /**
      * Következő kör indulását kezeli, ciszternánál generálás, pumpák elromlása,
@@ -950,5 +966,13 @@ return null;
 
     public LinkedList<Saboteur> getSaboteurs() {
         return saboteurs;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }
