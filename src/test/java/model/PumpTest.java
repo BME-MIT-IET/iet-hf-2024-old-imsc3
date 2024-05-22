@@ -165,30 +165,20 @@ public class PumpTest {
 
     @Test
     void testAddPipe() {
-        // Arrange
         Pipe mockPipe = Mockito.mock(Pipe.class);
 
-        // Act
-        boolean success = pump.addPipe(mockPipe);
-
-        // Assert
-        assertTrue(success);
+        assertTrue(pump.addPipe(mockPipe));
         assertTrue(pump.getPipes().contains(mockPipe));
     }
 
     @Test
     void testAddPipe_MaximumPipesReached() {
-        // Arrange
         for (int i = 0; i < 10; i++) {
             pump.addPipe(Mockito.mock(Pipe.class));
         }
         Pipe mockPipe = Mockito.mock(Pipe.class);
 
-        // Act
-        boolean success = pump.addPipe(mockPipe);
-
-        // Assert
-        assertFalse(success);
+        assertFalse(pump.addPipe(mockPipe));
         assertFalse(pump.getPipes().contains(mockPipe)); 
     }
 

@@ -11,6 +11,7 @@ import java.util.ConcurrentModificationException;
 public class Main {
     /**
      * A program belépési pontja
+     *
      * @param args a parancssori argumentumok
      */
     public static void main(String[] args) {
@@ -45,12 +46,10 @@ public class Main {
 
 
         if (fileToRead != null) {
-                readFile(fileToRead, fileToWrite);
+            readFile(fileToRead, fileToWrite);
         } else {
-                readStd(fileToWrite);
+            readStd(fileToWrite);
         }
-
-
 
 
     }
@@ -61,7 +60,7 @@ public class Main {
             IO_Manager.openFileWrite(fileToWrite);
 
         String line;
-        while ( !(line = IO_Manager.readLine()).equals("quit") ) {
+        while (!(line = IO_Manager.readLine()).equals("quit")) {
             processCommand(line, fileToWrite != null);
         }
 
@@ -76,7 +75,7 @@ public class Main {
             IO_Manager.openFileWrite(fileToWrite);
 
         String line;
-        while ( (line = IO_Manager.readLineFile()) != null) {
+        while ((line = IO_Manager.readLineFile()) != null) {
             processCommand(line, fileToWrite != null);
         }
 
@@ -127,6 +126,7 @@ public class Main {
                 controller.create(cmd[1], cmd[2], 0, 0);
         }
     }
+
     private static void processConnectCommand(Controller controller, String[] cmd) {
         if (cmd.length != 3)
             IO_Manager.writeError("connect requires 2 parameters", Controller.filetoWrite != null);

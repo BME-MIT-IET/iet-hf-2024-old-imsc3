@@ -5,12 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.EmptyStackException;
 
 /**
  * CharacterCreationMenu - creates a frame which includes a color picker panel
  */
-public class CharacterCreation {
+public class CharacterCreation implements Serializable {
     JFrame frame;
 
     JPanel mainPanel;

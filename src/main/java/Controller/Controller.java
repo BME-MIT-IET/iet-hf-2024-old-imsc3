@@ -19,13 +19,13 @@ import java.util.Map;
 public class Controller implements Serializable {
 
     private static Controller controller = null;
-    private static final boolean frameCounter = false;
+    private static final boolean FRAME_COUNTER = false;
 
     //Singleton
     private Controller() {
     }
 
-    static public Controller getInstance() {
+    public static Controller getInstance() {
         if (controller == null)
             controller = new Controller();
 
@@ -36,10 +36,6 @@ public class Controller implements Serializable {
      * Játék elkezdését mutató boolean
      */
     private boolean started = false;
-    /**
-     * Játék teljes futását mutató boolean
-     */
-    private final boolean running = true;
     /**
      * A játékosok actionkezeléséhez szükséges lista.
      */
@@ -118,19 +114,18 @@ public class Controller implements Serializable {
         int FPS = 120;
         double timePerFrame = 1000000000.0 / FPS;
         double elapsedFrames = 0;
-        while (running) {
+        while (true) {
             elapsedFrames += (System.nanoTime() - previousTimeInNanoSec) / timePerFrame;
             previousTimeInNanoSec = System.nanoTime();
             if (elapsedFrames >= 1) {
                 update();
-                if (frame != null)
-                    panel.repaint();
+                panel.repaint();
                 frames++;
                 elapsedFrames--;
             }
             //For FPS count
             if (System.currentTimeMillis() - previousTimeInMilliSec >= 1000) {
-                if (frameCounter) System.out.println(frames);
+                if (FRAME_COUNTER) System.out.println(frames);
                 frames = 0;
                 previousTimeInMilliSec = System.currentTimeMillis();
             }
@@ -565,6 +560,8 @@ public class Controller implements Serializable {
                         case MOVE_ACTION_STR -> ((Mechanic) o).setState(PlayerActionState.MOVE_ACTION);
                         case SPECIAL_ACTION_STR -> ((Mechanic) o).setState(PlayerActionState.SPECIAL_ACTION);
                         case TURN_OVER_STR -> ((Mechanic) o).setState(PlayerActionState.TURN_OVER);
+                        default -> {
+                        }
                     }
                     break;
                 default:
@@ -584,6 +581,8 @@ public class Controller implements Serializable {
                         case MOVE_ACTION_STR -> ((Saboteur) o).setState(PlayerActionState.MOVE_ACTION);
                         case SPECIAL_ACTION_STR -> ((Saboteur) o).setState(PlayerActionState.SPECIAL_ACTION);
                         case TURN_OVER_STR -> ((Saboteur) o).setState(PlayerActionState.TURN_OVER);
+                        default -> {
+                        }
                     }
                     break;
                 default:

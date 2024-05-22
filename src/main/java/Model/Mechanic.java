@@ -17,32 +17,31 @@ public class Mechanic extends Player implements Serializable {
      * Pályaelem megjavítására használt függvény, ha specialAction-ben van a játékos, akkor javít.
      */
     public boolean repair() {
-        boolean repaired=false;
-        if(isIgnoreStates()) {
+        boolean repaired = false;
+        if (isIgnoreStates()) {
             repaired = standingOn.repaired();
-        }
-        else if(state == PlayerActionState.SPECIAL_ACTION) {
+        } else if (state == PlayerActionState.SPECIAL_ACTION) {
             repaired = standingOn.repaired();
             if (repaired) {
                 state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
-        if(!repaired)
+        if (!repaired)
             IO_Manager.writeInfo(Controller.getInstance().getObjectName(standingOn) + "is not broken", Controller.filetoWrite != null);
         return repaired;
     }
 
     /**
      * Pályaelem felvételére használt függvény, a felvett pályaelemet a játékosnak beadjuk, és csak akkor tudja felvenni ha mellette áll
+     *
      * @param item - felvett pályaelem
      */
     public boolean pickUp(PickupAble item) {
-        boolean pickedup=false;
-        if(isIgnoreStates()) {
+        boolean pickedup = false;
+        if (isIgnoreStates()) {
             pickedup = standingOn.pickedUpFrom(item);
-        }
-        else if(state == PlayerActionState.SPECIAL_ACTION) {
+        } else if (state == PlayerActionState.SPECIAL_ACTION) {
             pickedup = standingOn.pickedUpFrom(item);
             if (pickedup) {
                 state = PlayerActionState.TURN_OVER;
@@ -52,8 +51,7 @@ public class Mechanic extends Player implements Serializable {
         if (pickedup) {
             item.pickedUp(standingOn);
             heldItems = item;
-        }
-        else
+        } else
             IO_Manager.writeInfo(Controller.getInstance().getObjectName(item) + " can't be picked up", Controller.filetoWrite != null);
 
         return pickedup;
@@ -66,10 +64,9 @@ public class Mechanic extends Player implements Serializable {
     public boolean placeDown() {
 
         boolean successful = false;
-        if(isIgnoreStates()) {
+        if (isIgnoreStates()) {
             successful = heldItems.placedDown(standingOn);
-        }
-        else if(state == PlayerActionState.SPECIAL_ACTION) {
+        } else if (state == PlayerActionState.SPECIAL_ACTION) {
             successful = heldItems.placedDown(standingOn);
             if (successful) {
                 state = PlayerActionState.TURN_OVER;
@@ -83,37 +80,38 @@ public class Mechanic extends Player implements Serializable {
 
     /**
      * A szerelő elérhető akcióit adja vissza arra az elemre amit átadunk neki
+     *
      * @param step - az elem amire nézzük az akciókat
      * @return - Az akciók tömbje
      */
-    public ActionType[] availableActions(Steppable step){
+    public ActionType[] availableActions(Steppable step) {
         ActionType[] actions = new ActionType[6];
-        if(state.equals(PlayerActionState.MOVE_ACTION)){
-            if(step.canMoveToHere(this)) {
+        if (state.equals(PlayerActionState.MOVE_ACTION)) {
+            if (step.canMoveToHere(this)) {
                 actions[2] = ActionType.MOVE;
                 return actions;
             }
         }
-        if(state.equals(PlayerActionState.SPECIAL_ACTION)){
+        if (state.equals(PlayerActionState.SPECIAL_ACTION)) {
             //2
             if (step.canMoveToHere(this))
                 actions[2] = ActionType.MOVE;
             else if (!standingOn.canMoveFromHere() || standingOn == step)
                 actions[2] = ActionType.PASS;
             //1
-            if(step.canRedirect(this))
+            if (step.canRedirect(this))
                 actions[1] = ActionType.REDIRECT;
             //3
-            if(step.canGlue(this))
+            if (step.canGlue(this))
                 actions[3] = ActionType.GLUE;
             //4
-            if(step.canPickUpPipe(this)){
+            if (step.canPickUpPipe(this)) {
                 actions[4] = ActionType.PICKUP_PIPE;
             } else if (step.canPlaceDown(this)) {
                 actions[4] = ActionType.PLACEDOWN;
             }
             //5
-            if(step.canPickUpPump(this)){
+            if (step.canPickUpPump(this)) {
                 actions[5] = ActionType.PICKUP_PUMP;
             } else if (step.canRepair(this)) {
                 actions[5] = ActionType.REPAIR;
@@ -124,8 +122,10 @@ public class Mechanic extends Player implements Serializable {
         }
         return actions;
     }
+
     /**
      * Felvett pályaelem gettere
+     *
      * @return a pályaelem
      */
     public PickupAble getHeldItems() {

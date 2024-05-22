@@ -22,7 +22,7 @@ public class AppFrame extends JFrame {
         setSize(width * 3/4, height * 3/4);
         add(panel);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         //tesztelés
         WindowOptions.windowOption = WindowOptions.MENU;

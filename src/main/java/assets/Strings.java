@@ -30,4 +30,5 @@ public class Strings {
     public static final String GLUED_STR = "glued";
     public static final String BEING_HELD_STR = "beingHeld";
     public static final String NODES_STR = "nodes";
+    public static final String INTER = "Inter";
 }

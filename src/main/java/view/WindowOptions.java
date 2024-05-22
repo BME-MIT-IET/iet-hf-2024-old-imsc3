@@ -12,5 +12,5 @@ public enum WindowOptions {
     LOAD,
     SAVE,
     EXIT;
-    public static WindowOptions windowOption= MENU;
+    public static WindowOptions windowOption = MENU;
 }

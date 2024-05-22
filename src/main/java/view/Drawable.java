@@ -51,11 +51,16 @@ public abstract class Drawable extends JComponent {
     }
 
     public double getPlayerAngle(Player p, LinkedList<Player> players) {
-        double[] angles = new double[players.size()];
+        int numOfPlayers = players.size();
+        double[] angles = new double[numOfPlayers];
         for (int i = 0; i < angles.length; ++i) {
             angles[i] = i * 20 - (angles.length - 1) * 10;
         }
-        return angles[players.indexOf(p)];
+        int indexOfPlayer = players.indexOf(p);
+        if(indexOfPlayer < numOfPlayers){
+            return angles[indexOfPlayer];
+        }
+        return -1;
     }
     public int[] setCapX(int x){
         int[] capX = new int[3];

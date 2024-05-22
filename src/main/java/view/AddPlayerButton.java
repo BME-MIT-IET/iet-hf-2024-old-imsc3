@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 public class AddPlayerButton extends Button {
     int type;
     String name;
-    static int counter = 0;
+    int counter = 0;
 
     CharacterCreation cc = null;
 
