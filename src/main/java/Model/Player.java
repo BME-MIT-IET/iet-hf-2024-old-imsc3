@@ -39,7 +39,7 @@ public abstract class Player implements Serializable {
     /**
      * A játékos státusza(nem az ő köre/mozog/akciók)
      */
-    PlayerActionState state =PlayerActionState.turnOver;
+    PlayerActionState state =PlayerActionState.TURN_OVER;
     /**
      * flag, hogy az actionstate-ket figyelembe kell-e venni.
      */
@@ -49,10 +49,10 @@ public abstract class Player implements Serializable {
      * Mozgás egyik elemről a másik, szomszédosra, figyelembe véve az ignoreStates flaget, és azt, hogy a játékos action-t végezhet
      * @param to amire szeretni lépni
      */
-    public boolean Move(Steppable to) {
+    public boolean move(Steppable to) {
         removed=false;
 
-        if(!ignoreStates && state==PlayerActionState.turnOver)
+        if(!ignoreStates && state==PlayerActionState.TURN_OVER)
             return false;
 
         if (fellDown) {
@@ -65,16 +65,16 @@ public abstract class Player implements Serializable {
             return false;
         }
 
-        if (to.PlayerEnter(this)) {
+        if (to.playerEnter(this)) {
 
             if (standingOn != null) {
-                if (!ignoreStates && state == PlayerActionState.moveAction)
-                    state = PlayerActionState.specialAction;
-                else if (!ignoreStates && state == PlayerActionState.specialAction) {
-                    state = PlayerActionState.turnOver;
+                if (!ignoreStates && state == PlayerActionState.MOVE_ACTION)
+                    state = PlayerActionState.SPECIAL_ACTION;
+                else if (!ignoreStates && state == PlayerActionState.SPECIAL_ACTION) {
+                    state = PlayerActionState.TURN_OVER;
                     Controller.getInstance().turnOver();
                 }
-                standingOn.PlayerExit(this);
+                standingOn.playerExit(this);
             }
 
             standingOn = to;
@@ -89,9 +89,9 @@ public abstract class Player implements Serializable {
     /**
      * Játékos eltávolítása a pályáról(CutInHalf-hez is)
      */
-    public void RemovePlayer(){
+    public void removePlayer(){
         if(standingOn != null){
-            standingOn.PlayerExit(this);
+            standingOn.playerExit(this);
         }
         standingOn = null;
         removed=true;
@@ -102,12 +102,12 @@ public abstract class Player implements Serializable {
      * @param in bemeneti cső
      * @param out kimeneti  cső
      */
-    public boolean Redirect(Pipe in, Pipe out) {
-        if (state != PlayerActionState.specialAction)
+    public boolean redirect(Pipe in, Pipe out) {
+        if (state != PlayerActionState.SPECIAL_ACTION)
             return false;
 
-        if (standingOn.PlayerRedirect(in, out)) {
-            state = PlayerActionState.turnOver;
+        if (standingOn.playerRedirect(in, out)) {
+            state = PlayerActionState.TURN_OVER;
             Controller.getInstance().turnOver();
             return true;
         }
@@ -118,15 +118,15 @@ public abstract class Player implements Serializable {
     /**
      * Kilyukasztja (amennyiben nem lyukas, és lyukasztható) azt az elemet, amin jelenleg a szabotőr áll
      */
-    public boolean Pierce() {
+    public boolean pierce() {
         boolean pierced=false;
         if(ignoreStates) {
-            pierced = standingOn.Pierced();
+            pierced = standingOn.pierced();
         }
-        else if(state == PlayerActionState.specialAction) {
-            pierced = standingOn.Pierced();
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
+            pierced = standingOn.pierced();
             if (pierced) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -136,15 +136,15 @@ public abstract class Player implements Serializable {
     /**
      * Ragacsossá teszi (amennyiben nem ragacsos) azt az elemet, amin jelenleg a szabotőr áll
      */
-    public boolean Glue(){
+    public boolean glue(){
         boolean glued = false;
         if(ignoreStates) {
-            glued = standingOn.Glued();
+            glued = standingOn.glued();
         }
-        else if(state == PlayerActionState.specialAction) {
-            glued = standingOn.Glued();
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
+            glued = standingOn.glued();
             if (glued) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }

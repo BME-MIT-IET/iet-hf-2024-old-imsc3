@@ -1,12 +1,12 @@
 package Model;
 
 import Controller.Controller;
-import View.GameView;
-import View.PipeView;
+import view.GameView;
+import view.PipeView;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Ciszterna megvalósítására szolgáló osztály
@@ -15,26 +15,35 @@ public class Cistern extends WaterNode implements Serializable {
     /**
      * Ciszternáról felvehető elemek, amik generálódtak rajta
      */
-    private LinkedList<PickupAble> createdPickupables = new LinkedList<>();
+    private final LinkedList<PickupAble> createdPickupables = new LinkedList<>();
     /**
      * Ciszternán keletkezett csövek listája
      */
-    private LinkedList<Pipe> generatedPipes = new LinkedList<>();
+    private final LinkedList<Pipe> generatedPipes = new LinkedList<>();
     /**
      * Ciszternán keletkezett pumpák listája
      */
-    private LinkedList<Pump> generatedPumps = new LinkedList<>();
+    private final LinkedList<Pump> generatedPumps = new LinkedList<>();
 
     /**
      * Pontszámításhoz használt singleton
      */
     private final PointCounter counter;
-
+    private Controller controller;
     /**
      * Ciszterna konstruktora
      */
-    public Cistern() {
-        counter = PointCounter.getInstance();
+    public Cistern(Controller controller, PointCounter counter) {
+         this.controller= controller;
+         this.counter = counter;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 
     /**
@@ -44,7 +53,7 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
         generatedPumps.remove(pickup);
         generatedPipes.remove(pickup);
         boolean result = createdPickupables.remove(pickup);
@@ -60,10 +69,10 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye(mivel ciszternára lehet csövet kötni ezért ez mindig kivitelezhető)
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
+    public boolean placedDownTo(Pipe pickup) {
 
-        AddPipe(pickup);
-        pickup.AddWaterNode(this);
+        addPipe(pickup);
+        pickup.addWaterNode(this);
         return true;
 
     }
@@ -74,7 +83,7 @@ public class Cistern extends WaterNode implements Serializable {
      * @return a felvétel eredménye(mivel ciszternára nem lehet pumpát kötni ezért ez sose kivitelezhető)
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
+    public boolean placedDownTo(Pump pickup) {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
@@ -87,21 +96,21 @@ public class Cistern extends WaterNode implements Serializable {
      * szerelők pontszáma.
      */
     @Override
-    public void WaterFlow() {
+    public void waterFlow() {
         for (Pipe p : pipes) {
-            int lost = p.LoseWater(1);
-            counter.AddMechanicPoints(lost);
-            IO_Manager.write(Controller.getInstance().getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
+            int lost = p.loseWater(1);
+            counter.addMechanicPoints(lost);
+            IO_Manager.write(controller.getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
         }
     }
 
     /**
      * A generálás függvénye, ami random generál egy pumpát vagy csövet. Ha már van 3 generált akkor nem készít többet
      */
-    public void GeneratePickupables() {
+    public void generatePickupables() {
         if (createdPickupables.size() > 3)
             return;
-        Random rand = new Random();
+        SecureRandom rand = new SecureRandom();
         if (rand.nextInt(0, 10) == 9) {
             String pumpName = "genPump" + Controller.getInstance().createdPumpNumber++;
             Controller.getInstance().create(pumpName, "pump", -50, -50);
@@ -115,8 +124,8 @@ public class Cistern extends WaterNode implements Serializable {
             Pipe pi = (Pipe) Controller.getInstance().getObjectCatalog().get(pipeName);
             createdPickupables.add(pi);
             generatedPipes.add(pi);
-            pi.AddWaterNode(this);
-            AddPipe(pi);
+            pi.addWaterNode(this);
+            addPipe(pi);
 
             GameView gameView = Controller.getInstance().getGameView();
             PipeView pipeView = new PipeView(
@@ -144,6 +153,8 @@ public class Cistern extends WaterNode implements Serializable {
      */
     @Override
     public boolean canPickUpPump(Mechanic m){
+
+        System.out.println(generatedPumps);
         return m.standingOn==this && !generatedPumps.isEmpty() && m.getHeldItems()==null;
     }
     /**
@@ -153,6 +164,8 @@ public class Cistern extends WaterNode implements Serializable {
      */
     @Override
     public boolean canPickUpPipe(Mechanic m){
+
+        System.out.println(m.getHeldItems());
         return m.standingOn==this && !generatedPipes.isEmpty() && m.getHeldItems()==null;
     }
 
@@ -176,8 +189,10 @@ public class Cistern extends WaterNode implements Serializable {
     public boolean canMoveFromHere() {
         boolean canMove=false;
         for(Pipe p:pipes){
-            if(p.players.isEmpty() && !generatedPipes.contains(p))
-                canMove=true;
+            if (p.players.isEmpty() && !generatedPipes.contains(p)) {
+                canMove = true;
+                break;
+            }
         }
         return canMove;
     }

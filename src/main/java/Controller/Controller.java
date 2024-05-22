@@ -1,15 +1,17 @@
 package Controller;
 
+import static assets.Strings.*;
+
 import Model.*;
-import View.*;
-import View.Window;
+import view.*;
 
 import java.awt.*;
 import java.io.*;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
+
 
 /**
  * A modell és a view egymással való működésében segít, a control funkciót látja el, singleton osztály
@@ -17,12 +19,13 @@ import java.util.Random;
 public class Controller implements Serializable {
 
     private static Controller controller = null;
+    private static final boolean FRAME_COUNTER = false;
 
     //Singleton
     private Controller() {
     }
 
-    static public Controller getInstance() {
+    public static Controller getInstance() {
         if (controller == null)
             controller = new Controller();
 
@@ -34,31 +37,26 @@ public class Controller implements Serializable {
      */
     private boolean started = false;
     /**
-     * Játék teljes futását mutató boolean
+     * A játékosok actionkezeléséhez szükséges lista.
      */
-    private boolean running = true;
-    /**
-     *  A játékosok actionkezeléséhez szükséges lista.
-     */
-    private LinkedList<Player> turnOrder = new LinkedList<>();
-
+    private final LinkedList<Player> turnOrder = new LinkedList<>();
     /**
      * Adott típusú objektumok tárolása.
      */
-    private LinkedList<Player> players = new LinkedList<>();
-    private LinkedList<Mechanic> mechanics = new LinkedList<>();
-    private LinkedList<Saboteur> saboteurs = new LinkedList<>();
-    private LinkedList<Steppable> steppables = new LinkedList<>(); //ez nincs benne a doksiban de kell
-    private LinkedList<WaterNode> nodes = new LinkedList<>();
-    private LinkedList<Pump> pumps = new LinkedList<>();
-    private LinkedList<Spring> springs = new LinkedList<>();
-    private LinkedList<Cistern> cisterns = new LinkedList<>();
-    private LinkedList<Pipe> pipes = new LinkedList<>();
-    private LinkedList<PickupAble> pickupables = new LinkedList<>();
+    private final LinkedList<Player> players = new LinkedList<>();
+    private final LinkedList<Mechanic> mechanics = new LinkedList<>();
+    private final LinkedList<Saboteur> saboteurs = new LinkedList<>();
+    private final LinkedList<Steppable> steppables = new LinkedList<>(); //ez nincs benne a doksiban de kell
+    private final LinkedList<WaterNode> nodes = new LinkedList<>();
+    private final LinkedList<Pump> pumps = new LinkedList<>();
+    private final LinkedList<Spring> springs = new LinkedList<>();
+    private final LinkedList<Cistern> cisterns = new LinkedList<>();
+    private final LinkedList<Pipe> pipes = new LinkedList<>();
+    private final LinkedList<PickupAble> pickupables = new LinkedList<>();
     /**
      * Hashmap azért, hogy a nevükkel lehessen azonosítani az objektumokat.
      */
-    private HashMap<String, Object> objectCatalog = new HashMap<>();
+    private final HashMap<String, Object> objectCatalog = new HashMap<>();
     public static File filetoWrite = null;
     /**
      * Determinisztikusságot mutató bool
@@ -67,7 +65,7 @@ public class Controller implements Serializable {
     /**
      * Pontok tárolására használt singleton
      */
-    private PointCounter counter = PointCounter.getInstance();
+    private final PointCounter counter = PointCounter.getInstance();
     /**
      * Ciszternáknál a pumpák nevének generálásához használt futóváltozó
      */
@@ -77,94 +75,96 @@ public class Controller implements Serializable {
      */
     public int createdPipeNumber = 1;
     /**
-     * Szöveg méretezésére használt változó, mennyisége a kicsi map-kép hossza
-     */
-    private int scaleForText;
-    /**
      * Az új játék ablaknál létrehozott szerelők száma-1(indexe)
      */
-    private int mechNumber=-1;
+    private int mechNumber = -1;
     /**
      * Az új játék ablaknál létrehozott szabotőrök száma-1(indexe)
      */
-    private int sabNumber=-1;
+    private int sabNumber = -1;
 
     /**
      * A panelt (JPanel) reprezentáló osztály
      */
-    private AppPanel panel = new AppPanel();
+    private final AppPanel panel = new AppPanel();
     /**
      * A frame-et (JFrame) reprezentáló osztály
      */
-    private AppFrame frame = new AppFrame(panel);
+    private final AppFrame frame = new AppFrame(panel);
     /**
      * A főmenü ablaka
      */
-    private MenuView menuView = new MenuView();
+    private final MenuView menuView = new MenuView();
     /**
      * Az új játék létrehozásának ablaka
      */
-    private NewGameView newGameView = new NewGameView();
+    private final NewGameView newGameView = new NewGameView();
     /**
      * A futó játék ablaka
      */
-    private GameView gameView = new GameView(frame);
+    private final GameView gameView = new GameView(frame);
 
     /**
      * A gameloop-ért fellelős függvény
      */
-    public void run(){
-        int frames=0;
-        long previousTimeInNanoSec=System.nanoTime();
-        long previousTimeInMilliSec=System.currentTimeMillis();
-        int FPS=120;
-        double timePerFrame=1000000000.0/FPS;
-        double elapsedFrames=0;
-        while(running){
-            elapsedFrames+=(System.nanoTime()-previousTimeInNanoSec)/timePerFrame;
-            previousTimeInNanoSec=System.nanoTime();
-            if(elapsedFrames>=1){
+    public void run() {
+        int frames = 0;
+        long previousTimeInNanoSec = System.nanoTime();
+        long previousTimeInMilliSec = System.currentTimeMillis();
+        int FPS = 120;
+        double timePerFrame = 1000000000.0 / FPS;
+        double elapsedFrames = 0;
+        int j = 0;
+        do {
+            j++;
+            elapsedFrames += (System.nanoTime() - previousTimeInNanoSec) / timePerFrame;
+            previousTimeInNanoSec = System.nanoTime();
+            if (elapsedFrames >= 1) {
                 update();
-                if (frame != null)
-                    panel.repaint();
+                panel.repaint();
                 frames++;
                 elapsedFrames--;
             }
             //For FPS count
-            if(System.currentTimeMillis()-previousTimeInMilliSec>=1000){
-                //System.out.println(frames);
-                frames=0;
-                previousTimeInMilliSec=System.currentTimeMillis();
+            if (System.currentTimeMillis() - previousTimeInMilliSec >= 1000) {
+                if (FRAME_COUNTER) System.out.println(frames);
+                frames = 0;
+                previousTimeInMilliSec = System.currentTimeMillis();
             }
-        }
+
+        } while (j != Integer.MIN_VALUE);
     }
 
     /**
      * Ez az update hívódik meg a gameloopból, ez osztja szét a különböző nézetek felé
      */
-    public void update(){
+    public void update() {
         switch (WindowOptions.windowOption) {
-            case menu -> menuView.update();
-            case newgame -> newGameView.update();
-            case game -> gameView.update();
+            case MENU -> menuView.update();
+            case NEWGAME -> newGameView.update();
+            case GAME -> gameView.update();
+            default -> throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+
         }
     }
 
     /**
      * Ez a paint hívódik a frame-repaint hatására, ez osztja szét a különböző nézetek felé
+     *
      * @param g - A frame grafikus megjelenítése, amire rajzolunk
      */
     public void paint(Graphics g) {
         switch (WindowOptions.windowOption) {
-            case menu -> menuView.paint(g);
-            case newgame -> newGameView.paint(g);
-            case game -> gameView.paint(g);
+            case MENU -> menuView.paint(g);
+            case NEWGAME -> newGameView.paint(g);
+            case GAME -> gameView.paint(g);
+            default -> throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+
         }
     }
 
     /**
      * Visszaadja az éppen aktív játékost, azaz aki a FIFO tetején van
-     * @return
      */
     public Player getActivePlayer() {
         return turnOrder.getFirst();
@@ -173,21 +173,22 @@ public class Controller implements Serializable {
     /**
      * A passzolás kivitelezésére használt függvény
      */
-    public void pass(){
-        if(turnOrder.getFirst().getState()==PlayerActionState.specialAction) {
-            turnOrder.getFirst().setState(PlayerActionState.turnOver);
+    public void pass() {
+        if (turnOrder.getFirst().getState() == PlayerActionState.SPECIAL_ACTION) {
+            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
         }
     }
 
     /**
      * A létrehozást megoldó függvény, amit parancsként kiadva tudunk új játékelemet helyezni a pályára
+     *
      * @param name - a játékelem neve
      * @param type - a játékelem típusa
-     * @param x - a játékelem kirajzolásához tartozó x koordináta
-     * @param y - a játékelem kirajzolásához tartozó y koordináta
+     * @param x    - a játékelem kirajzolásához tartozó x koordináta
+     * @param y    - a játékelem kirajzolásához tartozó y koordináta
      */
-    public void create(String name, String type,int x, int y) {
+    public void create(String name, String type, int x, int y) {
 
         switch (type) {
             case "mechanic" -> {
@@ -207,13 +208,13 @@ public class Controller implements Serializable {
                 gameView.addSaboteurView(saboteurView);
             }
             case "pump" -> {
-                Pump pump = new Pump();
+                Pump pump = new Pump(Controller.getInstance());
                 steppables.add(pump);
                 nodes.add(pump);
                 pumps.add(pump);
                 pickupables.add(pump);
                 objectCatalog.put(name, pump);
-                PumpView pumpView = new PumpView(x,y,25,pump,null,gameView);
+                PumpView pumpView = new PumpView(x, y, 25, pump, gameView);
                 gameView.addPumpView(pumpView);
             }
             case "spring" -> {
@@ -222,16 +223,16 @@ public class Controller implements Serializable {
                 nodes.add(spring);
                 springs.add(spring);
                 objectCatalog.put(name, spring);
-                SpringView springView = new SpringView(x,y,30,spring,gameView);
+                SpringView springView = new SpringView(x, y, 30, spring, gameView);
                 gameView.addSpringView(springView);
             }
             case "cistern" -> {
-                Cistern cistern = new Cistern();
+                Cistern cistern = new Cistern(Controller.getInstance(), PointCounter.getInstance());
                 steppables.add(cistern);
                 nodes.add(cistern);
                 cisterns.add(cistern);
                 objectCatalog.put(name, cistern);
-                CisternView cisternView = new CisternView(x,y,30,cistern,gameView);
+                CisternView cisternView = new CisternView(x, y, 30, cistern, gameView);
                 gameView.addCisternView(cisternView);
             }
             case "pipe" -> {
@@ -248,24 +249,25 @@ public class Controller implements Serializable {
 
     /**
      * Az összekötés parancs függvénye, összeköti a neki adott csövet egy node-al
-     * @param pipeName - az összekötni kívánt cső
+     *
+     * @param pipeName  - az összekötni kívánt cső
      * @param wNodeName - az összekötni kívánt node
      */
     public void connect(String pipeName, String wNodeName) {
 
-        if (!pipes.contains(objectCatalog.get(pipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+        if (!pipes.contains((Pipe) objectCatalog.get(pipeName))) {
+            IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
         Pipe p = (Pipe) objectCatalog.get(pipeName);
 
-        if (!nodes.contains(objectCatalog.get(wNodeName))) {
+        if (!nodes.contains((WaterNode) objectCatalog.get(wNodeName))) {
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
         WaterNode w = (WaterNode) objectCatalog.get(wNodeName);
 
-        if (w.AddPipe(p) && p.AddWaterNode(w)) {
+        if (w.addPipe(p) && p.addWaterNode(w)) {
             IO_Manager.write(pipeName + ".nodes = " + listWrite(p.getNodes()), Controller.filetoWrite != null);
             IO_Manager.write(wNodeName + ".pipes = " + listWrite(w.getPipes()), Controller.filetoWrite != null);
         }
@@ -274,29 +276,30 @@ public class Controller implements Serializable {
 
     /**
      * A mozgás parancsának függvénye, a neki adott játékos a neki adott léphető elemre lép, ha tud
-     * @param playerName - a mozgó játékos
+     *
+     * @param playerName    - a mozgó játékos
      * @param steppableName - az az elem amire mozog
      */
     public void move(String playerName, String steppableName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
+            IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (!steppables.contains(objectCatalog.get(steppableName))) {
+        if (!steppables.contains((Steppable) objectCatalog.get(steppableName))) {
             IO_Manager.writeError("wrong steppable name", Controller.filetoWrite != null);
             return;
         }
         Steppable s = (Steppable) objectCatalog.get(steppableName);
         Steppable prev = p.getStandingOn();
 
-        if (p.Move(s)) {
+        if (p.move(s)) {
             IO_Manager.write(steppableName + ".players = " + listWrite(s.getPlayers()), Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn = " + steppableName, Controller.filetoWrite != null);
             if (prev != null)
-                if (prev.getPlayers().size() == 0)
+                if (prev.getPlayers().isEmpty())
                     IO_Manager.write(getObjectName(prev) + ".players = null", Controller.filetoWrite != null);
                 else
                     IO_Manager.write(getObjectName(prev) + ".players = " + listWrite(prev.getPlayers()), Controller.filetoWrite != null);
@@ -306,34 +309,37 @@ public class Controller implements Serializable {
 
     /**
      * A lyukasztás parancs függvénye, a neki adott játékos kilyukasztja azt az elemet amin áll(csövet),ha tudja
+     *
      * @param playerName - a lyukasztó játékos
      */
     public void pierce(String playerName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
+            IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Pierce())
+        if (p.pierce())
 
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
 
     }
+
     /**
      * A ragacsozás parancs függvénye, a neki adott játékos bekeni ragaccsal azt az elemet amin áll(csövet),ha tudja
+     *
      * @param playerName - a ragacsozó játékos
      */
     public void glue(String playerName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
+            IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.Glue())
+        if (p.glue())
 
             IO_Manager.write(playerName + ".standingOn.glued = " + "true", Controller.filetoWrite != null);
 
@@ -341,36 +347,38 @@ public class Controller implements Serializable {
 
     /**
      * A csúszósá tétel parancsának függvénye, a neki adott szabotőr csúszóssá teszi azt az elemet amin áll(csövet),ha tudja
+     *
      * @param saboteurName - a csúszóssá tévő szabotőr
      */
     public void lubricate(String saboteurName) {
 
 
-        if (!saboteurs.contains(objectCatalog.get(saboteurName))) {
+        if (!saboteurs.contains((Saboteur) objectCatalog.get(saboteurName))) {
             IO_Manager.writeError("wrong saboteur name", Controller.filetoWrite != null);
             return;
         }
         Saboteur s = (Saboteur) objectCatalog.get(saboteurName);
 
-        if (s.Lubricate())
+        if (s.lubricate())
             IO_Manager.write(saboteurName + ".standingOn.lubricated = " + "true", Controller.filetoWrite != null);
     }
 
     /**
      * A javítás parancs függvénye, a neki adott szerelő megjavítja azt az elemet amin áll,ha tudja
+     *
      * @param mechanicName - a lyukasztó játékos
      */
     public void repair(String mechanicName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
+            IO_Manager.writeError(WRONG_MECH, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (m.Repair()) {
+        if (m.repair()) {
             IO_Manager.write(mechanicName + ".standingOn.broken = false", Controller.filetoWrite != null);
-            if (pipes.contains(m.getStandingOn())) {
+            if (pipes.contains((Pipe) m.getStandingOn())) {
                 IO_Manager.write(mechanicName + ".standingOn.readyToPierce = false", Controller.filetoWrite != null);
             }
         }
@@ -379,31 +387,32 @@ public class Controller implements Serializable {
 
     /**
      * Az átirányításért parancsért felelős függvény, meghívja az adott játékos redirect függvényét a paraméterként megadott csövekkel.
-     * @param playerName - a játékos aki átirányít
-     * @param inPipeName - az a cső amit bevezetőnek akar
+     *
+     * @param playerName  - a játékos aki átirányít
+     * @param inPipeName  - az a cső amit bevezetőnek akar
      * @param outPipeName - az a cső amit kivezetőnek akar
      */
     public void redirect(String playerName, String inPipeName, String outPipeName) {
 
-        if (!players.contains(objectCatalog.get(playerName))) {
-            IO_Manager.writeError("wrong player name", Controller.filetoWrite != null);
+        if (!players.contains((Player) objectCatalog.get(playerName))) {
+            IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (!pipes.contains(objectCatalog.get(inPipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+        if (!pipes.contains((Pipe) objectCatalog.get(inPipeName))) {
+            IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
         Pipe in = (Pipe) objectCatalog.get(inPipeName);
 
-        if (!pipes.contains(objectCatalog.get(outPipeName))) {
-            IO_Manager.writeError("wrong pipe name", Controller.filetoWrite != null);
+        if (!pipes.contains((Pipe) objectCatalog.get(outPipeName))) {
+            IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
         Pipe out = (Pipe) objectCatalog.get(outPipeName);
 
-        if (p.Redirect(in, out)) {
+        if (p.redirect(in, out)) {
             IO_Manager.write(playerName + ".standingOn.activeIn = " + inPipeName, Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn.activeOut = " + outPipeName, Controller.filetoWrite != null);
         }
@@ -412,24 +421,25 @@ public class Controller implements Serializable {
 
     /**
      * A felvevés parancsért felelős függvény, meghívja az adott szerelőre és Pickupable-re a szerelő PickUp függvényét.
+     *
      * @param mechanicName - a szerelő aki felvesz
-     * @param pickupName - a felvehető játékelem amit felvesz
+     * @param pickupName   - a felvehető játékelem amit felvesz
      */
     public void pickup(String mechanicName, String pickupName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
+            IO_Manager.writeError(WRONG_MECH, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (!pickupables.contains(objectCatalog.get(pickupName))) {
+        if (!pickupables.contains((PickupAble) objectCatalog.get(pickupName))) {
             IO_Manager.writeError("wrong pickup name", Controller.filetoWrite != null);
             return;
         }
         PickupAble p = (PickupAble) objectCatalog.get(pickupName);
 
-        if (m.PickUp(p)) {
+        if (m.pickUp(p)) {
             IO_Manager.write(mechanicName + ".heldItems = " + pickupName, Controller.filetoWrite != null);
 
         }
@@ -437,91 +447,92 @@ public class Controller implements Serializable {
 
     /**
      * A lerakás parancsért felelős függvény, meghívja az adott szerelő PlaceDown függvényét
+     *
      * @param mechanicName - a szerelő aki lerak
      */
     public void placedown(String mechanicName) {
 
-        if (!mechanics.contains(objectCatalog.get(mechanicName))) {
-            IO_Manager.writeError("wrong mechanic name", Controller.filetoWrite != null);
+        if (!mechanics.contains((Mechanic) objectCatalog.get(mechanicName))) {
+            IO_Manager.writeError(WRONG_MECH, Controller.filetoWrite != null);
             return;
         }
         Mechanic m = (Mechanic) objectCatalog.get(mechanicName);
 
-        if (m.PlaceDown())
+        if (m.placeDown())
             IO_Manager.write(mechanicName + ".heldItems = null", Controller.filetoWrite != null);
 
     }
 
     /**
      * Attribútumok lekérdezésének parancsát teljesítő függvény
+     *
      * @param objectName - az objektum neve amit lekérdezünk
      * @param attribName - az objektum egyik attribútumának neve amit le akarunk kérdezni
      */
     public void stateGet(String objectName, String attribName) {
-
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains(o)) {
+        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown" -> output += Boolean.toString(((Mechanic) o).isFellDown());
-                case "stuck" -> output += Boolean.toString(((Mechanic) o).isStuck());
-                case "standingOn" -> output += getObjectName(((Mechanic) o).getStandingOn());
-                case "state" -> output += getObjectName(((Mechanic) o).getState());
-                case "heldItems" -> output += getObjectName(((Mechanic) o).getHeldItems());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case FELL_DOWN_STR -> output += Boolean.toString(((Mechanic) o).isFellDown());
+                case STUCK_STR -> output += Boolean.toString(((Mechanic) o).isStuck());
+                case STANDING_ON_STR -> output += getObjectName(((Mechanic) o).getStandingOn());
+                case STATE_STR -> output += getObjectName(((Mechanic) o).getState());
+                case HELD_ITEMS_STR -> output += getObjectName(((Mechanic) o).getHeldItems());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown" -> output += Boolean.toString(((Mechanic) o).isFellDown());
-                case "stuck" -> output += Boolean.toString(((Mechanic) o).isStuck());
-                case "standingOn" -> output += getObjectName(((Mechanic) o).getStandingOn());
-                case "state" -> output += getObjectName(((Mechanic) o).getState());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case FELL_DOWN_STR -> output += Boolean.toString(((Saboteur) o).isFellDown());
+                case STUCK_STR -> output += Boolean.toString(((Saboteur) o).isStuck());
+                case STANDING_ON_STR -> output += getObjectName(((Saboteur) o).getStandingOn());
+                case STATE_STR -> output += getObjectName(((Saboteur) o).getState());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains(objectCatalog.get(objectName))) {
+        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "createdPickupables" -> output += listWrite(((Cistern) o).getCreatedPickupables());
-                case "pipes" -> output += listWrite(((Cistern) o).getPipes());
-                case "players" -> output += listWrite(((Cistern) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case CREATED_PICKUPABLES_STR -> output += listWrite(((Cistern) o).getCreatedPickupables());
+                case PIPES_STR -> output += listWrite(((Cistern) o).getPipes());
+                case PLAYERS_STR -> output += listWrite(((Cistern) o).getPlayers());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (springs.contains(objectCatalog.get(objectName))) {
+        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "pipes" -> output += listWrite(((Spring) o).getPipes());
-                case "players" -> output += listWrite(((Spring) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case PIPES_STR -> output += listWrite(((Spring) o).getPipes());
+                case PLAYERS_STR -> output += listWrite(((Spring) o).getPlayers());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pumps.contains(objectCatalog.get(objectName))) {
+        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> output += Boolean.toString(((Pump) o).isBroken());
-                case "waterCapacity" -> output += Integer.toString(((Pump) o).getWaterCapacity());
-                case "heldWater" -> output += Integer.toString(((Pump) o).getHeldWater());
-                case "maximumPipes" -> output += Integer.toString(((Pump) o).getMaximumPipes());
-                case "activeIn" -> output += getObjectName(((Pump) o).getActiveIn());
-                case "activeOut" -> output += getObjectName(((Pump) o).getActiveOut());
-                case "pipes" -> output += listWrite(((Pump) o).getPipes());
-                case "players" -> output += listWrite(((Pump) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case BROKEN_STR -> output += Boolean.toString(((Pump) o).isBroken());
+                case WATER_CAPACITY_STR -> output += Integer.toString(((Pump) o).getWaterCapacity());
+                case HELD_WATER_STR -> output += Integer.toString(((Pump) o).getHeldWater());
+                case MAXIMUM_PIPES_STR -> output += Integer.toString(((Pump) o).getMaximumPipes());
+                case ACTIVE_IN_STR -> output += getObjectName(((Pump) o).getActiveIn());
+                case ACTIVE_OUT_STR -> output += getObjectName(((Pump) o).getActiveOut());
+                case PIPES_STR -> output += listWrite(((Pump) o).getPipes());
+                case PLAYERS_STR -> output += listWrite(((Pump) o).getPlayers());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains(objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> output += Boolean.toString(((Pipe) o).isBroken());
-                case "waterCapacity" -> output += Integer.toString(((Pipe) o).getWaterCapacity());
-                case "heldWater" -> output += Integer.toString(((Pipe) o).getHeldWater());
-                case "readyToPierce" -> output += Boolean.toString(((Pipe) o).isReadyToPierce());
-                case "lubricated" -> output += Boolean.toString(((Pipe) o).isLubricated());
-                case "glued" -> output += Boolean.toString(((Pipe) o).isGlued());
-                case "beingHeld" -> output += Boolean.toString(((Pipe) o).isBeingHeld());
-                case "nodes" -> output += listWrite(((Pipe) o).getNodes());
-                case "players" -> output += listWrite(((Pipe) o).getPlayers());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case BROKEN_STR -> output += Boolean.toString(((Pipe) o).isBroken());
+                case WATER_CAPACITY_STR -> output += Integer.toString(((Pipe) o).getWaterCapacity());
+                case HELD_WATER_STR -> output += Integer.toString(((Pipe) o).getHeldWater());
+                case READY_TO_PIERCE_STR -> output += Boolean.toString(((Pipe) o).isReadyToPierce());
+                case LUBRICATED_STR -> output += Boolean.toString(((Pipe) o).isLubricated());
+                case GLUED_STR -> output += Boolean.toString(((Pipe) o).isGlued());
+                case BEING_HELD_STR -> output += Boolean.toString(((Pipe) o).isBeingHeld());
+                case NODES_STR -> output += listWrite(((Pipe) o).getNodes());
+                case PLAYERS_STR -> output += listWrite(((Pipe) o).getPlayers());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
         } else if (objectName.equals("counter")) {
             switch (attribName) {
-                case "saboteurPoints" -> output += Integer.toString(PointCounter.getInstance().GetSaboteurPoints());
-                case "mechanicPoints" -> output += Integer.toString(PointCounter.getInstance().GetMechanicPoints());
-                case "pointsToWin" -> output += Integer.toString(PointCounter.getInstance().GetPointsToWin());
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case SABOTEUR_POINTS_STR -> output += Integer.toString(PointCounter.getInstance().getSaboteurPoints());
+                case MECHANIC_POINTS_STR -> output += Integer.toString(PointCounter.getInstance().getMechanicPoints());
+                case POINTS_TO_WIN_STR -> output += Integer.toString(PointCounter.getInstance().getPointsToWin());
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
         } else {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
@@ -532,79 +543,84 @@ public class Controller implements Serializable {
 
     /**
      * Attribútumok beállításának parancsát teljesítő függvény
-     * @param objectName - az objektum neve aminek egyik értékét állítjuk be
-     * @param attribName - az objektum egyik attribútumának neve amit be akarunk állítani
+     *
+     * @param objectName  - az objektum neve aminek egyik értékét állítjuk be
+     * @param attribName  - az objektum egyik attribútumának neve amit be akarunk állítani
      * @param attribValue - az érték amire be akarjuk állítani
      */
     public void stateSet(String objectName, String attribName, String attribValue) {
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains(o)) {
+        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown":
+                case FELL_DOWN_STR:
                     ((Mechanic) o).setFellDown(Boolean.parseBoolean(attribValue));
                     break;
-                case "stuck":
+                case STUCK_STR:
                     ((Mechanic) o).setStuck(Boolean.parseBoolean(attribValue));
                     break;
-                case "state":
+                case STATE_STR:
                     switch (attribValue) {
-                        case "moveAction" -> ((Mechanic) o).setState(PlayerActionState.moveAction);
-                        case "specialAction" -> ((Mechanic) o).setState(PlayerActionState.specialAction);
-                        case "turnOver" -> ((Mechanic) o).setState(PlayerActionState.turnOver);
+                        case MOVE_ACTION_STR -> ((Mechanic) o).setState(PlayerActionState.MOVE_ACTION);
+                        case SPECIAL_ACTION_STR -> ((Mechanic) o).setState(PlayerActionState.SPECIAL_ACTION);
+                        case TURN_OVER_STR -> ((Mechanic) o).setState(PlayerActionState.TURN_OVER);
+                        default -> {
+                        }
                     }
                     break;
                 default:
-                    IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                    IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "fellDown":
+                case FELL_DOWN_STR:
                     ((Saboteur) o).setFellDown(Boolean.parseBoolean(attribValue));
                     break;
-                case "stuck":
+                case STUCK_STR:
                     ((Saboteur) o).setStuck(Boolean.parseBoolean(attribValue));
                     break;
 
-                case "state":
+                case STATE_STR:
                     switch (attribValue) {
-                        case "moveAction" -> ((Saboteur) o).setState(PlayerActionState.moveAction);
-                        case "specialAction" -> ((Saboteur) o).setState(PlayerActionState.specialAction);
-                        case "turnOver" -> ((Saboteur) o).setState(PlayerActionState.turnOver);
+                        case MOVE_ACTION_STR -> ((Saboteur) o).setState(PlayerActionState.MOVE_ACTION);
+                        case SPECIAL_ACTION_STR -> ((Saboteur) o).setState(PlayerActionState.SPECIAL_ACTION);
+                        case TURN_OVER_STR -> ((Saboteur) o).setState(PlayerActionState.TURN_OVER);
+                        default -> {
+                        }
                     }
                     break;
                 default:
-                    IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                    IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains(objectCatalog.get(objectName))) {
+        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (springs.contains(objectCatalog.get(objectName))) {
+        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (pumps.contains(objectCatalog.get(objectName))) {
+        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
-                case "waterCapacity" -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
-                case "heldWater" -> ((Pump) o).setHeldWater(Integer.parseInt(attribValue));
-                case "maximumPipes" -> ((Pump) o).setMaximumPipes(Integer.parseInt(attribValue));
-                case "activeIn" -> {
-                    if (pipes.contains(objectCatalog.get(attribValue)))
+                case BROKEN_STR -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
+                case WATER_CAPACITY_STR -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
+                case HELD_WATER_STR -> ((Pump) o).setHeldWater(Integer.parseInt(attribValue));
+                case MAXIMUM_PIPES_STR -> ((Pump) o).setMaximumPipes(Integer.parseInt(attribValue));
+                case ACTIVE_IN_STR -> {
+                    if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveIn((Pipe) objectCatalog.get(attribValue));
                 }
-                case "activeOut" -> {
-                    if (pipes.contains(objectCatalog.get(attribValue)))
+                case ACTIVE_OUT_STR -> {
+                    if (pipes.contains((Pipe) objectCatalog.get(attribValue)))
                         ((Pump) o).setActiveOut((Pipe) objectCatalog.get(attribValue));
                 }
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains(objectCatalog.get(objectName))) {
+        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
             switch (attribName) {
-                case "broken" -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
-                case "waterCapacity" -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
-                case "heldWater" -> ((Pipe) o).setHeldWater(Integer.parseInt(attribValue));
-                case "readyToPierce" -> ((Pipe) o).setReadyToPierce(Boolean.parseBoolean(attribValue));
-                case "lubricated" -> ((Pipe) o).setLubricated(Boolean.parseBoolean(attribValue));
-                case "glued" -> ((Pipe) o).setGlued(Boolean.parseBoolean(attribValue));
-                case "beingHeld" -> ((Pipe) o).setBeingHeld(Boolean.parseBoolean(attribValue));
-                default -> IO_Manager.writeError("wrong attribute name", Controller.filetoWrite != null);
+                case BROKEN_STR -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
+                case WATER_CAPACITY_STR -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
+                case HELD_WATER_STR -> ((Pipe) o).setHeldWater(Integer.parseInt(attribValue));
+                case READY_TO_PIERCE_STR -> ((Pipe) o).setReadyToPierce(Boolean.parseBoolean(attribValue));
+                case LUBRICATED_STR -> ((Pipe) o).setLubricated(Boolean.parseBoolean(attribValue));
+                case GLUED_STR -> ((Pipe) o).setGlued(Boolean.parseBoolean(attribValue));
+                case BEING_HELD_STR -> ((Pipe) o).setBeingHeld(Boolean.parseBoolean(attribValue));
+                default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
         } else {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
@@ -618,20 +634,19 @@ public class Controller implements Serializable {
      */
     public void turnOver() {
         turnOrder.add(turnOrder.removeFirst());
-        turnOrder.getFirst().setState(PlayerActionState.moveAction);
+        turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
         if (turnOrder.getFirst().isFellDown()) {
             turnOrder.getFirst().setFellDown(false);
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
-            boolean ignoreStates = Player.isIgnoreStates();
             Player.setIgnoreStates(true);
-            turnOrder.getFirst().Move(nodes.get(chance));
+            turnOrder.getFirst().move(nodes.get(chance));
             Player.setIgnoreStates(false);
-            turnOrder.getFirst().setState(PlayerActionState.turnOver);
+            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
         }
         if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
-            turnOrder.getFirst().setState(PlayerActionState.specialAction);
+            turnOrder.getFirst().setState(PlayerActionState.SPECIAL_ACTION);
         nextTurn();
         for (Pipe p : pipes) {
             if (!p.isReadyToPierce()) {
@@ -645,7 +660,7 @@ public class Controller implements Serializable {
                 getActivePlayer().setStuck(false);
             else {
                 getActivePlayer().setGlueLength(getActivePlayer().getGlueLength() - 1);
-                getActivePlayer().setState(PlayerActionState.turnOver);
+                getActivePlayer().setState(PlayerActionState.TURN_OVER);
                 turnOver();
             }
         }
@@ -658,14 +673,14 @@ public class Controller implements Serializable {
      */
     public void nextTurn() {
         for (WaterNode node : nodes) {
-            node.WaterFlow();
+            node.waterFlow();
         }
         for (Cistern cistern : cisterns) {
-            cistern.GeneratePickupables();
+            cistern.generatePickupables();
         }
         if (!deterministic) {
             for (Pump pump : pumps) {
-                Random random = new Random();
+                SecureRandom random = new SecureRandom();
                 int chance = random.nextInt(0, 5);
                 if (chance == 0) {
                     pump.setBroken(true);
@@ -674,77 +689,83 @@ public class Controller implements Serializable {
             }
         }
         //end of game?
-        if (started) {
-            if (counter.GetMechanicPoints() >= counter.GetPointsToWin() || counter.GetSaboteurPoints() >= counter.GetPointsToWin())
-                endGame();
-        }
+        if (started && (counter.getMechanicPoints() >= counter.getPointsToWin() || counter.getSaboteurPoints() >= counter.getPointsToWin()))
+            endGame();
     }
 
     /**
      * A ciszternán generálás parancsának függvénye, meghívja az adott ciszterna GeneratePickupables függvényét a megadott nevekkel.
+     *
      * @param cisternName - a ciszterna neve amin generáltatunk
-     * @param pipeName - a generált cső neve
-     * @param pumpName - a generált pumpa neve
+     * @param pipeName    - a generált cső neve
+     * @param pumpName    - a generált pumpa neve
      */
     public void generate(String cisternName, String pipeName, String pumpName) {
-        if (!cisterns.contains(objectCatalog.get(cisternName))) {
+        if (!cisterns.contains((Cistern) objectCatalog.get(cisternName))) {
             IO_Manager.writeError("wrong cistern name", Controller.filetoWrite != null);
             return;
         }
         Cistern c = (Cistern) objectCatalog.get(cisternName);
 
-        c.GeneratePickupables();
+        c.generatePickupables();
 
+        IO_Manager.write("This is pipe:" + pipeName);
+        IO_Manager.write("This is pump:" + pumpName);
         IO_Manager.write(cisternName + ".createdPickupables = " + listWrite(((Cistern) objectCatalog.get(cisternName)).getCreatedPickupables()), Controller.filetoWrite != null);
     }
 
     /**
      * A vízfolyás parancs függvénye, adott csomópontra hívja meg a vízfolyást.
+     *
      * @param wNodeName - a csomópont neve
      */
     public void waterFlow(String wNodeName) {
 
-        if (!nodes.contains(objectCatalog.get(wNodeName))) {
+        if (!nodes.contains((WaterNode) objectCatalog.get(wNodeName))) {
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
         WaterNode w = (WaterNode) objectCatalog.get(wNodeName);
 
-        w.WaterFlow();
+        w.waterFlow();
 
 
     }
 
     /**
      * Szerializált mentés parancs kivitelezésére használt függvény
+     *
      * @param filename - a fájl amibe mentünk
      */
     public void save(String filename) {
-        try {
-            FileOutputStream fops = new FileOutputStream("program.txt");
-            ObjectOutputStream oos = new ObjectOutputStream(fops);
+        try (FileOutputStream fops = new FileOutputStream("program.txt");
+             ObjectOutputStream oos = new ObjectOutputStream(fops)
+        ) {
             oos.writeObject(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error saving state to " + filename + ": " + e.getMessage());
         }
         IO_Manager.write("saved state to program.txt", Controller.filetoWrite != null);
     }
 
     /**
      * Szerializált betöltés parancs kivitelezésére használt függvény
+     *
      * @param filename - a fájl amiből betöltünk
      */
     public void load(String filename) {
-        try {
-            FileInputStream fis = new FileInputStream("program.txt");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            Controller c2 = (Controller) ois.readObject();
-            controller = c2;
+
+        try (
+                FileInputStream fis = new FileInputStream("program.txt");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+        ) {
+            controller = (Controller) ois.readObject();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error loading state from " + filename + ": " + e.getMessage());
         }
         IO_Manager.write("loaded state from program.txt", Controller.filetoWrite != null);
     }
+
 
     /**
      * A játék végét lefuttató függvény
@@ -753,12 +774,14 @@ public class Controller implements Serializable {
         started = false;
         gameView.end();
         IO_Manager.write("game over", Controller.filetoWrite != null);
-        IO_Manager.write("saboteurPoints = " + counter.GetSaboteurPoints(), Controller.filetoWrite != null);
-        IO_Manager.write("mechanicPoints = " + counter.GetMechanicPoints(), Controller.filetoWrite != null);
+        IO_Manager.write("saboteurPoints = " + counter.getSaboteurPoints(), Controller.filetoWrite != null);
+        IO_Manager.write("mechanicPoints = " + counter.getMechanicPoints(), Controller.filetoWrite != null);
 
     }
+
     /**
      * Visszaadja az objektkatalógusban található elemet, ha benne van
+     *
      * @param o - az objektum amit keresünk
      * @return - az objektum neve
      */
@@ -769,6 +792,7 @@ public class Controller implements Serializable {
         }
         return null;
     }
+
     /**
      * A játék kezdete, megvizsgálja, hogy van-e elég játékos, random elhelyezi őket egy waternode-on,
      * /mevizsgálja, hogy minden csőnek mindkét vége bekötött-e (funkcionális követelmény), illetve
@@ -777,7 +801,7 @@ public class Controller implements Serializable {
     public void startGame() {
 
 
-        for (Pipe p :pipes) {
+        for (Pipe p : pipes) {
             PipeView pipeView = new PipeView(
                     gameView.getDrawableByCorrespondingModel(p.getNodes().getFirst()),
                     gameView.getDrawableByCorrespondingModel(p.getNodes().getLast()),
@@ -791,10 +815,10 @@ public class Controller implements Serializable {
             return;
         }
         for (Player p : players) {
-            p.RemovePlayer();
-            Random random = new Random();
+            p.removePlayer();
+            SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
-            p.Move(nodes.get(chance));
+            p.move(nodes.get(chance));
         }
         for (Pipe p : pipes) {
             if (p.getNodes().getFirst() == null || p.getNodes().getLast() == null) {
@@ -805,85 +829,80 @@ public class Controller implements Serializable {
 
         //IDE KELL EGY BFS-KERESES A GRAFIKUSBA
 
-        /** START
-         *  Ha be akarjuk állítani másra a nyerési pontot azt itt kell majd
-         *  counter.setPointsToWin(50);
+        /* START
+           Ha be akarjuk állítani másra a nyerési pontot azt itt kell majd
+           counter.setPointsToWin(50);
          */
         turnOrder.addAll(mechanics);
         turnOrder.addAll(saboteurs);
         started = true;
         gameView.setStarted(true);
-        turnOrder.getFirst().setState(PlayerActionState.moveAction);
+        turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
         if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
-            turnOrder.getFirst().setState(PlayerActionState.specialAction);
+            turnOrder.getFirst().setState(PlayerActionState.SPECIAL_ACTION);
         Player.setIgnoreStates(false);
     }
 
 
     /**
      * Kiírja egy lista elemeinek neveit a megadott kimenet szerint
+     *
      * @param list - a lista amit kiiratunk
      * @return - a kiiratott szöveg
      */
     private String listWrite(LinkedList<?> list) {
-        String out = "";
+        StringBuilder out = new StringBuilder();
         try {
             for (int i = 0; i < list.size(); i++) {
-                out += getObjectName(list.get(i));
-                if (i != list.size() - 1) out += ", ";
+                out.append(getObjectName(list.get(i)));
+                if (i != list.size() - 1) out.append(", ");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error occurred while writing the list: " + e.getMessage());
         }
-        return out;
+        return out.toString();
 
     }
 
     /**
      * Eltávolítja az adott objektumot abból a listá(k)ból, ami(k)ben benne van.
-     * @param o - az objektum amit eltávolítunk
+     *
+     * @param p - az objektum amit eltávolítunk (Csak Pipe-ra kell)
      */
-    public void removeObject(Object o) {
-        cisterns.remove(o);
-        mechanics.remove(o);
-        pickupables.remove(o);
-        pipes.remove(o);
-        players.remove(o);
-        pumps.remove(o);
-        saboteurs.remove(o);
-        springs.remove(o);
-        steppables.remove(o);
-        nodes.remove(o);
-        objectCatalog.remove(o);
+    public void removeObject(Pipe p) {
+        pipes.remove(p);
     }
 
     /**
      * Az új játék ablaknál egy szerelő színét és nevét beállító függvény
+     *
      * @param temp - a szerelő neve
-     * @param cp - a colorpicker amivel színt választottunk
+     * @param cp   - a colorpicker amivel színt választottunk
      * @return - a szerelő nézete
      */
     public MechanicView makeMechanic(String temp, ColorPicker cp) {
-        Mechanic m= (Mechanic) objectCatalog.get(temp);
-        if(mechanics.contains(m)){
-            MechanicView mechanicView= (MechanicView) gameView.getDrawableByCorrespondingModel(m);
+        Mechanic m = (Mechanic) objectCatalog.get(temp);
+        if (mechanics.contains(m)) {
+            MechanicView mechanicView = (MechanicView) gameView.getDrawableByCorrespondingModel(m);
             mechanicView.setColor(cp.getUserColor());
             mechNumber++;
             mechanicView.setNumber(mechNumber);
             return mechanicView;
         }
-return null;
+        return null;
     }
+
     /**
      * Az új játék ablaknál egy szabotőr színét és nevét beállító függvény
+     *
      * @param temp - a szabotőr neve
-     * @param cp - a colorpicker amivel színt választottunk
+     * @param cp   - a colorpicker amivel színt választottunk
      * @return - a szabotőr nézete
      */
     public SaboteurView makeSaboteur(String temp, ColorPicker cp) {
-        Saboteur s= (Saboteur) objectCatalog.get(temp);
-        if(saboteurs.contains(s)){
-            SaboteurView saboteurView= (SaboteurView) gameView.getDrawableByCorrespondingModel(s);
+        Saboteur s = (Saboteur) objectCatalog.get(temp);
+        if (saboteurs.contains(s)) {
+            SaboteurView saboteurView = (SaboteurView) gameView.getDrawableByCorrespondingModel(s);
             saboteurView.setColor(cp.getUserColor());
             sabNumber++;
             saboteurView.setNumber(sabNumber);
@@ -895,20 +914,25 @@ return null;
 
     /**
      * A frame (JFrame) gettere
+     *
      * @return - a frame
      */
     public AppFrame getFrame() {
         return frame;
     }
+
     /**
      * Az objekt katalógus gettere
+     *
      * @return - a katalógus
      */
     public HashMap<String, Object> getObjectCatalog() {
         return objectCatalog;
     }
+
     /**
      * a főmenü gettere
+     *
      * @return a főmenü
      */
     public MenuView getMenuView() {
@@ -917,6 +941,7 @@ return null;
 
     /**
      * az új játék ablak gettere
+     *
      * @return az ablak
      */
     public NewGameView getNewGameView() {
@@ -925,6 +950,7 @@ return null;
 
     /**
      * a futó játék ablakának gettere
+     *
      * @return az ablak
      */
     public GameView getGameView() {

@@ -33,12 +33,29 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      */
     private Pipe activeOut = null;
 
+    private Controller controller;
+
+    public Pump(Controller controller) {
+        this.controller = controller;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     /**
      * Akkor hívódik, ha egy játékos felveszi ezt a pumpát(amit nem tud)
      * @param from melyik elemről vesszük le / csatlakoztatjuk le a pumpát
      */
     @Override
-    public void PickedUp(Steppable from) {}
+    public void pickedUp(Steppable from) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Pumpa letétele
@@ -46,8 +63,8 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return ha sikerül letenni, akkor true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PlacedDown(Steppable to) {
-        return to.PlacedDownTo(this);
+    public boolean placedDown(Steppable to) {
+        return to.placedDownTo(this);
     }
     /**
      * A pickup felvétele a pumpárópl
@@ -55,7 +72,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return amennyiben az elemet sikeresen felvették true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PickedUpFrom(PickupAble pickup) {
+    public boolean pickedUpFrom(PickupAble pickup) {
 
         int pickupIdx = pipes.indexOf(pickup);
         if (pickupIdx != -1) {
@@ -78,10 +95,10 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return amennyiben sikeresen le lehet helyezni a csövet a pumpára true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean PlacedDownTo(Pipe pickup) {
-        boolean successful = AddPipe(pickup);
+    public boolean placedDownTo(Pipe pickup) {
+        boolean successful = addPipe(pickup);
         if (successful)
-            pickup.AddWaterNode(this);
+            pickup.addWaterNode(this);
         return successful;
     }
 
@@ -91,7 +108,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return mindig false-szal tér vissza, hiszen pump-ra nem lehet másik pump-ot helyezni
      */
     @Override
-    public boolean PlacedDownTo(Pump pickup) {
+    public boolean placedDownTo(Pump pickup) {
         IO_Manager.writeInfo("Can't place it here", Controller.filetoWrite != null);
         return false;
     }
@@ -100,30 +117,29 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * a vízfolyás függvénye, először átadja a vizet a kimenő csőnek, ha a pumpa nem romlott, vagy a tárolója nem üres, majd elveszi a vizet a bemeneti csőtől
      */
     @Override
-    public void WaterFlow() {
+    public void waterFlow() {
 
         if (broken) {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is broken", controller.filetoWrite != null);
         }
-        int gained=0;
         if(!broken && heldWater != 0 && activeOut != null)
         {
-            gained= activeOut.GainWater(1);
+            int gained = activeOut.gainWater(1);
             if(gained==1){
                 heldWater--;
             }
-            IO_Manager.write(Controller.getInstance().getObjectName(activeOut) + " gained " + gained, Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(activeOut) + " gained " + gained, controller.filetoWrite != null);
         } else if (heldWater == 0) {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is empty", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is empty", controller.filetoWrite != null);
         }
 
         if (activeIn != null) {
 
-            int lost = activeIn.LoseWater(1);
+            int lost = activeIn.loseWater(1);
             int excess = (heldWater + lost > waterCapacity) ? (heldWater + lost - waterCapacity) : 0;
-            activeIn.GainWater(excess);
+            activeIn.gainWater(excess);
             heldWater +=lost-excess;
-            IO_Manager.write(Controller.getInstance().getObjectName(activeIn) + " lost " + (lost - excess), Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(activeIn) + " lost " + (lost - excess), controller.filetoWrite != null);
         }
     }
 
@@ -135,7 +151,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * különben false-szal
      */
     @Override
-    public boolean PlayerRedirect(Pipe in, Pipe out) {
+    public boolean playerRedirect(Pipe in, Pipe out) {
         if(pipes.contains(in) && pipes.contains(out)) {
             activeIn = in;
             activeOut = out;
@@ -210,13 +226,13 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return ha sikerült a csövet a pumpára kötni, akkor true-val tér vissza, különben false-szal
      */
     @Override
-    public boolean AddPipe(Pipe p) {
+    public boolean addPipe(Pipe p) {
         boolean valid = pipes.size() < maximumPipes;
         if(valid)
             pipes.add(p);
         else
-            IO_Manager.writeInfo("Can't place " + Controller.getInstance().getObjectName(p) + " here, because " +
-                    Controller.getInstance().getObjectName(this) + " reached pipe capacity", Controller.filetoWrite != null);
+            IO_Manager.writeInfo("Can't place " + controller.getObjectName(p) + " here, because " +
+                    controller.getObjectName(this) + " reached pipe capacity", controller.filetoWrite != null);
         return valid;
 
     }
@@ -226,7 +242,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
      * @return sikeresség
      */
     @Override
-    public boolean Repaired(){
+    public boolean repaired(){
         if(broken){
             broken = false;
             return true;

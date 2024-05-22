@@ -18,13 +18,13 @@ public abstract class Steppable implements Serializable {
      * @return sikeres / sikertelen a belépési kísérlet
      * Alapesetben false-szal tér vissza, a leszármazottakban overrideolva van.
      */
-    public boolean PlayerEnter(Player player) { return false; }
+    public boolean playerEnter(Player player) { return false; }
 
     /**
      * A függvény az adott játékos lelépési szándékát adja meg, leszármazottakban történik a megvalósítása.
      * @param player a mezőről lelépő játékos
      */
-    public void PlayerExit(Player player) {}
+    public void playerExit(Player player) {}
 
     /**
      * Az adott elem ki- és bemeneti állapotát állítja be, leszármazottakban megvalósítás.
@@ -33,7 +33,7 @@ public abstract class Steppable implements Serializable {
      * @param out kimeneti állapot
      * @return az átirányítás sikeressége
      */
-    public boolean PlayerRedirect(Pipe in, Pipe out) {
+    public boolean playerRedirect(Pipe in, Pipe out) {
         return false;
     }
 
@@ -43,7 +43,7 @@ public abstract class Steppable implements Serializable {
      * @return sikeres / sikertelen volt az elem felvétele a pályáról
      * Absztrakt függvény, leszármazottakban van a megvalósítása.
      */
-    public abstract boolean PickedUpFrom(PickupAble pickup);
+    public abstract boolean pickedUpFrom(PickupAble pickup);
 
     /**
      * Pipe letétele erre az objektumra
@@ -51,14 +51,14 @@ public abstract class Steppable implements Serializable {
      * @return lerakás sikeressége
      * Absztrakt, leszármazottakban van a megvalósítása.
      */
-    public abstract boolean PlacedDownTo(Pipe pickup);
+    public abstract boolean placedDownTo(Pipe pickup);
 
     /**
      * Pump letétele erre az objektumra
      * @param pickup a Pump amit le akarunk rakni
      * @return lerakás sikeressége
      */
-    public abstract boolean PlacedDownTo(Pump pickup);
+    public abstract boolean placedDownTo(Pump pickup);
 
     //oopsie, itt amúgy a paraméter Pump, nem Pipe ahogy a doksiban van
 
@@ -66,19 +66,19 @@ public abstract class Steppable implements Serializable {
      * Leszármazottban valósul meg a funkciója
      * @param pump lerakandó pumpa
      */
-    public void CutInHalf(Pump pump) {}
+    public void cutInHalf(Pump pump) {}
 
    //Pályelem lyukasztása, alapesetben false-szal tér vissza, Pipe osztályban overrideolva van.
-    public boolean Pierced() { return false; }
+    public boolean pierced() { return false; }
 
    //Pályaelem megjavítása, mindig false-szal tér vissza, a Cistern és Spring osztályok kivételével overrideolva van a leszármazottakban.
-    public boolean Repaired() { return false; }
+    public boolean repaired() { return false; }
 
     //Ragacsossá tétel függvénye, ami itt mindig hamissal tér vissza, a Pipe osztályban override-olva van.
-    public boolean Glued(){return false;}
+    public boolean glued(){return false;}
 
     //Csúszóssá tétel függvénye, ami itt mindig hamissal tér vissza, a Pipe osztályban override-olva van.
-    public boolean Lubricated(){return false;}
+    public boolean lubricated(){return false;}
 
     /**
      * Aktív bemenet megadása

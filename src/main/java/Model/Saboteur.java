@@ -3,7 +3,6 @@ package Model;
 import Controller.Controller;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * A Saboteur osztály valósítja meg a szabotőrrel kapcsolatos metódusokat
@@ -14,15 +13,15 @@ public class Saboteur extends Player implements Serializable {
      * Csúszóssá teszi azt amin áll, ha tudja, meghívja azon pályaelem Lubricated függvényét.
      * @return sikeresség
      */
-    public boolean Lubricate(){
+    public boolean lubricate(){
         boolean lubricated=false;
         if(isIgnoreStates()) {
-            lubricated = standingOn.Lubricated();
+            lubricated = standingOn.lubricated();
         }
-        else if(state == PlayerActionState.specialAction) {
-            lubricated = standingOn.Lubricated();
+        else if(state == PlayerActionState.SPECIAL_ACTION) {
+            lubricated = standingOn.lubricated();
             if (lubricated) {
-                state = PlayerActionState.turnOver;
+                state = PlayerActionState.TURN_OVER;
                 Controller.getInstance().turnOver();
             }
         }
@@ -37,30 +36,30 @@ public class Saboteur extends Player implements Serializable {
      */
     public ActionType[] availableActions(Steppable step){
         ActionType[] actions = new ActionType[6];
-        if(state.equals(PlayerActionState.moveAction)){
+        if(state.equals(PlayerActionState.MOVE_ACTION)){
             if(step.canMoveToHere(this)) {
-                actions[2] = ActionType.move;
+                actions[2] = ActionType.MOVE;
                 return actions;
             }
         }
-        if(state.equals(PlayerActionState.specialAction)){
+        if(state.equals(PlayerActionState.SPECIAL_ACTION)){
             //2
             if (step.canMoveToHere(this))
-                actions[2] = ActionType.move;
+                actions[2] = ActionType.MOVE;
             else if (!standingOn.canMoveFromHere() || standingOn == step)
-                actions[2] = ActionType.pass;
+                actions[2] = ActionType.PASS;
             //0
             if(step.canLubricate(this))
-                actions[0] = ActionType.lubricate;
+                actions[0] = ActionType.LUBRICATE;
             //1
             if(step.canRedirect(this))
-                actions[1] = ActionType.redirect;
+                actions[1] = ActionType.REDIRECT;
             //3
             if(step.canGlue(this))
-                actions[3] = ActionType.glue;
+                actions[3] = ActionType.GLUE;
             //5
             if (step.canPierce(this))
-                actions[5] = ActionType.pierce;
+                actions[5] = ActionType.PIERCE;
             return actions;
         }
         return actions;
