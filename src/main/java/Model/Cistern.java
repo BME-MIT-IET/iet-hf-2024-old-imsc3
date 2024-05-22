@@ -224,9 +224,6 @@ public class Cistern extends WaterNode implements Serializable {
     public LinkedList<Pipe> getGeneratedPipes() {
         return generatedPipes;
     }
-    public void addGeneratedPipe(Pipe p) {
-        generatedPipes.add(p);
-    }
     /**
      * A generált pumpák listájának gettere
      * @return a lista
@@ -235,8 +232,5 @@ public class Cistern extends WaterNode implements Serializable {
         return generatedPumps;
     }
 
-    public void addGeneratedPump(Pump p) {
-        generatedPumps.add(p);
-    }
 
 }
