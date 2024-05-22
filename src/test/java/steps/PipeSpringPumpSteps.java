@@ -98,16 +98,16 @@ public class PipeSpringPumpSteps {
     @Then("{string} should be marked as broken")
     public void should_be_marked_as_broken(String name) {
         Object o = controller.getObjectCatalog().get(name);
-        if(o instanceof Pipe) assertTrue(((Pipe)o).isBroken());
+        if (o instanceof Pipe) assertTrue(((Pipe) o).isBroken());
 
-        else if (o instanceof Pump) assertTrue(((Pump)o).isBroken());
+        else if (o instanceof Pump) assertTrue(((Pump) o).isBroken());
     }
 
     @Then("{string} should have {int} water held")
     public void should_have_water_held(String name, int waterAmount) {
         Object o = controller.getObjectCatalog().get(name);
-        if(o instanceof Pipe) assertEquals(waterAmount, ((Pipe)o).getHeldWater());
-        else if (o instanceof Pump) assertEquals(waterAmount, ((Pump)o).getHeldWater());
+        if (o instanceof Pipe) assertEquals(waterAmount, ((Pipe) o).getHeldWater());
+        else if (o instanceof Pump) assertEquals(waterAmount, ((Pump) o).getHeldWater());
 
 
     }
@@ -150,18 +150,14 @@ public class PipeSpringPumpSteps {
 
 
     @Then("{string} should be marked as not broken")
-<<<<<<< HEAD
+
     public void should_be_marked_as_not_broken(String name) {
         Object o = controller.getObjectCatalog().get(name);
-        if(o instanceof Pipe) assertFalse(((Pipe)o).isBroken());
-        else if (o instanceof Pump) assertFalse(((Pump)o).isBroken());
-=======
-    public void pipe_should_be_marked_as_not_broken(String pipeName) {
-        Object pipe = controller.getObjectCatalog().get(pipeName);
->>>>>>> 53834bb099e6b2589d35a7b6e5c4bf58873faba4
+        if (o instanceof Pipe) assertFalse(((Pipe) o).isBroken());
+        else if (o instanceof Pump) assertFalse(((Pump) o).isBroken());
+
 
     }
-
 
 
     @Then("{string} should be marked as not being held")
@@ -170,7 +166,7 @@ public class PipeSpringPumpSteps {
         assertFalse(pipe.isBeingHeld());
     }
 
-<<<<<<< HEAD
+
     @Then("{string}'s activeOut should be {string}")
     public void activeOut_should_be(String objectName, String out) {
         Pump pump = (Pump) controller.getObjectCatalog().get(objectName);
@@ -188,16 +184,11 @@ public class PipeSpringPumpSteps {
     }
 
 
-=======
     @Then("{string} should be marked as being held")
     public void should_be_marked_as_being_held(String pipeName) {
-        Object pipe =  controller.getObjectCatalog().get(pipeName);
+        Object pipe = controller.getObjectCatalog().get(pipeName);
         System.out.println(pipe);
         //assertTrue(pipe.isBeingHeld());
     }
 
-    @Then("{string} should not be marked as being held")
-    public void shouldNotBeMarkedAsBeingHeld(String arg0) {
-    }
->>>>>>> 53834bb099e6b2589d35a7b6e5c4bf58873faba4
 }
