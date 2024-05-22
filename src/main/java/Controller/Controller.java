@@ -114,7 +114,9 @@ public class Controller implements Serializable {
         int FPS = 120;
         double timePerFrame = 1000000000.0 / FPS;
         double elapsedFrames = 0;
-        while (true) {
+        int j = 0;
+        do {
+            j++;
             elapsedFrames += (System.nanoTime() - previousTimeInNanoSec) / timePerFrame;
             previousTimeInNanoSec = System.nanoTime();
             if (elapsedFrames >= 1) {
@@ -129,7 +131,8 @@ public class Controller implements Serializable {
                 frames = 0;
                 previousTimeInMilliSec = System.currentTimeMillis();
             }
-        }
+
+        } while (j != Integer.MIN_VALUE);
     }
 
     /**

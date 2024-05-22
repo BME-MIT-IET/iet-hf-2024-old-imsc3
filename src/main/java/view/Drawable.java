@@ -51,16 +51,17 @@ public abstract class Drawable extends JComponent {
     }
 
     public double getPlayerAngle(Player p, LinkedList<Player> players) {
-        int numOfPlayers = players.size();
-        double[] angles = new double[numOfPlayers];
+        double[] angles = new double[players.size()];
         for (int i = 0; i < angles.length; ++i) {
             angles[i] = i * 20 - (angles.length - 1) * 10;
         }
-        int indexOfPlayer = players.indexOf(p);
-        if(indexOfPlayer < numOfPlayers){
-            return angles[indexOfPlayer];
+
+        int index = players.indexOf(p);
+        if (index != -1) { // Check if player is in the list
+            return angles[index];
+        } else {
+            throw new IllegalArgumentException("Player not found in the list");
         }
-        return -1;
     }
     public int[] setCapX(int x){
         int[] capX = new int[3];
