@@ -10,6 +10,20 @@ import java.util.List;
  */
 public class Saboteur extends Player implements Serializable {
 
+    private Controller controller;
+
+    public Saboteur(Controller controller) {
+        this.controller = controller;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
     /**
      * Csúszóssá teszi azt amin áll, ha tudja, meghívja azon pályaelem Lubricated függvényét.
      * @return sikeresség
@@ -23,7 +37,7 @@ public class Saboteur extends Player implements Serializable {
             lubricated = standingOn.Lubricated();
             if (lubricated) {
                 state = PlayerActionState.turnOver;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         return lubricated;

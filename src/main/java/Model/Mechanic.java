@@ -9,6 +9,22 @@ import java.util.List;
  * Szerelő megvalósítására használt osztály
  */
 public class Mechanic extends Player implements Serializable {
+
+    private Controller controller;
+
+    public Mechanic(Controller controller) {
+        this.controller = controller;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     /**
      * felvett pályaelem
      */
@@ -26,11 +42,11 @@ public class Mechanic extends Player implements Serializable {
             repaired = standingOn.Repaired();
             if (repaired) {
                 state = PlayerActionState.turnOver;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if(!repaired)
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(standingOn) + "is not broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(standingOn) + "is not broken", Controller.filetoWrite != null);
         return repaired;
     }
 
@@ -47,7 +63,7 @@ public class Mechanic extends Player implements Serializable {
             pickedup = standingOn.PickedUpFrom(item);
             if (pickedup) {
                 state = PlayerActionState.turnOver;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if (pickedup) {
@@ -55,7 +71,7 @@ public class Mechanic extends Player implements Serializable {
             heldItems = item;
         }
         else
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(item) + " can't be picked up", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(item) + " can't be picked up", Controller.filetoWrite != null);
 
         return pickedup;
     }
@@ -74,7 +90,7 @@ public class Mechanic extends Player implements Serializable {
             successful = heldItems.PlacedDown(standingOn);
             if (successful) {
                 state = PlayerActionState.turnOver;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if (successful)
