@@ -1,8 +1,8 @@
 package Model;
 
 import Controller.Controller;
-import View.PipeView;
-import View.PumpView;
+import view.PipeView;
+import view.PumpView;
 
 import java.io.Serializable;
 import java.security.SecureRandom;

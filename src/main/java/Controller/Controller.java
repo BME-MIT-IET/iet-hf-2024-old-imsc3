@@ -1,8 +1,9 @@
 package Controller;
 
-import static Assets.Strings.*;
+import static assets.Strings.*;
+
 import Model.*;
-import View.*;
+import view.*;
 
 import java.awt.*;
 import java.io.*;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class Controller implements Serializable {
 
     private static Controller controller = null;
-    private final boolean frameCounter = false;
+    private static final boolean frameCounter = false;
 
     //Singleton
     private Controller() {
@@ -40,7 +41,7 @@ public class Controller implements Serializable {
      */
     private final boolean running = true;
     /**
-     *  A játékosok actionkezeléséhez szükséges lista.
+     * A játékosok actionkezeléséhez szükséges lista.
      */
     private final LinkedList<Player> turnOrder = new LinkedList<>();
     /**
@@ -80,11 +81,11 @@ public class Controller implements Serializable {
     /**
      * Az új játék ablaknál létrehozott szerelők száma-1(indexe)
      */
-    private int mechNumber=-1;
+    private int mechNumber = -1;
     /**
      * Az új játék ablaknál létrehozott szabotőrök száma-1(indexe)
      */
-    private int sabNumber=-1;
+    private int sabNumber = -1;
 
     /**
      * A panelt (JPanel) reprezentáló osztály
@@ -110,17 +111,17 @@ public class Controller implements Serializable {
     /**
      * A gameloop-ért fellelős függvény
      */
-    public void run(){
-        int frames=0;
-        long previousTimeInNanoSec=System.nanoTime();
-        long previousTimeInMilliSec=System.currentTimeMillis();
-        int FPS=120;
-        double timePerFrame=1000000000.0/FPS;
-        double elapsedFrames=0;
-        while(running){
-            elapsedFrames+=(System.nanoTime()-previousTimeInNanoSec)/timePerFrame;
-            previousTimeInNanoSec=System.nanoTime();
-            if(elapsedFrames>=1){
+    public void run() {
+        int frames = 0;
+        long previousTimeInNanoSec = System.nanoTime();
+        long previousTimeInMilliSec = System.currentTimeMillis();
+        int FPS = 120;
+        double timePerFrame = 1000000000.0 / FPS;
+        double elapsedFrames = 0;
+        while (running) {
+            elapsedFrames += (System.nanoTime() - previousTimeInNanoSec) / timePerFrame;
+            previousTimeInNanoSec = System.nanoTime();
+            if (elapsedFrames >= 1) {
                 update();
                 if (frame != null)
                     panel.repaint();
@@ -128,10 +129,10 @@ public class Controller implements Serializable {
                 elapsedFrames--;
             }
             //For FPS count
-            if(System.currentTimeMillis()-previousTimeInMilliSec>=1000){
-                if(frameCounter) System.out.println(frames);
-                frames=0;
-                previousTimeInMilliSec=System.currentTimeMillis();
+            if (System.currentTimeMillis() - previousTimeInMilliSec >= 1000) {
+                if (frameCounter) System.out.println(frames);
+                frames = 0;
+                previousTimeInMilliSec = System.currentTimeMillis();
             }
         }
     }
@@ -139,19 +140,19 @@ public class Controller implements Serializable {
     /**
      * Ez az update hívódik meg a gameloopból, ez osztja szét a különböző nézetek felé
      */
-    public void update(){
+    public void update() {
         switch (WindowOptions.windowOption) {
             case MENU -> menuView.update();
             case NEWGAME -> newGameView.update();
             case GAME -> gameView.update();
-            default -> {
-                throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
-            }
+            default -> throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+
         }
     }
 
     /**
      * Ez a paint hívódik a frame-repaint hatására, ez osztja szét a különböző nézetek felé
+     *
      * @param g - A frame grafikus megjelenítése, amire rajzolunk
      */
     public void paint(Graphics g) {
@@ -159,9 +160,8 @@ public class Controller implements Serializable {
             case MENU -> menuView.paint(g);
             case NEWGAME -> newGameView.paint(g);
             case GAME -> gameView.paint(g);
-            default -> {
-                throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
-            }
+            default -> throw new IllegalStateException("Unexpected value: " + WindowOptions.windowOption);
+
         }
     }
 
@@ -175,8 +175,8 @@ public class Controller implements Serializable {
     /**
      * A passzolás kivitelezésére használt függvény
      */
-    public void pass(){
-        if(turnOrder.getFirst().getState()==PlayerActionState.SPECIAL_ACTION) {
+    public void pass() {
+        if (turnOrder.getFirst().getState() == PlayerActionState.SPECIAL_ACTION) {
             turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
             turnOver();
         }
@@ -184,12 +184,13 @@ public class Controller implements Serializable {
 
     /**
      * A létrehozást megoldó függvény, amit parancsként kiadva tudunk új játékelemet helyezni a pályára
+     *
      * @param name - a játékelem neve
      * @param type - a játékelem típusa
-     * @param x - a játékelem kirajzolásához tartozó x koordináta
-     * @param y - a játékelem kirajzolásához tartozó y koordináta
+     * @param x    - a játékelem kirajzolásához tartozó x koordináta
+     * @param y    - a játékelem kirajzolásához tartozó y koordináta
      */
-    public void create(String name, String type,int x, int y) {
+    public void create(String name, String type, int x, int y) {
 
         switch (type) {
             case "mechanic" -> {
@@ -215,7 +216,7 @@ public class Controller implements Serializable {
                 pumps.add(pump);
                 pickupables.add(pump);
                 objectCatalog.put(name, pump);
-                PumpView pumpView = new PumpView(x,y,25,pump, gameView);
+                PumpView pumpView = new PumpView(x, y, 25, pump, gameView);
                 gameView.addPumpView(pumpView);
             }
             case "spring" -> {
@@ -224,16 +225,16 @@ public class Controller implements Serializable {
                 nodes.add(spring);
                 springs.add(spring);
                 objectCatalog.put(name, spring);
-                SpringView springView = new SpringView(x,y,30,spring,gameView);
+                SpringView springView = new SpringView(x, y, 30, spring, gameView);
                 gameView.addSpringView(springView);
             }
             case "cistern" -> {
-                Cistern cistern = new Cistern(Controller.getInstance(),PointCounter.getInstance());
+                Cistern cistern = new Cistern(Controller.getInstance(), PointCounter.getInstance());
                 steppables.add(cistern);
                 nodes.add(cistern);
                 cisterns.add(cistern);
                 objectCatalog.put(name, cistern);
-                CisternView cisternView = new CisternView(x,y,30,cistern,gameView);
+                CisternView cisternView = new CisternView(x, y, 30, cistern, gameView);
                 gameView.addCisternView(cisternView);
             }
             case "pipe" -> {
@@ -250,12 +251,13 @@ public class Controller implements Serializable {
 
     /**
      * Az összekötés parancs függvénye, összeköti a neki adott csövet egy node-al
-     * @param pipeName - az összekötni kívánt cső
+     *
+     * @param pipeName  - az összekötni kívánt cső
      * @param wNodeName - az összekötni kívánt node
      */
     public void connect(String pipeName, String wNodeName) {
 
-        if (!pipes.contains((Pipe)objectCatalog.get(pipeName))) {
+        if (!pipes.contains((Pipe) objectCatalog.get(pipeName))) {
             IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
@@ -276,7 +278,8 @@ public class Controller implements Serializable {
 
     /**
      * A mozgás parancsának függvénye, a neki adott játékos a neki adott léphető elemre lép, ha tud
-     * @param playerName - a mozgó játékos
+     *
+     * @param playerName    - a mozgó játékos
      * @param steppableName - az az elem amire mozog
      */
     public void move(String playerName, String steppableName) {
@@ -308,6 +311,7 @@ public class Controller implements Serializable {
 
     /**
      * A lyukasztás parancs függvénye, a neki adott játékos kilyukasztja azt az elemet amin áll(csövet),ha tudja
+     *
      * @param playerName - a lyukasztó játékos
      */
     public void pierce(String playerName) {
@@ -323,8 +327,10 @@ public class Controller implements Serializable {
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
 
     }
+
     /**
      * A ragacsozás parancs függvénye, a neki adott játékos bekeni ragaccsal azt az elemet amin áll(csövet),ha tudja
+     *
      * @param playerName - a ragacsozó játékos
      */
     public void glue(String playerName) {
@@ -343,6 +349,7 @@ public class Controller implements Serializable {
 
     /**
      * A csúszósá tétel parancsának függvénye, a neki adott szabotőr csúszóssá teszi azt az elemet amin áll(csövet),ha tudja
+     *
      * @param saboteurName - a csúszóssá tévő szabotőr
      */
     public void lubricate(String saboteurName) {
@@ -360,6 +367,7 @@ public class Controller implements Serializable {
 
     /**
      * A javítás parancs függvénye, a neki adott szerelő megjavítja azt az elemet amin áll,ha tudja
+     *
      * @param mechanicName - a lyukasztó játékos
      */
     public void repair(String mechanicName) {
@@ -381,8 +389,9 @@ public class Controller implements Serializable {
 
     /**
      * Az átirányításért parancsért felelős függvény, meghívja az adott játékos redirect függvényét a paraméterként megadott csövekkel.
-     * @param playerName - a játékos aki átirányít
-     * @param inPipeName - az a cső amit bevezetőnek akar
+     *
+     * @param playerName  - a játékos aki átirányít
+     * @param inPipeName  - az a cső amit bevezetőnek akar
      * @param outPipeName - az a cső amit kivezetőnek akar
      */
     public void redirect(String playerName, String inPipeName, String outPipeName) {
@@ -393,13 +402,13 @@ public class Controller implements Serializable {
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (!pipes.contains((Pipe)objectCatalog.get(inPipeName))) {
+        if (!pipes.contains((Pipe) objectCatalog.get(inPipeName))) {
             IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
         Pipe in = (Pipe) objectCatalog.get(inPipeName);
 
-        if (!pipes.contains((Pipe)objectCatalog.get(outPipeName))) {
+        if (!pipes.contains((Pipe) objectCatalog.get(outPipeName))) {
             IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
@@ -414,8 +423,9 @@ public class Controller implements Serializable {
 
     /**
      * A felvevés parancsért felelős függvény, meghívja az adott szerelőre és Pickupable-re a szerelő PickUp függvényét.
+     *
      * @param mechanicName - a szerelő aki felvesz
-     * @param pickupName - a felvehető játékelem amit felvesz
+     * @param pickupName   - a felvehető játékelem amit felvesz
      */
     public void pickup(String mechanicName, String pickupName) {
 
@@ -439,6 +449,7 @@ public class Controller implements Serializable {
 
     /**
      * A lerakás parancsért felelős függvény, meghívja az adott szerelő PlaceDown függvényét
+     *
      * @param mechanicName - a szerelő aki lerak
      */
     public void placedown(String mechanicName) {
@@ -453,8 +464,10 @@ public class Controller implements Serializable {
             IO_Manager.write(mechanicName + ".heldItems = null", Controller.filetoWrite != null);
 
     }
+
     /**
      * Attribútumok lekérdezésének parancsát teljesítő függvény
+     *
      * @param objectName - az objektum neve amit lekérdezünk
      * @param attribName - az objektum egyik attribútumának neve amit le akarunk kérdezni
      */
@@ -532,8 +545,9 @@ public class Controller implements Serializable {
 
     /**
      * Attribútumok beállításának parancsát teljesítő függvény
-     * @param objectName - az objektum neve aminek egyik értékét állítjuk be
-     * @param attribName - az objektum egyik attribútumának neve amit be akarunk állítani
+     *
+     * @param objectName  - az objektum neve aminek egyik értékét állítjuk be
+     * @param attribName  - az objektum egyik attribútumának neve amit be akarunk állítani
      * @param attribValue - az érték amire be akarjuk állítani
      */
     public void stateSet(String objectName, String attribName, String attribValue) {
@@ -623,7 +637,6 @@ public class Controller implements Serializable {
             turnOrder.getFirst().setFellDown(false);
             SecureRandom random = new SecureRandom();
             int chance = random.nextInt(0, nodes.size());
-            boolean ignoreStates = Player.isIgnoreStates();
             Player.setIgnoreStates(true);
             turnOrder.getFirst().move(nodes.get(chance));
             Player.setIgnoreStates(false);
@@ -674,17 +687,16 @@ public class Controller implements Serializable {
             }
         }
         //end of game?
-        if (started) {
-            if (counter.getMechanicPoints() >= counter.getPointsToWin() || counter.getSaboteurPoints() >= counter.getPointsToWin())
-                endGame();
-        }
+        if (started && (counter.getMechanicPoints() >= counter.getPointsToWin() || counter.getSaboteurPoints() >= counter.getPointsToWin()))
+            endGame();
     }
 
     /**
      * A ciszternán generálás parancsának függvénye, meghívja az adott ciszterna GeneratePickupables függvényét a megadott nevekkel.
+     *
      * @param cisternName - a ciszterna neve amin generáltatunk
-     * @param pipeName - a generált cső neve
-     * @param pumpName - a generált pumpa neve
+     * @param pipeName    - a generált cső neve
+     * @param pumpName    - a generált pumpa neve
      */
     public void generate(String cisternName, String pipeName, String pumpName) {
         if (!cisterns.contains((Cistern) objectCatalog.get(cisternName))) {
@@ -702,6 +714,7 @@ public class Controller implements Serializable {
 
     /**
      * A vízfolyás parancs függvénye, adott csomópontra hívja meg a vízfolyást.
+     *
      * @param wNodeName - a csomópont neve
      */
     public void waterFlow(String wNodeName) {
@@ -719,56 +732,34 @@ public class Controller implements Serializable {
 
     /**
      * Szerializált mentés parancs kivitelezésére használt függvény
+     *
      * @param filename - a fájl amibe mentünk
      */
     public void save(String filename) {
-        ObjectOutputStream oos = null;
-        FileOutputStream fops = null;
-        try {
-            fops = new FileOutputStream("program.txt");
-            oos = new ObjectOutputStream(fops);
+        try (FileOutputStream fops = new FileOutputStream("program.txt");
+             ObjectOutputStream oos = new ObjectOutputStream(fops)
+        ) {
             oos.writeObject(this);
         } catch (Exception e) {
             System.err.println("Error saving state to " + filename + ": " + e.getMessage());
-        } finally {
-            try {
-                if (oos != null) {
-                    oos.close();
-                }
-                if (fops != null) {
-                    fops.close();
-                }
-            } catch (IOException e) {
-                System.err.println("Error closing output streams: " + e.getMessage());
-            }
         }
         IO_Manager.write("saved state to program.txt", Controller.filetoWrite != null);
     }
 
     /**
      * Szerializált betöltés parancs kivitelezésére használt függvény
+     *
      * @param filename - a fájl amiből betöltünk
      */
     public void load(String filename) {
-        ObjectInputStream ois = null;
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream("program.txt");
-            ois = new ObjectInputStream(fis);
+
+        try (
+                FileInputStream fis = new FileInputStream("program.txt");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+        ) {
             controller = (Controller) ois.readObject();
         } catch (Exception e) {
             System.err.println("Error loading state from " + filename + ": " + e.getMessage());
-        } finally {
-            try {
-                if (ois != null) {
-                    ois.close();
-                }
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-                System.err.println("Error closing input streams: " + e.getMessage());
-            }
         }
         IO_Manager.write("loaded state from program.txt", Controller.filetoWrite != null);
     }
@@ -785,8 +776,10 @@ public class Controller implements Serializable {
         IO_Manager.write("mechanicPoints = " + counter.getMechanicPoints(), Controller.filetoWrite != null);
 
     }
+
     /**
      * Visszaadja az objektkatalógusban található elemet, ha benne van
+     *
      * @param o - az objektum amit keresünk
      * @return - az objektum neve
      */
@@ -797,6 +790,7 @@ public class Controller implements Serializable {
         }
         return null;
     }
+
     /**
      * A játék kezdete, megvizsgálja, hogy van-e elég játékos, random elhelyezi őket egy waternode-on,
      * /mevizsgálja, hogy minden csőnek mindkét vége bekötött-e (funkcionális követelmény), illetve
@@ -805,7 +799,7 @@ public class Controller implements Serializable {
     public void startGame() {
 
 
-        for (Pipe p :pipes) {
+        for (Pipe p : pipes) {
             PipeView pipeView = new PipeView(
                     gameView.getDrawableByCorrespondingModel(p.getNodes().getFirst()),
                     gameView.getDrawableByCorrespondingModel(p.getNodes().getLast()),
@@ -850,6 +844,7 @@ public class Controller implements Serializable {
 
     /**
      * Kiírja egy lista elemeinek neveit a megadott kimenet szerint
+     *
      * @param list - a lista amit kiiratunk
      * @return - a kiiratott szöveg
      */
@@ -869,6 +864,7 @@ public class Controller implements Serializable {
 
     /**
      * Eltávolítja az adott objektumot abból a listá(k)ból, ami(k)ben benne van.
+     *
      * @param p - az objektum amit eltávolítunk (Csak Pipe-ra kell)
      */
     public void removeObject(Pipe p) {
@@ -877,31 +873,34 @@ public class Controller implements Serializable {
 
     /**
      * Az új játék ablaknál egy szerelő színét és nevét beállító függvény
+     *
      * @param temp - a szerelő neve
-     * @param cp - a colorpicker amivel színt választottunk
+     * @param cp   - a colorpicker amivel színt választottunk
      * @return - a szerelő nézete
      */
     public MechanicView makeMechanic(String temp, ColorPicker cp) {
-        Mechanic m= (Mechanic) objectCatalog.get(temp);
-        if(mechanics.contains(m)){
-            MechanicView mechanicView= (MechanicView) gameView.getDrawableByCorrespondingModel(m);
+        Mechanic m = (Mechanic) objectCatalog.get(temp);
+        if (mechanics.contains(m)) {
+            MechanicView mechanicView = (MechanicView) gameView.getDrawableByCorrespondingModel(m);
             mechanicView.setColor(cp.getUserColor());
             mechNumber++;
             mechanicView.setNumber(mechNumber);
             return mechanicView;
         }
-return null;
+        return null;
     }
+
     /**
      * Az új játék ablaknál egy szabotőr színét és nevét beállító függvény
+     *
      * @param temp - a szabotőr neve
-     * @param cp - a colorpicker amivel színt választottunk
+     * @param cp   - a colorpicker amivel színt választottunk
      * @return - a szabotőr nézete
      */
     public SaboteurView makeSaboteur(String temp, ColorPicker cp) {
-        Saboteur s= (Saboteur) objectCatalog.get(temp);
-        if(saboteurs.contains(s)){
-            SaboteurView saboteurView= (SaboteurView) gameView.getDrawableByCorrespondingModel(s);
+        Saboteur s = (Saboteur) objectCatalog.get(temp);
+        if (saboteurs.contains(s)) {
+            SaboteurView saboteurView = (SaboteurView) gameView.getDrawableByCorrespondingModel(s);
             saboteurView.setColor(cp.getUserColor());
             sabNumber++;
             saboteurView.setNumber(sabNumber);
@@ -913,20 +912,25 @@ return null;
 
     /**
      * A frame (JFrame) gettere
+     *
      * @return - a frame
      */
     public AppFrame getFrame() {
         return frame;
     }
+
     /**
      * Az objekt katalógus gettere
+     *
      * @return - a katalógus
      */
     public HashMap<String, Object> getObjectCatalog() {
         return objectCatalog;
     }
+
     /**
      * a főmenü gettere
+     *
      * @return a főmenü
      */
     public MenuView getMenuView() {
@@ -935,6 +939,7 @@ return null;
 
     /**
      * az új játék ablak gettere
+     *
      * @return az ablak
      */
     public NewGameView getNewGameView() {
@@ -943,6 +948,7 @@ return null;
 
     /**
      * a futó játék ablakának gettere
+     *
      * @return az ablak
      */
     public GameView getGameView() {
