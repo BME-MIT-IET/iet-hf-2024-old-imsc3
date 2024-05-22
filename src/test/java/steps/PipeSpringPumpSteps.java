@@ -1,6 +1,7 @@
 package steps;
 
 import Model.Player;
+import Model.Pump;
 import Model.Steppable;
 import io.cucumber.java.en.*;
 import Controller.Controller;
@@ -61,6 +62,11 @@ public class PipeSpringPumpSteps {
         controller.stateSet(objectName, state, value);
     }
 
+    @When("{string} redirects from {string} to {string}")
+    public void redirects(String playerName, String inPipe, String outPipe) {
+        controller.redirect(playerName, inPipe, outPipe);
+    }
+
     @Then("{string} should be in the game")
     public void should_be_in_the_game(String name) {
         Object obj = controller.getObjectCatalog().get(name);
@@ -74,6 +80,13 @@ public class PipeSpringPumpSteps {
         assertTrue(pipe.getNodes().contains(node));
     }
 
+    @Then("{string} should be disconnected from {string}")
+    public void should_be_disconnected_from(String pipeName, String nodeName) {
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
+        Object node = controller.getObjectCatalog().get(nodeName);
+        assertTrue(!pipe.getNodes().contains(node));
+    }
+
     @Then("{string} should be connected to {string} and {string}")
     public void should_be_connected_to_and(String pipeName, String nodeName1, String nodeName2) {
         Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
@@ -84,15 +97,20 @@ public class PipeSpringPumpSteps {
     }
 
     @Then("{string} should be marked as broken")
-    public void should_be_marked_as_broken(String pipeName) {
-        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
-        assertTrue(pipe.isBroken());
+    public void should_be_marked_as_broken(String name) {
+        Object o = controller.getObjectCatalog().get(name);
+        if(o instanceof Pipe) assertTrue(((Pipe)o).isBroken());
+
+        else if (o instanceof Pump) assertTrue(((Pump)o).isBroken());
     }
 
     @Then("{string} should have {int} water held")
-    public void should_have_water_held(String pipeName, int waterAmount) {
-        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
-        assertEquals(waterAmount, pipe.getHeldWater());
+    public void should_have_water_held(String name, int waterAmount) {
+        Object o = controller.getObjectCatalog().get(name);
+        if(o instanceof Pipe) assertEquals(waterAmount, ((Pipe)o).getHeldWater());
+        else if (o instanceof Pump) assertEquals(waterAmount, ((Pump)o).getHeldWater());
+
+
     }
 
     @Then("the saboteur's points should be {int}")
@@ -138,14 +156,36 @@ public class PipeSpringPumpSteps {
     }
 
     @Then("{string} should be marked as not broken")
-    public void pipe_should_be_marked_as_not_broken(String pipeName) {
-        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
-        assertFalse(pipe.isBroken());
+    public void should_be_marked_as_not_broken(String name) {
+        Object o = controller.getObjectCatalog().get(name);
+        if(o instanceof Pipe) assertFalse(((Pipe)o).isBroken());
+        else if (o instanceof Pump) assertFalse(((Pump)o).isBroken());
+
     }
+
+
 
     @Then("{string} should be marked as not being held")
     public void should_be_marked_as_not_being_held(String pipeName) {
         Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
         assertFalse(pipe.isBeingHeld());
     }
+
+    @Then("{string}'s activeOut should be {string}")
+    public void activeOut_should_be(String objectName, String out) {
+        Pump pump = (Pump) controller.getObjectCatalog().get(objectName);
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(out);
+        assertSame(pump.getActiveOut(), pipe);
+
+    }
+
+    @Then("{string}'s activeIn should be {string}")
+    public void activeIn_should_be(String objectName, String in) {
+        Pump pump = (Pump) controller.getObjectCatalog().get(objectName);
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(in);
+        assertSame(pump.getActiveIn(), pipe);
+
+    }
+
+
 }
