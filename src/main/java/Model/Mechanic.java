@@ -8,6 +8,22 @@ import java.io.Serializable;
  * Szerelő megvalósítására használt osztály
  */
 public class Mechanic extends Player implements Serializable {
+
+    private Controller controller;
+
+    public Mechanic(Controller controller) {
+        this.controller = controller;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     /**
      * felvett pályaelem
      */
@@ -24,11 +40,11 @@ public class Mechanic extends Player implements Serializable {
             repaired = standingOn.repaired();
             if (repaired) {
                 state = PlayerActionState.TURN_OVER;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if (!repaired)
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(standingOn) + "is not broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(standingOn) + "is not broken", Controller.filetoWrite != null);
         return repaired;
     }
 
@@ -45,14 +61,14 @@ public class Mechanic extends Player implements Serializable {
             pickedup = standingOn.pickedUpFrom(item);
             if (pickedup) {
                 state = PlayerActionState.TURN_OVER;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if (pickedup) {
             item.pickedUp(standingOn);
             heldItems = item;
         } else
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(item) + " can't be picked up", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(item) + " can't be picked up", Controller.filetoWrite != null);
 
         return pickedup;
     }
@@ -70,7 +86,7 @@ public class Mechanic extends Player implements Serializable {
             successful = heldItems.placedDown(standingOn);
             if (successful) {
                 state = PlayerActionState.TURN_OVER;
-                Controller.getInstance().turnOver();
+                controller.turnOver();
             }
         }
         if (successful)

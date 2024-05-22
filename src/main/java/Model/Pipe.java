@@ -14,6 +14,27 @@ import java.util.LinkedList;
 public class Pipe extends Steppable implements PickupAble, Serializable {
 
     /**
+     * Pontszámításhoz használt singleton
+     */
+    private final PointCounter counter;
+
+    private Controller controller;
+
+    public Pipe(Controller controller, PointCounter counter) {
+        this.controller = controller;
+        this.counter = counter;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    /**
      * A cső kapacitása, kritérium szerint mindig egy
      */
     private int waterCapacity = 1;
@@ -51,14 +72,6 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
      */
     private final LinkedList<WaterNode> nodes = new LinkedList<>();
 
-    /**
-     * Pontszámításhoz használt singleton
-     */
-    private final PointCounter counter;
-
-    /**
-     * Pipe konstruktora
-     */
     public Pipe(PointCounter pointCounter) {
         counter = pointCounter;
     }
@@ -77,7 +90,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
                     nodes.remove(pickupIdx);
                 beingHeld = true;
                 if (!players.isEmpty()) {
-                    IO_Manager.writeInfo(Controller.getInstance().getObjectName(players.getFirst()) + " is fallen off", Controller.filetoWrite != null);
+                IO_Manager.writeInfo(controller.getObjectName(players.getFirst()) + " is fallen off", Controller.filetoWrite != null);
                     players.getFirst().setFellDown(true);
                 }
                 counter.addSaboteurPoints(heldWater);
@@ -111,10 +124,16 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     @Override
     public boolean playerEnter(Player player) {
         if (!players.isEmpty()) {
-            IO_Manager.writeInfo("Can't move to " + Controller.getInstance().getObjectName(this) + ", "
-                    + Controller.getInstance().getObjectName(players.getFirst()) + " is standing on it", Controller.filetoWrite != null);
+            IO_Manager.writeInfo("Can't move to " + controller.getObjectName(this) + ", "
+                    + controller.getObjectName(players.getFirst()) + " is standing on it", Controller.filetoWrite != null);
             return false;
         }
+
+        if (nodes.isEmpty() || nodes.getFirst() == null || nodes.getLast() == null) {
+            IO_Manager.writeInfo("Pipe " + controller.getObjectName(this) + " is not properly connected", Controller.filetoWrite != null);
+            return false;
+        }
+
         boolean successful = nodes.getFirst()!=null && nodes.getLast()!=null && (nodes.contains(player.getStandingOn()) || player.getStandingOn() == null);
 
         if (successful){
@@ -154,7 +173,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             player.setState(PlayerActionState.SPECIAL_ACTION);
         } else if (player.getState() == PlayerActionState.SPECIAL_ACTION) {
             player.setState(PlayerActionState.TURN_OVER);
-            Controller.getInstance().turnOver();
+            controller.turnOver();
         }
         lubricated = false;
     }
@@ -164,7 +183,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         player.setGlueLength(1);
         glued = false;
         player.setState(PlayerActionState.TURN_OVER);
-        Controller.getInstance().turnOver();
+        controller.turnOver();
     }
 
     /**
@@ -230,13 +249,13 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     @Override
     public void cutInHalf(Pump pump) {
 
-        String newP1="GenPipe"+ Controller.getInstance().createdPipeNumber++;
-        String newP2="GenPipe"+Controller.getInstance().createdPipeNumber++;
-        Controller.getInstance().create(newP1,"pipe",0,0);
-        Controller.getInstance().create(newP2,"pipe",0,0);
+        String newP1="GenPipe"+ controller.createdPipeNumber++;
+        String newP2="GenPipe"+controller.createdPipeNumber++;
+        controller.create(newP1,"pipe",0,0);
+        controller.create(newP2,"pipe",0,0);
 
-        Pipe newPipe1 =((Pipe)Controller.getInstance().getObjectCatalog().get(newP1));
-        Pipe newPipe2 =((Pipe)Controller.getInstance().getObjectCatalog().get(newP2));
+        Pipe newPipe1 =((Pipe)controller.getObjectCatalog().get(newP1));
+        Pipe newPipe2 =((Pipe)controller.getObjectCatalog().get(newP2));
         newPipe1.addWaterNode(pump);
         newPipe2.addWaterNode(pump);
 
@@ -244,8 +263,8 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         pump.addPipe(newPipe2);
 
         Player player=players.getFirst();
-        int x=Controller.getInstance().getGameView().getDrawableByCorrespondingModel(player).getX();
-        int y=Controller.getInstance().getGameView().getDrawableByCorrespondingModel(player).getY()+25;
+        int x=controller.getGameView().getDrawableByCorrespondingModel(player).getX();
+        int y=controller.getGameView().getDrawableByCorrespondingModel(player).getY()+25;
         //PLAYER LESZEDÉSE A CSŐRŐL
         player.setStandingOn(null);
         players.remove(player);
@@ -286,29 +305,29 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
         player.move(newPipe1);
         Player.setIgnoreStates(ignoreStates);
 
-        Controller.getInstance().removeObject(this);
-        Controller.getInstance().getGameView().remove(Controller.getInstance().getGameView().getPipeViewByCorrespondingModel(this));
+        controller.removeObject(this);
+        controller.getGameView().remove(controller.getGameView().getPipeViewByCorrespondingModel(this));
 
-        Controller.getInstance().getGameView().remove(Controller.getInstance().getGameView().getDrawableByCorrespondingModel(pump));
-        PumpView pumpView = new PumpView(x,y,25,pump, Controller.getInstance().getGameView());
-        Controller.getInstance().getGameView().addPumpView(pumpView);
+        controller.getGameView().remove(controller.getGameView().getDrawableByCorrespondingModel(pump));
+        PumpView pumpView = new PumpView(x,y,25,pump,controller.getGameView());
+        controller.getGameView().addPumpView(pumpView);
 
         PipeView pipeView1 = new PipeView(
-                Controller.getInstance().getGameView().getDrawableByCorrespondingModel(newPipe1.getNodes().getFirst()),
-                Controller.getInstance().getGameView().getDrawableByCorrespondingModel(newPipe1.getNodes().getLast()),
+                controller.getGameView().getDrawableByCorrespondingModel(newPipe1.getNodes().getFirst()),
+                controller.getGameView().getDrawableByCorrespondingModel(newPipe1.getNodes().getLast()),
                 5,
                 newPipe1,
-                Controller.getInstance().getGameView()
+                controller.getGameView()
         );
-        Controller.getInstance().getGameView().addPipeView(pipeView1);
+        controller.getGameView().addPipeView(pipeView1);
         PipeView pipeView2 = new PipeView(
-                Controller.getInstance().getGameView().getDrawableByCorrespondingModel(newPipe2.getNodes().getFirst()),
-                Controller.getInstance().getGameView().getDrawableByCorrespondingModel(newPipe2.getNodes().getLast()),
+                controller.getGameView().getDrawableByCorrespondingModel(newPipe2.getNodes().getFirst()),
+                controller.getGameView().getDrawableByCorrespondingModel(newPipe2.getNodes().getLast()),
                 5,
                 newPipe2,
-                Controller.getInstance().getGameView()
+                controller.getGameView()
         );
-        Controller.getInstance().getGameView().addPipeView(pipeView2);
+        controller.getGameView().addPipeView(pipeView2);
 
 
     }
@@ -320,14 +339,16 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
     @Override
     public boolean pierced() {
         if (broken) {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is already broken", Controller.filetoWrite != null);
+            controller.setLastMessage(controller.getObjectName(this) + " is already broken");
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is already broken", Controller.filetoWrite != null);
             return false;
         }
         if(readyToPierce) {
             broken = true;
         }
         else
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is not ready to be pierced again", Controller.filetoWrite != null);
+            controller.setLastMessage(controller.getObjectName(this) + " is not ready to be pierced again");
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is not ready to be pierced again", Controller.filetoWrite != null);
         return broken;
     }
 
@@ -430,7 +451,7 @@ public class Pipe extends Steppable implements PickupAble, Serializable {
             readyToPierceTimer = random.nextInt(4, 9);
             return true;
         } else {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is not broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is not broken", Controller.filetoWrite != null);
             return false;
         }
     }

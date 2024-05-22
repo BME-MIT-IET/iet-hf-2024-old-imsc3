@@ -8,6 +8,20 @@ import java.io.Serializable;
  * Spring valósítja meg a vízforrásokkal kapcsolatos funkciókat
  */
 public class Spring extends WaterNode implements Serializable {
+    private Controller controller;
+
+    public Spring(Controller controller) {
+        this.controller = controller;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
 
 
     /**
@@ -90,7 +104,7 @@ public class Spring extends WaterNode implements Serializable {
     public void waterFlow() {
         if(pipes.getFirst()!=null) {
             int gained = pipes.getFirst().gainWater(1);
-            IO_Manager.write(Controller.getInstance().getObjectName(pipes.get(0)) + " gained " + gained, Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(pipes.get(0)) + " gained " + gained, Controller.filetoWrite != null);
         }
     }
 
@@ -104,8 +118,8 @@ public class Spring extends WaterNode implements Serializable {
         if (valid)
             pipes.add(p);
         else
-            IO_Manager.writeInfo("Can't place " + Controller.getInstance().getObjectName(p) + " here, because " +
-                    Controller.getInstance().getObjectName(this) + " already has a pipe connected", Controller.filetoWrite != null);
+            IO_Manager.writeInfo("Can't place " + controller.getObjectName(p) + " here, because " +
+                    controller.getObjectName(this) + " already has a pipe connected", Controller.filetoWrite != null);
         return valid;
 
     }

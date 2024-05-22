@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public class Controller implements Serializable {
 
+    private String lastMessage = "";
+
     private static Controller controller = null;
     private static final boolean FRAME_COUNTER = false;
 
@@ -105,6 +107,13 @@ public class Controller implements Serializable {
     private final GameView gameView = new GameView(frame);
 
     /**
+     * Adja a countert
+     */
+    public PointCounter getCounter() {
+        return counter;
+    }
+
+    /**
      * A gameloop-ért fellelős függvény
      */
     public void run() {
@@ -189,10 +198,9 @@ public class Controller implements Serializable {
      * @param y    - a játékelem kirajzolásához tartozó y koordináta
      */
     public void create(String name, String type, int x, int y) {
-
         switch (type) {
             case "mechanic" -> {
-                Mechanic mechanic = new Mechanic();
+                Mechanic mechanic = new Mechanic(Controller.getInstance());
                 players.add(mechanic);
                 mechanics.add(mechanic);
                 objectCatalog.put(name, mechanic);
@@ -200,7 +208,7 @@ public class Controller implements Serializable {
                 gameView.addMechanicView(mechanicView);
             }
             case "saboteur" -> {
-                Saboteur saboteur = new Saboteur();
+                Saboteur saboteur = new Saboteur(Controller.getInstance());
                 players.add(saboteur);
                 saboteurs.add(saboteur);
                 objectCatalog.put(name, saboteur);
@@ -218,7 +226,7 @@ public class Controller implements Serializable {
                 gameView.addPumpView(pumpView);
             }
             case "spring" -> {
-                Spring spring = new Spring();
+                Spring spring = new Spring(Controller.getInstance());
                 steppables.add(spring);
                 nodes.add(spring);
                 springs.add(spring);
@@ -236,7 +244,7 @@ public class Controller implements Serializable {
                 gameView.addCisternView(cisternView);
             }
             case "pipe" -> {
-                Pipe pipe = new Pipe(PointCounter.getInstance());
+                Pipe pipe = new Pipe(Controller.getInstance(), PointCounter.getInstance());
                 steppables.add(pipe);
                 pipes.add(pipe);
                 pickupables.add(pipe);
@@ -244,6 +252,7 @@ public class Controller implements Serializable {
             }
             default -> IO_Manager.writeError("not valid type name", Controller.filetoWrite != null);
         }
+        setLastMessage(name + " created");
         IO_Manager.write(name + " created", Controller.filetoWrite != null);
     }
 
@@ -256,12 +265,14 @@ public class Controller implements Serializable {
     public void connect(String pipeName, String wNodeName) {
 
         if (!pipes.contains((Pipe) objectCatalog.get(pipeName))) {
+            setLastMessage(WRONG_PIPE);
             IO_Manager.writeError(WRONG_PIPE, Controller.filetoWrite != null);
             return;
         }
         Pipe p = (Pipe) objectCatalog.get(pipeName);
 
         if (!nodes.contains((WaterNode) objectCatalog.get(wNodeName))) {
+            setLastMessage("wrong node name");
             IO_Manager.writeError("wrong node name", Controller.filetoWrite != null);
             return;
         }
@@ -271,6 +282,7 @@ public class Controller implements Serializable {
             IO_Manager.write(pipeName + ".nodes = " + listWrite(p.getNodes()), Controller.filetoWrite != null);
             IO_Manager.write(wNodeName + ".pipes = " + listWrite(w.getPipes()), Controller.filetoWrite != null);
         }
+        setLastMessage(pipeName + " connected to " + wNodeName);
 
     }
 
@@ -281,14 +293,14 @@ public class Controller implements Serializable {
      * @param steppableName - az az elem amire mozog
      */
     public void move(String playerName, String steppableName) {
-
         if (!players.contains((Player) objectCatalog.get(playerName))) {
+            setLastMessage(WRONG_PLAYER);
             IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
-
         if (!steppables.contains((Steppable) objectCatalog.get(steppableName))) {
+            setLastMessage("wrong steppable name");
             IO_Manager.writeError("wrong steppable name", Controller.filetoWrite != null);
             return;
         }
@@ -296,6 +308,7 @@ public class Controller implements Serializable {
         Steppable prev = p.getStandingOn();
 
         if (p.move(s)) {
+            setLastMessage(playerName + " moves to " + steppableName);
             IO_Manager.write(steppableName + ".players = " + listWrite(s.getPlayers()), Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn = " + steppableName, Controller.filetoWrite != null);
             if (prev != null)
@@ -304,7 +317,10 @@ public class Controller implements Serializable {
                 else
                     IO_Manager.write(getObjectName(prev) + ".players = " + listWrite(prev.getPlayers()), Controller.filetoWrite != null);
 
+        }else{
+            setLastMessage(playerName + " can't move to " + steppableName);
         }
+
     }
 
     /**
@@ -315,15 +331,16 @@ public class Controller implements Serializable {
     public void pierce(String playerName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
+            setLastMessage(WRONG_PLAYER);
             IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.pierce())
-
+        if (p.pierce()) {
             IO_Manager.write(playerName + ".standingOn.broken = " + "true", Controller.filetoWrite != null);
-
+            setLastMessage(playerName + " pierced");
+        }
     }
 
     /**
@@ -334,15 +351,16 @@ public class Controller implements Serializable {
     public void glue(String playerName) {
 
         if (!players.contains((Player) objectCatalog.get(playerName))) {
+            setLastMessage(WRONG_PLAYER);
             IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
         }
         Player p = (Player) objectCatalog.get(playerName);
 
-        if (p.glue())
-
+        if (p.glue()) {
             IO_Manager.write(playerName + ".standingOn.glued = " + "true", Controller.filetoWrite != null);
-
+            setLastMessage(playerName + " glued");
+        }
     }
 
     /**
@@ -351,8 +369,6 @@ public class Controller implements Serializable {
      * @param saboteurName - a csúszóssá tévő szabotőr
      */
     public void lubricate(String saboteurName) {
-
-
         if (!saboteurs.contains((Saboteur) objectCatalog.get(saboteurName))) {
             IO_Manager.writeError("wrong saboteur name", Controller.filetoWrite != null);
             return;
@@ -393,7 +409,6 @@ public class Controller implements Serializable {
      * @param outPipeName - az a cső amit kivezetőnek akar
      */
     public void redirect(String playerName, String inPipeName, String outPipeName) {
-
         if (!players.contains((Player) objectCatalog.get(playerName))) {
             IO_Manager.writeError(WRONG_PLAYER, Controller.filetoWrite != null);
             return;
@@ -416,6 +431,7 @@ public class Controller implements Serializable {
             IO_Manager.write(playerName + ".standingOn.activeIn = " + inPipeName, Controller.filetoWrite != null);
             IO_Manager.write(playerName + ".standingOn.activeOut = " + outPipeName, Controller.filetoWrite != null);
         }
+        setLastMessage(playerName + " redirected");
 
     }
 
@@ -441,7 +457,7 @@ public class Controller implements Serializable {
 
         if (m.pickUp(p)) {
             IO_Manager.write(mechanicName + ".heldItems = " + pickupName, Controller.filetoWrite != null);
-
+            setLastMessage(mechanicName + " picked up " + pickupName);
         }
     }
 
@@ -468,11 +484,12 @@ public class Controller implements Serializable {
      *
      * @param objectName - az objektum neve amit lekérdezünk
      * @param attribName - az objektum egyik attribútumának neve amit le akarunk kérdezni
+     * @return
      */
-    public void stateGet(String objectName, String attribName) {
+    public Object stateGet(String objectName, String attribName, boolean str) {
         String output = objectName + "." + attribName + " = ";
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
+        if (mechanics.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR -> output += Boolean.toString(((Mechanic) o).isFellDown());
                 case STUCK_STR -> output += Boolean.toString(((Mechanic) o).isStuck());
@@ -481,7 +498,7 @@ public class Controller implements Serializable {
                 case HELD_ITEMS_STR -> output += getObjectName(((Mechanic) o).getHeldItems());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR -> output += Boolean.toString(((Saboteur) o).isFellDown());
                 case STUCK_STR -> output += Boolean.toString(((Saboteur) o).isStuck());
@@ -489,20 +506,20 @@ public class Controller implements Serializable {
                 case STATE_STR -> output += getObjectName(((Saboteur) o).getState());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
+        } else if (cisterns.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case CREATED_PICKUPABLES_STR -> output += listWrite(((Cistern) o).getCreatedPickupables());
                 case PIPES_STR -> output += listWrite(((Cistern) o).getPipes());
                 case PLAYERS_STR -> output += listWrite(((Cistern) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
-            switch (attribName) {
+        } else if (springs.contains(objectCatalog.get(objectName))) {
+            switch (attribName)  {
                 case PIPES_STR -> output += listWrite(((Spring) o).getPipes());
                 case PLAYERS_STR -> output += listWrite(((Spring) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
+        } else if (pumps.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> output += Boolean.toString(((Pump) o).isBroken());
                 case WATER_CAPACITY_STR -> output += Integer.toString(((Pump) o).getWaterCapacity());
@@ -514,7 +531,7 @@ public class Controller implements Serializable {
                 case PLAYERS_STR -> output += listWrite(((Pump) o).getPlayers());
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
+        } else if (pipes.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> output += Boolean.toString(((Pipe) o).isBroken());
                 case WATER_CAPACITY_STR -> output += Integer.toString(((Pipe) o).getWaterCapacity());
@@ -539,7 +556,12 @@ public class Controller implements Serializable {
         }
 
         IO_Manager.write(output, Controller.filetoWrite != null);
+        if (str)
+            return output;
+        return o;
     }
+
+
 
     /**
      * Attribútumok beállításának parancsát teljesítő függvény
@@ -550,7 +572,7 @@ public class Controller implements Serializable {
      */
     public void stateSet(String objectName, String attribName, String attribValue) {
         Object o = objectCatalog.get(objectName);
-        if (mechanics.contains((Mechanic) objectCatalog.get(objectName))) {
+        if (mechanics.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR:
                     ((Mechanic) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -570,7 +592,7 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (saboteurs.contains((Saboteur) objectCatalog.get(objectName))) {
+        } else if (saboteurs.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case FELL_DOWN_STR:
                     ((Saboteur) o).setFellDown(Boolean.parseBoolean(attribValue));
@@ -591,11 +613,11 @@ public class Controller implements Serializable {
                 default:
                     IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (cisterns.contains((Cistern) objectCatalog.get(objectName))) {
+        } else if (cisterns.contains(objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (springs.contains((Spring) objectCatalog.get(objectName))) {
+        } else if (springs.contains(objectCatalog.get(objectName))) {
             IO_Manager.writeError("no attribute to set", Controller.filetoWrite != null);
-        } else if (pumps.contains((Pump) objectCatalog.get(objectName))) {
+        } else if (pumps.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> ((Pump) o).setBroken(Boolean.parseBoolean(attribValue));
                 case WATER_CAPACITY_STR -> ((Pump) o).setWaterCapacity(Integer.parseInt(attribValue));
@@ -611,7 +633,7 @@ public class Controller implements Serializable {
                 }
                 default -> IO_Manager.writeError(WRONG_ATTR, Controller.filetoWrite != null);
             }
-        } else if (pipes.contains((Pipe) objectCatalog.get(objectName))) {
+        } else if (pipes.contains(objectCatalog.get(objectName))) {
             switch (attribName) {
                 case BROKEN_STR -> ((Pipe) o).setBroken(Boolean.parseBoolean(attribValue));
                 case WATER_CAPACITY_STR -> ((Pipe) o).setWaterCapacity(Integer.parseInt(attribValue));
@@ -626,28 +648,35 @@ public class Controller implements Serializable {
             IO_Manager.writeError("wrong object name", Controller.filetoWrite != null);
         }
         //Kiírjuk a változást
-        stateGet(objectName, attribName);
+        setLastMessage(objectName + "." + attribName + " = " + attribValue);
+        stateGet(objectName, attribName, false);
     }
 
     /**
      * A következő játékos/kör parancsának függvénye, elintéz mindent ami egy körben történik
      */
     public void turnOver() {
-        turnOrder.add(turnOrder.removeFirst());
-        turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
-        if (turnOrder.getFirst().isFellDown()) {
-            turnOrder.getFirst().setFellDown(false);
-            SecureRandom random = new SecureRandom();
-            int chance = random.nextInt(0, nodes.size());
-            Player.setIgnoreStates(true);
-            turnOrder.getFirst().move(nodes.get(chance));
-            Player.setIgnoreStates(false);
-            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
-            turnOver();
+        if (!turnOrder.isEmpty()) {
+            turnOrder.add(turnOrder.removeFirst());
         }
-        if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
+
+        if (!turnOrder.isEmpty()) {
+            turnOrder.getFirst().setState(PlayerActionState.MOVE_ACTION);
+            if (turnOrder.getFirst().isFellDown()) {
+                turnOrder.getFirst().setFellDown(false);
+            SecureRandom random = new SecureRandom();
+                int chance = random.nextInt(nodes.size());
+                Player.setIgnoreStates(true);
+            turnOrder.getFirst().move(nodes.get(chance));
+                Player.setIgnoreStates(false);
+            turnOrder.getFirst().setState(PlayerActionState.TURN_OVER);
+                turnOver();
+            }
+            if (!turnOrder.getFirst().getStandingOn().canMoveFromHere())
             turnOrder.getFirst().setState(PlayerActionState.SPECIAL_ACTION);
-        nextTurn();
+            nextTurn();
+        }
+
         for (Pipe p : pipes) {
             if (!p.isReadyToPierce()) {
                 p.setReadyToPierceTimer(p.getReadyToPierceTimer() - 1);
@@ -655,7 +684,8 @@ public class Controller implements Serializable {
                     p.setReadyToPierce(true);
             }
         }
-        if (getActivePlayer().isStuck()) {
+
+        if (!turnOrder.isEmpty() && getActivePlayer().isStuck()) {
             if (getActivePlayer().getGlueLength() == 0)
                 getActivePlayer().setStuck(false);
             else {
@@ -665,6 +695,7 @@ public class Controller implements Serializable {
             }
         }
     }
+
 
     /**
      * Következő kör indulását kezeli, ciszternánál generálás, pumpák elromlása,
@@ -963,5 +994,13 @@ public class Controller implements Serializable {
 
     public LinkedList<Saboteur> getSaboteurs() {
         return saboteurs;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }

@@ -3,8 +3,8 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.io.*;
 
 /**
  * A játék ablakát reprezentáló osztály
