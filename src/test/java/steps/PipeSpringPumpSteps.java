@@ -43,6 +43,7 @@ public class PipeSpringPumpSteps {
     @When("{string} picks up {string}")
     public void picks_up(String playerName, String objectName) {
         controller.pickup(playerName, objectName);
+        System.out.println(controller.getLastMessage());
     }
 
     @When("water flows from {string}")
@@ -117,5 +118,34 @@ public class PipeSpringPumpSteps {
     public void the_message_should_be_shown(String expectedMessage) {
         String actualMessage = controller.getLastMessage();
         assertEquals(expectedMessage, actualMessage);
+    }
+
+    @When("{string} is broken")
+    public void pipe_is_broken(String arg0) {
+        controller.stateSet(arg0, "broken", "true");
+        assertEquals("pipe1.broken = true", controller.getLastMessage());
+    }
+
+    @When("{string} gains {int} water")
+    public void pipe_gains_water(String pipeName, int waterAmount) {
+        controller.stateSet(pipeName, "heldWater", Integer.toString(waterAmount));
+    }
+
+    @Then("{string} should be marked as being held")
+    public void should_be_marked_as_being_held(String pipeName) {
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
+        assertTrue(pipe.isBeingHeld());
+    }
+
+    @Then("{string} should be marked as not broken")
+    public void pipe_should_be_marked_as_not_broken(String pipeName) {
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
+        assertFalse(pipe.isBroken());
+    }
+
+    @Then("{string} should be marked as not being held")
+    public void should_be_marked_as_not_being_held(String pipeName) {
+        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
+        assertFalse(pipe.isBeingHeld());
     }
 }

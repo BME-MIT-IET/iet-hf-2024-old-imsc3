@@ -446,7 +446,7 @@ public class Controller implements Serializable {
 
         if (m.PickUp(p)) {
             IO_Manager.write(mechanicName + ".heldItems = " + pickupName, Controller.filetoWrite != null);
-
+            setLastMessage(mechanicName + " picked up " + pickupName);
         }
     }
 
