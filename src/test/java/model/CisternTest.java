@@ -24,7 +24,6 @@ public class CisternTest {
     private Cistern cistern;
     private Controller mockController;
     private PointCounter mockPointCounter;
-    private GameView mockGameView;
 
     @BeforeEach
     public void setUp() {
@@ -68,8 +67,10 @@ public class CisternTest {
     @Test
     public void testWaterFlow() {
         Pipe mockPipe = mock(Pipe.class);
-        cistern.getPipes().add(mockPipe);
+        cistern.addPipe(mockPipe);
+        cistern.setActiveIn(mockPipe);
         when(mockPipe.loseWater(1)).thenReturn(1);
+        when(mockController.getObjectName(any())).thenReturn("Pipe");
 
         cistern.waterFlow();
 
