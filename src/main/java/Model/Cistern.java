@@ -12,6 +12,27 @@ import java.util.Random;
  * Ciszterna megvalósítására szolgáló osztály
  */
 public class Cistern extends WaterNode implements Serializable {
+    private Controller controller;
+
+    /**
+     * Pontszámításhoz használt singleton
+     */
+    private final PointCounter counter;
+
+    public Cistern(Controller controller, PointCounter counter) {
+        this.controller = controller;
+        this.counter = counter;
+    }
+
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     /**
      * Ciszternáról felvehető elemek, amik generálódtak rajta
      */
@@ -25,17 +46,8 @@ public class Cistern extends WaterNode implements Serializable {
      */
     private LinkedList<Pump> generatedPumps = new LinkedList<>();
 
-    /**
-     * Pontszámításhoz használt singleton
-     */
-    private final PointCounter counter;
 
-    /**
-     * Ciszterna konstruktora
-     */
-    public Cistern() {
-        counter = PointCounter.getInstance();
-    }
+
 
     /**
      * PickupAble felvétele esetén hívódik, a
@@ -91,7 +103,7 @@ public class Cistern extends WaterNode implements Serializable {
         for (Pipe p : pipes) {
             int lost = p.LoseWater(1);
             counter.AddMechanicPoints(lost);
-            IO_Manager.write(Controller.getInstance().getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(p) + " lost " + lost, Controller.filetoWrite != null);
         }
     }
 
@@ -103,22 +115,22 @@ public class Cistern extends WaterNode implements Serializable {
             return;
         Random rand = new Random();
         if (rand.nextInt(0, 10) == 9) {
-            String pumpName = "genPump" + Controller.getInstance().createdPumpNumber++;
-            Controller.getInstance().create(pumpName, "pump", -50, -50);
-            Pump p = (Pump) Controller.getInstance().getObjectCatalog().get(pumpName);
+            String pumpName = "genPump" + controller.createdPumpNumber++;
+            controller.create(pumpName, "pump", -50, -50);
+            Pump p = (Pump) controller.getObjectCatalog().get(pumpName);
             createdPickupables.add(p);
             generatedPumps.add(p);
         }
         if (rand.nextInt(0, 10) == 9) {
-            String pipeName = "genPipe" + Controller.getInstance().createdPipeNumber++;
-            Controller.getInstance().create(pipeName, "pipe", 0, 0);
-            Pipe pi = (Pipe) Controller.getInstance().getObjectCatalog().get(pipeName);
+            String pipeName = "genPipe" + controller.createdPipeNumber++;
+            controller.create(pipeName, "pipe", 0, 0);
+            Pipe pi = (Pipe) controller.getObjectCatalog().get(pipeName);
             createdPickupables.add(pi);
             generatedPipes.add(pi);
             pi.AddWaterNode(this);
             AddPipe(pi);
 
-            GameView gameView = Controller.getInstance().getGameView();
+            GameView gameView = controller.getGameView();
             PipeView pipeView = new PipeView(
                     gameView.getDrawableByCorrespondingModel(this),
                     gameView.getDrawableByCorrespondingModel(this),

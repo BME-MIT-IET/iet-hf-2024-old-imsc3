@@ -198,7 +198,7 @@ public class Controller implements Serializable {
     public void create(String name, String type, int x, int y) {
         switch (type) {
             case "mechanic" -> {
-                Mechanic mechanic = new Mechanic();
+                Mechanic mechanic = new Mechanic(Controller.getInstance());
                 players.add(mechanic);
                 mechanics.add(mechanic);
                 objectCatalog.put(name, mechanic);
@@ -206,7 +206,7 @@ public class Controller implements Serializable {
                 gameView.addMechanicView(mechanicView);
             }
             case "saboteur" -> {
-                Saboteur saboteur = new Saboteur();
+                Saboteur saboteur = new Saboteur(Controller.getInstance());
                 players.add(saboteur);
                 saboteurs.add(saboteur);
                 objectCatalog.put(name, saboteur);
@@ -214,7 +214,7 @@ public class Controller implements Serializable {
                 gameView.addSaboteurView(saboteurView);
             }
             case "pump" -> {
-                Pump pump = new Pump();
+                Pump pump = new Pump(Controller.getInstance());
                 steppables.add(pump);
                 nodes.add(pump);
                 pumps.add(pump);
@@ -224,7 +224,7 @@ public class Controller implements Serializable {
                 gameView.addPumpView(pumpView);
             }
             case "spring" -> {
-                Spring spring = new Spring();
+                Spring spring = new Spring(Controller.getInstance());
                 steppables.add(spring);
                 nodes.add(spring);
                 springs.add(spring);
@@ -233,7 +233,7 @@ public class Controller implements Serializable {
                 gameView.addSpringView(springView);
             }
             case "cistern" -> {
-                Cistern cistern = new Cistern();
+                Cistern cistern = new Cistern(Controller.getInstance(), PointCounter.getInstance());
                 steppables.add(cistern);
                 nodes.add(cistern);
                 cisterns.add(cistern);
@@ -242,7 +242,7 @@ public class Controller implements Serializable {
                 gameView.addCisternView(cisternView);
             }
             case "pipe" -> {
-                Pipe pipe = new Pipe();
+                Pipe pipe = new Pipe(Controller.getInstance(), PointCounter.getInstance());
                 steppables.add(pipe);
                 pipes.add(pipe);
                 pickupables.add(pipe);

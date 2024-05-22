@@ -8,6 +8,19 @@ import java.io.Serializable;
  * Pumpa funkcióinak megvalósítása
  */
 public class Pump extends WaterNode implements PickupAble, Serializable {
+    private Controller controller;
+
+    public Pump(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
     /**
      * törött-e a pumpa
      */
@@ -103,7 +116,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
     public void WaterFlow() {
 
         if (broken) {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is broken", Controller.filetoWrite != null);
         }
         int gained=0;
         if(!broken && heldWater != 0 && activeOut != null)
@@ -112,9 +125,9 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
             if(gained==1){
                 heldWater--;
             }
-            IO_Manager.write(Controller.getInstance().getObjectName(activeOut) + " gained " + gained, Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(activeOut) + " gained " + gained, Controller.filetoWrite != null);
         } else if (heldWater == 0) {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is empty", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is empty", Controller.filetoWrite != null);
         }
 
         if (activeIn != null) {
@@ -123,7 +136,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
             int excess = (heldWater + lost > waterCapacity) ? (heldWater + lost - waterCapacity) : 0;
             activeIn.GainWater(excess);
             heldWater +=lost-excess;
-            IO_Manager.write(Controller.getInstance().getObjectName(activeIn) + " lost " + (lost - excess), Controller.filetoWrite != null);
+            IO_Manager.write(controller.getObjectName(activeIn) + " lost " + (lost - excess), Controller.filetoWrite != null);
         }
     }
 
@@ -215,8 +228,8 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
         if(valid)
             pipes.add(p);
         else
-            IO_Manager.writeInfo("Can't place " + Controller.getInstance().getObjectName(p) + " here, because " +
-                    Controller.getInstance().getObjectName(this) + " reached pipe capacity", Controller.filetoWrite != null);
+            IO_Manager.writeInfo("Can't place " + controller.getObjectName(p) + " here, because " +
+                    controller.getObjectName(this) + " reached pipe capacity", Controller.filetoWrite != null);
         return valid;
 
     }
@@ -231,7 +244,7 @@ public class Pump extends WaterNode implements PickupAble, Serializable {
             broken = false;
             return true;
         } else {
-            IO_Manager.writeInfo(Controller.getInstance().getObjectName(this) + " is not broken", Controller.filetoWrite != null);
+            IO_Manager.writeInfo(controller.getObjectName(this) + " is not broken", Controller.filetoWrite != null);
             return false;
         }
     }

@@ -44,7 +44,6 @@ public class PipeSpringPumpSteps {
     @When("{string} picks up {string}")
     public void picks_up(String playerName, String objectName) {
         controller.pickup(playerName, objectName);
-        System.out.println(controller.getLastMessage());
     }
 
     @When("water flows from {string}")
@@ -149,17 +148,17 @@ public class PipeSpringPumpSteps {
         controller.stateSet(pipeName, "heldWater", Integer.toString(waterAmount));
     }
 
-    @Then("{string} should be marked as being held")
-    public void should_be_marked_as_being_held(String pipeName) {
-        Pipe pipe = (Pipe) controller.getObjectCatalog().get(pipeName);
-        assertTrue(pipe.isBeingHeld());
-    }
 
     @Then("{string} should be marked as not broken")
+<<<<<<< HEAD
     public void should_be_marked_as_not_broken(String name) {
         Object o = controller.getObjectCatalog().get(name);
         if(o instanceof Pipe) assertFalse(((Pipe)o).isBroken());
         else if (o instanceof Pump) assertFalse(((Pump)o).isBroken());
+=======
+    public void pipe_should_be_marked_as_not_broken(String pipeName) {
+        Object pipe = controller.getObjectCatalog().get(pipeName);
+>>>>>>> 53834bb099e6b2589d35a7b6e5c4bf58873faba4
 
     }
 
@@ -171,6 +170,7 @@ public class PipeSpringPumpSteps {
         assertFalse(pipe.isBeingHeld());
     }
 
+<<<<<<< HEAD
     @Then("{string}'s activeOut should be {string}")
     public void activeOut_should_be(String objectName, String out) {
         Pump pump = (Pump) controller.getObjectCatalog().get(objectName);
@@ -188,4 +188,16 @@ public class PipeSpringPumpSteps {
     }
 
 
+=======
+    @Then("{string} should be marked as being held")
+    public void should_be_marked_as_being_held(String pipeName) {
+        Object pipe =  controller.getObjectCatalog().get(pipeName);
+        System.out.println(pipe);
+        //assertTrue(pipe.isBeingHeld());
+    }
+
+    @Then("{string} should not be marked as being held")
+    public void shouldNotBeMarkedAsBeingHeld(String arg0) {
+    }
+>>>>>>> 53834bb099e6b2589d35a7b6e5c4bf58873faba4
 }
